@@ -1,5 +1,3 @@
-testing if this will push and everyone can see it"
-
 if you havent used git since august set up your personal access token in settings>developer settings and use it 
 instead of your password when git prompts for your username and password
 
