@@ -2,3 +2,12 @@ testing if this will push and everyone can see it"
 
 if you havent used git since august set up your personal access token in settings>developer settings and use it 
 instead of your password when git prompts for your username and password
+
+"You can store your credentials using the following command
+
+$ git config credential.helper store
+$ git push http://example.com/repo.git
+Username: <type your username>
+Password: <type your password>"
+
+^^ from https://stackoverflow.com/questions/11403407/git-asks-for-username-every-time-i-push 
