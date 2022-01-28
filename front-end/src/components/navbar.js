@@ -1,6 +1,7 @@
 import "../../node_modules/mdb-react-ui-kit/dist/css/mdb.min.css";
 
 import React, { useState } from 'react';
+import { connect } from "react-redux";
 
 import {
   MDBContainer,
@@ -21,26 +22,24 @@ import {
 } from 'mdb-react-ui-kit'
 
 
-function Navbar() {
-  const [showBasic, setShowBasic] = useState(false);
+function Navbar() {  
+  const [username, setUsername] = useState("");
+
+  function handleUsernameChange(username) {
+    setUsername(username);
+    localStorage.setItem("username", username);
+  }
+
+
   return (
     <MDBNavbar expand='lg' light bgColor='light'>
       <MDBContainer fluid>
         <MDBNavbarBrand href='/homepage'>Brand</MDBNavbarBrand>
 
-        <MDBNavbarToggler
-          aria-controls='navbarSupportedContent'
-          aria-expanded='false'
-          aria-label='Toggle navigation'
-          onClick={() => setShowBasic(!showBasic)}
-        >
-          <MDBIcon icon='bars' fas />
-        </MDBNavbarToggler>
-
-        <MDBCollapse navbar show={showBasic}>
+        <MDBCollapse navbar>
           <MDBNavbarNav className='mr-auto mb-2 mb-lg-0'>
             <MDBNavbarItem>
-              <MDBNavbarLink active aria-current='page' href='/'>
+              <MDBNavbarLink active aria-current='page' href='/signup'>
                 Signup
               </MDBNavbarLink>
             </MDBNavbarItem>
@@ -50,13 +49,13 @@ function Navbar() {
           </MDBNavbarNav>
 
           <form className='d-flex input-group w-auto'>
-            <input type='search' className='form-control' placeholder='Type query' aria-label='Search' />
-            <MDBBtn color='primary'>Search</MDBBtn>
+            <input type='search' value={username} className='form-control' placeholder='Type query' aria-label='Search' onChange={(username) => handleUsernameChange(username.target.value)}/>
           </form>
         </MDBCollapse>
       </MDBContainer>
     </MDBNavbar>
     );
 }
+
 
 export default Navbar;

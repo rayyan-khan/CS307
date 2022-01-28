@@ -1,9 +1,9 @@
 import './App.css';
 
 import {
-  BrowserRouter,
-  Routes,
+  BrowserRouter as Router,
   Route,
+  Routes,  
 } from "react-router-dom";
 
 
@@ -18,13 +18,13 @@ export default function App() {
   return (
     <div className="App">
       <Navbar />
-      <BrowserRouter>
+      <Router>
         <Routes>
-          <Route path="/" element={<Signup />} />
-          <Route path="login" element={<Login />} />
-          <Route path="homepage" element={<Homepage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/homepage" element={<Homepage />} />
         </Routes>
-      </BrowserRouter>,
+      </Router>,
     </div>
   );
 }
