@@ -3,7 +3,8 @@ import './App.css';
 import {
   BrowserRouter as Router,
   Route,
-  Routes,  
+  Routes,
+  Navigate,
 } from "react-router-dom";
 
 
@@ -20,6 +21,7 @@ export default function App() {
       <Navbar />
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate replace to="/signup" />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/homepage" element={<Homepage />} />
