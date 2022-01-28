@@ -8,5 +8,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {}
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.7.1",
+    "concurrently": "^7.0.0",
+    "react-redux": "^7.2.6",
+    "react-router-dom": "^6.2.1"
+  }
 }
