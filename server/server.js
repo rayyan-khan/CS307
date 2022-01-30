@@ -27,19 +27,17 @@ if (process.env.NODE_ENV === 'production') {
 
 const port = process.env.PORT || 5000;
 
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "password",
-  database: "mydb"
-});
+// var con = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "password",
+//   database: "mydb"
+// });
+
+var con = require("./db/conn");
  
 app.listen(port, () => {
   // perform a database connection when server starts
-  con.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected to database!");
-  });
 
   console.log(`Server is running on port: ${port}`);
 });
