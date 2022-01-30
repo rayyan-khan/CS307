@@ -5,7 +5,10 @@
   "scripts": {
     "start": "concurrently \"npm start --prefix front-end\" \"npm start --prefix server\"",
     "front-end": "npm start --prefix front-end",
-    "server": "npm start --prefix server"
+    "server": "npm start --prefix server",
+    "i-all": "npm install --prefix front-end && npm install --prefix server",
+    "i-front-end": "npm install --prefix front-end",
+    "i-server": "npm install --prefix server"
   },
   "keywords": [],
   "author": "",

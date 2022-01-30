@@ -23,3 +23,9 @@ Run the following in the root directory to run the server and client at the same
 To run just the server or just the client, run the following command in respective folder: npm start
 You can also run the following in the root folder to run just the client: npm run front-end
 Or the following to run just the server: npm run server
+
+To install dependencies in both front-end and server from the root folder, run the following: npm run i-all
+
+To install dependencies in the front-end from the root folder, run the following: npm run i-front-end
+
+To install dependencies in the server from the root folder, run the following: npm run i-server
