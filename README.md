@@ -8,6 +8,15 @@ run the following: npm install
 
 run the following in the root folder: npm install -g concurrently
 
+Create a file in the server folder titled .env
+Add the following lines to the file:
+DATABASE_HOST=host
+DATABASE_USER=user
+DATABASE_PASSWORD=password
+DATABASE_DATABASE=database
+
+and replace host, user, password, and database as needed
+
 How to Run Project
 Run the following in the root directory to run the server and client at the same time: npm start
 
