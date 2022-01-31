@@ -2,14 +2,14 @@ import React from 'react'
 
 import logo from '../../logo.svg';
 
-class Profile extends React.Component {
+class MakePost extends React.Component {
     render() {
         return (
             <div className="App">
                 <header className="App-header">
                     <img src={logo} className="App-logo" alt="logo" />
                     <p>
-                        This is the profile page for {localStorage.getItem("username")}
+                        {localStorage.getItem("username")} wants to make a post
                     </p>
                     <a
                         className="App-link"
@@ -24,4 +24,4 @@ class Profile extends React.Component {
         );
     }
 }
-export default Profile;
+export default MakePost;
