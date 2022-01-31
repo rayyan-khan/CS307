@@ -12,16 +12,18 @@ import {
 } from 'mdb-react-ui-kit';
 
 
-let testbar = <><MDBContainer fluid>
-  <MDBNavbarBrand href='/homepage'>
-    Purdue Circle
-  </MDBNavbarBrand>
-</MDBContainer>
+let testbar = <>
+  <MDBContainer fluid>
+    <MDBNavbarBrand href='/homepage'>
+      Purdue Circle
+    </MDBNavbarBrand>
+  </MDBContainer>
   <MDBNavbar className="position-absolute start-25" style={{ left: "42%", width: "16%" }}>
     <form className="form-inline" style={{ width: "150%", display: "flex", justifyContent: "center", alignItems: "center" }}>
       <input className="form-control mr-sm-5" type="search" placeholder="Search" aria-label="" />
     </form>
-  </MDBNavbar></>
+  </MDBNavbar>
+</>
 
 function Navbar() {
   if (localStorage.getItem("username") !== null) {
