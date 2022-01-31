@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from "react-redux";
 
-import logo from '../logo.svg';
+import logo from '../logo.png';
 
 class SearchResult extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ class SearchResult extends React.Component {
         this.state.username = localStorage.getItem("username") !== null ? localStorage.getItem("username") : "a new user";
         console.log(this.state.searchQuery);
     }
-    
+
     render() {
         return (
             <div className="App">
@@ -34,6 +34,7 @@ class SearchResult extends React.Component {
                         href="https://reactjs.org"
                         target="_blank"
                         rel="noopener noreferrer"
+                        style={{ color: "#C5B1F5" }}
                     >
                         Learn React
                     </a>

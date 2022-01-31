@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from "react-redux";
 
-import logo from '../logo.svg';
+import logo from '../logo.png';
 
 function Homepage() {
     return (
@@ -16,6 +16,7 @@ function Homepage() {
                     href="https://reactjs.org"
                     target="_blank"
                     rel="noopener noreferrer"
+                    style={{ color: "#C5B1F5" }}
                 >
                     Learn React
                 </a>

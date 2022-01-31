@@ -1,6 +1,6 @@
 import React from 'react'
 
-import logo from '../../logo.svg';
+import logo from '../../logo.png';
 
 class Profile extends React.Component {
     render() {
@@ -16,6 +16,7 @@ class Profile extends React.Component {
                         href="https://reactjs.org"
                         target="_blank"
                         rel="noopener noreferrer"
+                        style={{ color: "#C5B1F5" }}
                     >
                         Learn React
                     </a>

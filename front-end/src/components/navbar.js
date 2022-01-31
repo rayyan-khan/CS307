@@ -40,8 +40,8 @@ class Navbar extends React.Component {
     let searchQuery = this.state.searchQuery;
     console.log(searchQuery);
     let url = window.location.href;
-    url = url.substring(0, url.length - "/homepage".length);
-    window.location.href = url + "/search";    
+    url = url.substring(0, url.indexOf("/"));
+    window.location.href = url + "/search";
     localStorage.setItem("search_query", searchQuery);
   }
 
@@ -64,22 +64,24 @@ class Navbar extends React.Component {
 
     if (localStorage.getItem("username") !== null) {
       return (
-        <MDBNavbar expand='lg' dark bgColor='dark'>
-          {barFront}
-          <div style={{ top: "10%" }}>
-            <MDBNavbarNav right>
-              <MDBNavbarItem>
-                <MDBNavbarLink href='/post'>Post</MDBNavbarLink>
-              </MDBNavbarItem>
-              <MDBNavbarItem>
-                <MDBNavbarLink href='/dms'>DM's</MDBNavbarLink>
-              </MDBNavbarItem>
-              <MDBNavbarItem>
-                <MDBNavbarLink href='/profile'>Profile</MDBNavbarLink>
-              </MDBNavbarItem>
-            </MDBNavbarNav>
-          </div>
-        </MDBNavbar>
+        <div>
+          <MDBNavbar style={{ height: "200%" }} expand='lg' dark bgColor='dark'>
+            {barFront}
+            <div style={{ top: "15%" }}>
+              <MDBNavbarNav right>
+                <MDBNavbarItem>
+                  <MDBNavbarLink href='/post'>Post</MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink href='/dms'>DM's</MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink href='/profile'>Profile</MDBNavbarLink>
+                </MDBNavbarItem>
+              </MDBNavbarNav>
+            </div>
+          </MDBNavbar>
+        </div>
       )
     } else {
       return (
