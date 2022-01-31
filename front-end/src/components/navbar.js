@@ -19,8 +19,9 @@ import {
   MDBDropdownItem,
   MDBDropdownLink,
   MDBCollapse
-} from 'mdb-react-ui-kit'
+} from 'mdb-react-ui-kit';
 
+import logo from "../assets/PurdueLogo.jpeg";
 
 function Navbar() {  
   const [username, setUsername] = useState("");
@@ -32,30 +33,27 @@ function Navbar() {
 
 
   return (
-    <MDBNavbar expand='lg' light bgColor='light'>
+    <MDBNavbar expand='lg' dark bgColor='dark'>
       <MDBContainer fluid>
-        <MDBNavbarBrand href='/homepage'>Brand</MDBNavbarBrand>
-
-        <MDBCollapse navbar>
-          <MDBNavbarNav className='mr-auto mb-2 mb-lg-0'>
-            <MDBNavbarItem>
-              <MDBNavbarLink active aria-current='page' href='/signup'>
-                Signup
-              </MDBNavbarLink>
-            </MDBNavbarItem>
-            <MDBNavbarItem>
-              <MDBNavbarLink href='/login'>Login</MDBNavbarLink>
-            </MDBNavbarItem>
-          </MDBNavbarNav>
-
-          <form className='d-flex input-group w-auto'>
-            <input type='search' value={username} className='form-control' placeholder='Type query' aria-label='Search' onChange={(username) => handleUsernameChange(username.target.value)}/>
-          </form>
-        </MDBCollapse>
+        <MDBNavbarBrand href='/homepage'>
+              Purdue Circle
+        </MDBNavbarBrand>
       </MDBContainer>
+      <MDBNavbarNav left className="position-absolute start-25" style={{ left: "45%" }}>
+          <MDBNavbarItem>
+            <form className="form-inline">
+              <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
+              </form>
+          </MDBNavbarItem>
+        </MDBNavbarNav>
     </MDBNavbar>
     );
 }
 
 
 export default Navbar;
+
+
+<MDBNavbarNav>
+
+</MDBNavbarNav>
