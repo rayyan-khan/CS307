@@ -9,7 +9,7 @@ class Profile extends React.Component {
                 <header className="App-header">
                     <img src={logo} className="App-logo" alt="logo" />
                     <p>
-                        This is the profile page for {localStorage.getItem("username")}
+                        This is the profile page for {sessionStorage.getItem("username")}
                     </p>
                     <a
                         className="App-link"

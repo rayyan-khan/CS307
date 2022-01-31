@@ -9,7 +9,7 @@ function Homepage() {
             <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
                 <p>
-                    This is the home page for {localStorage.getItem("username") !== null ? localStorage.getItem("username") : "a new user"}
+                    This is the home page for {sessionStorage.getItem("username") !== null ? sessionStorage.getItem("username") : "a new user"}
                 </p>
                 <a
                     className="App-link"

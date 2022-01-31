@@ -13,10 +13,10 @@ class SearchResult extends React.Component {
     }
     UNSAFE_componentWillMount() {
         // What the user wants to search
-        this.state.searchQuery = localStorage.getItem("search_query");
+        this.state.searchQuery = sessionStorage.getItem("search_query");
 
         // What the user is logged in as
-        this.state.username = localStorage.getItem("username") !== null ? localStorage.getItem("username") : "a new user";
+        this.state.username = sessionStorage.getItem("username") !== null ? sessionStorage.getItem("username") : "a new user";
         console.log(this.state.searchQuery);
     }
 

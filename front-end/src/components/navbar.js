@@ -42,7 +42,7 @@ class Navbar extends React.Component {
     let url = window.location.href;
     url = url.substring(0, url.indexOf("/"));
     window.location.href = url + "/search";
-    localStorage.setItem("search_query", searchQuery);
+    sessionStorage.setItem("search_query", searchQuery);
   }
 
   render() {
@@ -62,7 +62,7 @@ class Navbar extends React.Component {
       </MDBNavbar>
     </>
 
-    if (localStorage.getItem("username") !== null) {
+    if (sessionStorage.getItem("username") !== null) {
       return (
         <div>
           <MDBNavbar style={{ height: "200%" }} expand='lg' dark bgColor='dark'>
