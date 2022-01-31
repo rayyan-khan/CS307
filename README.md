@@ -41,6 +41,6 @@
   - Open the developer tools of your browswer
   - In the console tab
     - To sign in as a user, run the following command
-        - `localStorage.setItem("username", "your_user_name");`
+        - `sessionStorage.setItem("username", "your_user_name");`
     - To sign out, run the following command
-        - `localStorage.removeItem("username");`
+        - `sessionStorage.removeItem("username");`

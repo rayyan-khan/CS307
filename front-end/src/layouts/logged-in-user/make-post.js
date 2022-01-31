@@ -9,7 +9,7 @@ class MakePost extends React.Component {
                 <header className="App-header">
                     <img src={logo} className="App-logo" alt="logo" />
                     <p>
-                        {localStorage.getItem("username")} wants to make a post
+                        {sessionStorage.getItem("username")} wants to make a post
                     </p>
                     <a
                         className="App-link"

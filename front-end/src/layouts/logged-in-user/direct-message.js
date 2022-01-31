@@ -9,7 +9,7 @@ class DirectMessage extends React.Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <p>
-            {localStorage.getItem("username")} wants to send a direct message
+            {sessionStorage.getItem("username")} wants to send a direct message
           </p>
           <a
             className="App-link"
