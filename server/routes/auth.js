@@ -78,6 +78,26 @@ authRoutes.route("/register").post(async (req, res) => {
     res.json("Successfully created an unverified acount")
 });
 
+authRoutes.route('/resend-email/:email').get(async (req, res) => {
+    var result = await query.getConfirmationCode(req.params.email).catch(err => {
+        console.log(err)
+    })
+
+    if (!result) {
+        res.status(500).json('Error trying to access unverified account')
+    } else if (result.length == 0) {
+        var verifiedResult = await query.allVerifiedUsersByEmail(req.params.email);
+        if (!verifiedResult) res.status(500).json('Error trying to access verified account')
+        else if (verifiedResult.length != 0) res.status(400).json('Account with email already verified')
+        else res.status(400).json('No account is associated with specified email')
+    } else if (result.length > 1) {
+        res.status(500).json('Multiple unverified accounts with same email')
+    } else {
+        nodemailer.sendVerificationEmail(req.params.email, result[0].confirmationCode)
+        res.json('Verification link resent')
+    }
+})
+
 authRoutes.route("/verify/:token").get(async (req, res) => {
     jwt.verify(req.params.token, process.env.TOKEN_SECRET, async (err, decoded) => {
         if (err) {

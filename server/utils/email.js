@@ -16,8 +16,8 @@ module.exports.sendVerificationEmail = (toAddress, confirmationCode) => {
     var mailOptions = {
         from: process.env.EMAIL_FROM_USERNAME,
         to: toAddress,
-        subject: 'PurdueCircle- Confirmation Code',
-        text: `This is your confirmation code:\n\n${process.env.EMAIL_BASE_URL}/verification/`
+        subject: 'PurdueCircle- Verification Link',
+        text: `Please click this link to verify your account\n\n${process.env.EMAIL_BASE_URL}/verification/`
         + verificationToken + "\n\nNote: If you were not expecting this email, rut-roh."
     }
 

@@ -27,5 +27,8 @@ module.exports = {
     },
     deleteUnverifiedUser: async (username) => {
         return await con.awaitQuery(`DELETE FROM unverified_users WHERE username='${username}'`)
+    },
+    getConfirmationCode: async (email) => {
+        return await con.awaitQuery(`SELECT * FROM unverified_users WHERE email='${email}'`)
     }
 }
