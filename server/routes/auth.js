@@ -4,6 +4,7 @@ const isEmpty = require('is-empty');
 var nodemailer = require('../utils/email');
 var query = require('../database/queries/authQueries');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt')
 
 authRoutes.route("/register").post(async (req, res) => {
     const { email, username, password } = req.body
@@ -64,18 +65,27 @@ authRoutes.route("/register").post(async (req, res) => {
 
     var confirmationCode = Math.floor(100000 + Math.random() * 900000);
 
-    var result = await query.createUnverifiedUser(username, email, password, confirmationCode).catch((err) => {
-        console.log(err);
+    bcrypt.genSalt(10, async (err, salt) => {
+        bcrypt.hash(password, salt, async (err, hash) => {
+            if (err) {
+                console.log(err)
+                res.status(500).json('Error hashing password')
+            }
+
+            var result = await query.createUnverifiedUser(username, email, hash, confirmationCode).catch((err) => {
+                console.log(err);
+            })
+
+            if (!result) {
+                res.status(500).json('Error when trying to create unverfied account')
+                return;
+            }
+
+            nodemailer.sendVerificationEmail(email, confirmationCode)
+
+            res.json("Successfully created an unverified acount")
+        })
     })
-
-    if (!result) {
-        res.status(500).json('Error when trying to create unverfied account')
-        return;
-    }
-
-    nodemailer.sendVerificationEmail(email, confirmationCode)
-
-    res.json("Successfully created an unverified acount")
 });
 
 authRoutes.route('/resend-email/:email').get(async (req, res) => {
@@ -152,22 +162,40 @@ authRoutes.route("/verify/:token").get(async (req, res) => {
 })
 
 authRoutes.route("/login").post(async (req, res) => {
-    jwt.verify(req.body.token, process.env.TOKEN_SECRET, async (err, decoded) => {
-        if (err) {
-            console.log(err);
-            res.status(400).json('Error decoding token')
-            return;
-        }
+    let { username, password } = req.body
 
-        const { username, password } = decoded
+    errors = [];
 
-        if (!username || !password) {
-            res.status(400).json('Missing fields')
-            return;            
-        }
+    if (!username) errors.push('Missing username field')
+    if (!password) errors.push('Missing password field')
 
-        console.log(decoded)
-    })
+    if (errors.length != 0) {
+        return res.status(400).json({errors: errors})
+    }
+
+    var result = await query.allVerifiedUsersByUsername(username).catch(err => console.log(err))
+
+    if (!result) {
+        return res.status(500).json('Error executing MySQL statement')
+    } else if (result.length == 0) {
+        var unverifiedResult = await query.allUnverifiedUsersByUsername(username).catch(err => console.log(err))
+
+        if (!unverifiedResult) return res.status(500).json('Error executing MySQL statement')
+        else if (unverifiedResult.length != 0) return res.status(400).json('Unverified account')
+        else return res.status(400).json('No account with specified username exists')
+    } else {
+        bcrypt.compare(password, result[0].password).then(isMatch => {
+            if (!isMatch) return res.status(400).json('Incorrect password')
+
+            const payload = {'email': result[0].email, 'username': result[0].username}
+            jwt.sign(payload, process.env.TOKEN_SECRET, {expiresIn: 10800}, (err, token) => {
+                if (err) {
+                    console.log(err)
+                    res.json(500).json('Error creating auth token')
+                } else res.json({token: token})
+            })
+        })
+    }
 })
 
 module.exports = authRoutes;
