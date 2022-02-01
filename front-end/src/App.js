@@ -17,9 +17,9 @@ import Homepage from './layouts/homepage';
 import Profile from './layouts/logged-in-user/profile';
 import DirectMessage from './layouts/logged-in-user/direct-message';
 import MakePost from './layouts/logged-in-user/make-post';
-import SearchResult from './layouts/search_results';
+import SearchResult from './layouts/search-results';
 import ScreenTooSmall from './components/screenTooSmall';
-import PostPage from './layouts/logged-in-user/postPage';
+import PostPage from './layouts/logged-in-user/post-page';
 
 export default class App extends React.Component {
   render() {
