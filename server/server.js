@@ -15,6 +15,7 @@ app.use(cors());
 
 //routes middleware
 app.use('/api', require('./routes/users'))
+app.use('/api', require('./routes/auth'))
 
 //Serve static assets if in production. DON'T DELETE
 if (process.env.NODE_ENV === 'production') {
@@ -27,9 +28,6 @@ if (process.env.NODE_ENV === 'production') {
 
 const port = process.env.PORT || 5000;
 
-var con = require("./db/conn");
-
 app.listen(port, () => {
-
   console.log(`Server is running on port: ${port}`);
 });

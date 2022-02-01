@@ -14,7 +14,11 @@
     "cors": "^2.8.5",
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
+    "is-empty": "^1.2.0",
+    "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
+    "mysql-await": "^2.1.8",
+    "nodemailer": "^6.7.2",
     "nodemon": "^2.0.15"
   }
 }

@@ -1,9 +1,8 @@
 const express = require('express');
-var mysql = require('mysql');
 const userRoutes = express.Router();
 
 //Use the below line in any file to connect to the database
-var con = require("../db/conn");
+var con = require("../database/conn");
 
 userRoutes.route("/add").post(function (req, res) {
     var sql = "INSERT INTO users (username, password) VALUES ('" + req.body.username + "', '" + req.body.password + "')";
