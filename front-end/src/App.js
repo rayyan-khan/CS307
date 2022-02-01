@@ -38,14 +38,11 @@ export default function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/homepage" element={<Homepage />} />
-<<<<<<< HEAD
           <Route path="/profile" element={<Profile />} />
           <Route path="/dms" element={<DirectMessage />} />
           <Route path="/post" element={<MakePost />} />
           <Route path="/search" element={<SearchResult />} />
-=======
           <Route path="/verification/:token" element={<VerificationWrapper />} />
->>>>>>> 04f94ba (Front end verification link proof of concept)
         </Routes>
       </Router>
     </div>
