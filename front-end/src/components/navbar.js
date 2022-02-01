@@ -1,14 +1,6 @@
 import "../../node_modules/mdb-react-ui-kit/dist/css/mdb.min.css";
 
-import React, { useState } from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-  useNavigate,
-} from "react-router-dom";
-
+import React from 'react';
 import {
   MDBContainer,
   MDBNavbar,
@@ -18,7 +10,6 @@ import {
   MDBNavbarLink,
 } from 'mdb-react-ui-kit';
 
-import SearchResult from "../layouts/search_results";
 
 import { BsPlusSquare, BsPlusSquareFill } from 'react-icons/bs'
 import { AiFillMessage, AiOutlineMessage } from 'react-icons/ai'
@@ -87,17 +78,17 @@ class Navbar extends React.Component {
               <MDBNavbarNav right>
                 <MDBNavbarItem>
                   <MDBNavbarLink href='/post'>
-                    {this.state.currSection == "post" ? <BsPlusSquareFill size={25} /> : <BsPlusSquare size={25} />}
+                    {this.state.currSection === "post" ? <BsPlusSquareFill size={25} /> : <BsPlusSquare size={25} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink href='/dms'>
-                  {this.state.currSection == "dms" ? <AiFillMessage size={25} /> : <BsPlusSquare size={25} />}
+                  {this.state.currSection === "dms" ? <AiFillMessage size={25} /> : <AiOutlineMessage size={25} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink href='/profile'>
-                    {this.state.currSection == "profile" ? <RiProfileFill size={25} /> : <RiProfileLine size={25} />}
+                    {this.state.currSection === "profile" ? <RiProfileFill size={25} /> : <RiProfileLine size={25} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
               </MDBNavbarNav>
