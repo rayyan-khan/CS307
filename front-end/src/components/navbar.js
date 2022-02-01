@@ -92,7 +92,7 @@ class Navbar extends React.Component {
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink href='/dms'>
-                  {this.state.currSection == "dms" ? <AiFillMessage size={25} /> : <AiOutlineMessage size={25} />}
+                  {this.state.currSection == "dms" ? <AiFillMessage size={25} /> : <BsPlusSquare size={25} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
