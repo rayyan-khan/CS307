@@ -20,9 +20,10 @@ import {
 
 import SearchResult from "../layouts/search_results";
 
-import { BsPlusSquare } from 'react-icons/bs'
-import { CgProfile } from 'react-icons/cg'
-import { BiMessageRounded, BiHome } from 'react-icons/bi'
+import { BsPlusSquare, BsPlusSquareFill } from 'react-icons/bs'
+import { AiFillMessage, AiOutlineMessage } from 'react-icons/ai'
+import { BiHome } from 'react-icons/bi'
+import { RiProfileLine, RiProfileFill } from 'react-icons/ri'
 
 
 class Navbar extends React.Component {
@@ -30,6 +31,7 @@ class Navbar extends React.Component {
     super(props);
     this.state = {
       searchQuery: "",
+      currSection: "homepage",
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -45,10 +47,17 @@ class Navbar extends React.Component {
     let searchQuery = this.state.searchQuery;
     console.log(searchQuery);
     let url = window.location.href;
-    url = url.substring(0, url.indexOf("/"));
-    window.location.href = url + "/search";
+    window.location.href = url.substring(0, url.indexOf("/")) + "/search";
     sessionStorage.setItem("search_query", searchQuery);
   }
+
+  componentWillMount() {
+    let url = window.location.href;
+    let currSection = url.substring(url.lastIndexOf("/") + 1);
+    this.setState({ currSection: currSection });
+    console.log(currSection);
+  }
+
 
   render() {
 
@@ -56,7 +65,7 @@ class Navbar extends React.Component {
       <div style={{ width: "16%" }}>
         <MDBContainer>
           <MDBNavbarBrand href='/homepage'>
-            <BiHome size={25}/>
+            <BiHome size={25} />
           </MDBNavbarBrand>
         </MDBContainer>
       </div>
@@ -78,17 +87,17 @@ class Navbar extends React.Component {
               <MDBNavbarNav right>
                 <MDBNavbarItem>
                   <MDBNavbarLink href='/post'>
-                    <BsPlusSquare size={25}/>
+                    {this.state.currSection == "post" ? <BsPlusSquareFill size={25} /> : <BsPlusSquare size={25} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink href='/dms'>
-                    <BiMessageRounded size={25}/>
+                  {this.state.currSection == "dms" ? <AiFillMessage size={25} /> : <AiOutlineMessage size={25} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink href='/profile'>
-                    <CgProfile size={25}/>
+                    {this.state.currSection == "profile" ? <RiProfileFill size={25} /> : <RiProfileLine size={25} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
               </MDBNavbarNav>
