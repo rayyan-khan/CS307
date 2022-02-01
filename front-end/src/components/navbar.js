@@ -20,6 +20,11 @@ import {
 
 import SearchResult from "../layouts/search_results";
 
+import { BsPlusSquare } from 'react-icons/bs'
+import { CgProfile } from 'react-icons/cg'
+import { BiMessageRounded, BiHome } from 'react-icons/bi'
+
+
 class Navbar extends React.Component {
   constructor(props) {
     super(props);
@@ -47,36 +52,44 @@ class Navbar extends React.Component {
 
   render() {
 
-    let barFront = <>
-      <MDBContainer fluid>
-        <MDBNavbarBrand href='/homepage'>
-          Purdue Circle
-        </MDBNavbarBrand>
-      </MDBContainer>
-      <MDBNavbar className="position-absolute start-25" style={{ left: "42%", width: "16%" }}>
+    let barFront = <MDBNavbarNav right>
+      <div style={{ width: "16%" }}>
+        <MDBContainer>
+          <MDBNavbarBrand href='/homepage'>
+            <BiHome size={25}/>
+          </MDBNavbarBrand>
+        </MDBContainer>
+      </div>
+      <MDBNavbar className="position-absolute start-25" style={{ left: "42%", width: "16%", top: "10%" }}>
         <form onSubmit={this.submitForm} className="form-inline" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <div className="md-form my-0">
             <input className="form-control mr-sm-2" value={this.state.searchQuery} type="text" placeholder="Search" onChange={this.handleChange} />
           </div>
         </form>
       </MDBNavbar>
-    </>
+    </MDBNavbarNav>
 
     if (sessionStorage.getItem("username") !== null) {
       return (
         <div>
-          <MDBNavbar style={{ height: "200%" }} expand='lg' dark bgColor='dark'>
+          <MDBNavbar expand='lg' dark bgColor='dark'>
             {barFront}
-            <div style={{ top: "15%" }}>
+            <div>
               <MDBNavbarNav right>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href='/post'>Post</MDBNavbarLink>
+                  <MDBNavbarLink href='/post'>
+                    <BsPlusSquare size={25}/>
+                  </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href='/dms'>DM's</MDBNavbarLink>
+                  <MDBNavbarLink href='/dms'>
+                    <BiMessageRounded size={25}/>
+                  </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href='/profile'>Profile</MDBNavbarLink>
+                  <MDBNavbarLink href='/profile'>
+                    <CgProfile size={25}/>
+                  </MDBNavbarLink>
                 </MDBNavbarItem>
               </MDBNavbarNav>
             </div>
@@ -85,19 +98,21 @@ class Navbar extends React.Component {
       )
     } else {
       return (
-        <MDBNavbar expand='lg' dark bgColor='dark'>
-          {barFront}
-          <div style={{ top: "10%" }}>
-            <MDBNavbarNav right>
-              <MDBNavbarItem>
-                <MDBNavbarLink href='/signup'>Signup</MDBNavbarLink>
-              </MDBNavbarItem>
-              <MDBNavbarItem>
-                <MDBNavbarLink href='/login'>Login</MDBNavbarLink>
-              </MDBNavbarItem>
-            </MDBNavbarNav>
-          </div>
-        </MDBNavbar>
+        <div style={{ height: "65px" }}>
+          <MDBNavbar style={{ height: "100%" }} expand='lg' dark bgColor='dark'>
+            {barFront}
+            <div style={{ top: "100px" }}>
+              <MDBNavbarNav right>
+                <MDBNavbarItem>
+                  <MDBNavbarLink href='/signup'>Signup</MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink href='/login'>Login</MDBNavbarLink>
+                </MDBNavbarItem>
+              </MDBNavbarNav>
+            </div>
+          </MDBNavbar>
+        </div>
       );
     }
   }
