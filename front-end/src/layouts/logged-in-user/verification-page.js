@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import axios from 'axios';
-import logo from '../../logo.svg';
 
 class Verification extends Component {
     // This is the constructor that stores the data.
@@ -35,7 +34,6 @@ class Verification extends Component {
         return (
             <div className="App">
                 <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
                     <p>
                         Response from API: {this.state.message}
                     </p>

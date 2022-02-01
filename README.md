@@ -18,7 +18,16 @@
         `DATABASE_PASSWORD=password`
 
         `DATABASE_DATABASE=database`
-    - Replace host, user, password, and database as needed 
+
+        `EMAIL_FROM_USERNAME=address@gmail.com`
+
+        `EMAIL_PASSWORD=emailpassword`
+
+        `EMAIL_BASE_URL=http://localhost:3000`
+
+        `TOKEN_SECRET=secret`
+
+    - Replace host, user, password, database, email username, and email password as needed 
 
 ---
 

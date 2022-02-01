@@ -17,7 +17,7 @@ import Profile from './layouts/logged-in-user/profile';
 import DirectMessage from './layouts/logged-in-user/direct-message';
 import MakePost from './layouts/logged-in-user/make-post';
 import SearchResult from './layouts/search_results';
-import Homepage from './layouts/logged-in-user/home-page';
+import Homepage from './layouts/homepage';
 import Verification from './layouts/logged-in-user/verification-page'
 import React from 'react';
 
