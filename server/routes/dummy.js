@@ -8,13 +8,22 @@ dummyRoutes.route("/test-token").get(async (req, res) => {
     if (!token) {
         res.json('No header')
     } else {
-        const user = jwt.decode(token);
+        jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+            if (err) {
+                res.status(500).json({ errors: err });
+                return;
+            }
+    
+            const user = decoded;
 
-        if (!user) {
-            res.json('messed up token')
-        } else {
-            res.json(user)
-        }
+            if (!user) {
+                res.json('messed up token')
+            } else {
+                res.json(user)
+            }
+        })
+
+        
     }
 });
 
