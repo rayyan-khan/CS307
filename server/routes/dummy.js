@@ -1,30 +1,18 @@
 const express = require('express');
 const dummyRoutes = express.Router();
-const jwt = require('jsonwebtoken');
+const decodeHeader = require('../utils/decodeHeader')
 
-dummyRoutes.route("/test-token").get(async (req, res) => {
-    var token = req.headers.authorization;
+dummyRoutes.route("/test-token").post(async (req, res) => {
+    var user;
 
-    if (!token) {
-        res.json('No header')
-    } else {
-        jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
-            if (err) {
-                res.status(500).json({ errors: err });
-                return;
-            }
-    
-            const user = decoded;
-
-            if (!user) {
-                res.json('messed up token')
-            } else {
-                res.json(user)
-            }
-        })
-
-        
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
     }
+
+    res.json(user)
 });
 
 module.exports = dummyRoutes;
