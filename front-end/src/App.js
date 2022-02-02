@@ -32,14 +32,14 @@ export default class App extends React.Component {
         <ScreenTooSmall />
       );
     }
-    
+
     const VerificationWrapper = props => {
       const params = useParams();
       return <Verification token={params.token} />
     }
-    
+
     return (
-      <div className="App">
+      <div>
         <Navbar />
         <Router>
           <Routes>
@@ -55,7 +55,7 @@ export default class App extends React.Component {
             <Route path="/verification/:token" element={<VerificationWrapper />} />
           </Routes>
         </Router>
-      </div>
+      </div >
     );
   }
 }

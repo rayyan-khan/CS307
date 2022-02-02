@@ -1,28 +1,35 @@
 import React from 'react'
-import { connect } from "react-redux";
 
-import logo from '../logo.png';
+import Post from '../components/feed/post/post';
+import posts from '../components/feed/posts';
 
-function Homepage() {
-    return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    This is the home page for {sessionStorage.getItem("username") !== null ? sessionStorage.getItem("username") : "a new user"}
-                </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: "#C5B1F5" }}
-                >
-                    Learn React
-                </a>
-            </header>
-        </div>
-    );
+
+
+class Homepage extends React.Component {
+    postHandler(posts) {
+        console.log(posts.posts);
+        return posts.posts.map((post) => {
+            return (
+                <div>
+                    <Post
+                        post={post}
+                    />
+                </div>
+            )
+        }
+        );
+    }
+
+
+    render() {
+        return (
+            <div>
+                {this.postHandler(posts)}
+            </div>
+        );
+    }
+
+
 }
 
 export default Homepage;
