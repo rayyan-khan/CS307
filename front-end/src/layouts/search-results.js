@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from "react-redux";
 
 import logo from '../logo.png';
 
@@ -13,10 +12,10 @@ class SearchResult extends React.Component {
     }
     UNSAFE_componentWillMount() {
         // What the user wants to search
-        this.state.searchQuery = sessionStorage.getItem("search_query");
+        this.setState({ searchQuery: sessionStorage.getItem("search_query") });
 
         // What the user is logged in as
-        this.state.username = sessionStorage.getItem("username") !== null ? sessionStorage.getItem("username") : "a new user";
+        this.setState({ username: sessionStorage.getItem("username") !== null ? sessionStorage.getItem("username") : "a new user" });
         console.log(this.state.searchQuery);
     }
 
