@@ -27,7 +27,8 @@
 
         `TOKEN_SECRET=secret`
 
-    - Replace host, user, password, database, email username, and email password as needed 
+    - Replace host, user, password, database, email username, and email password as needed
+    - To send emails from your own gmail account, you can't use your regular gmail password and will instead need to [generate an App Password](https://support.google.com/accounts/answer/185833?hl=en) 
 
 ---
 

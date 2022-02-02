@@ -185,6 +185,8 @@ authRoutes.route("/login").post(async (req, res) => {
         else return res.status(400).json('No account with specified username exists')
     } else {
         bcrypt.compare(password, result[0].password).then(isMatch => {
+            console.log(password);
+            console.log(result[0])
             if (!isMatch) return res.status(400).json('Incorrect password')
 
             const payload = {'email': result[0].email, 'username': result[0].username}
