@@ -33,9 +33,33 @@ export default class App extends React.Component {
       );
     }
     
-    const VerificationWrapper = props => {
+    const VerificationWrapper = () => {
       const params = useParams();
       return <Verification token={params.token} />
+    }
+
+    const ProfileWrapper = () => {
+      const params = useParams();
+
+      console.log(1)
+      
+      if (params.username == null) {
+        console.log(2)
+        //Viewing /profile
+        if (sessionStorage.getItem('username') == null) {
+          console.log(3)
+          //Viewing /profile and not logged in
+          return <Navigate replace to="/homepage" />
+        } else {
+          console.log(4)
+          //Viewing /profile and logged in
+          return <Profile username={sessionStorage.getItem('username')} />
+        }
+      } else {
+        console.log(5)
+        //Viewing a specific user's profile
+        return <Profile username={params.username} />
+      }
     }
     
     return (
@@ -47,7 +71,8 @@ export default class App extends React.Component {
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/homepage" element={<Homepage />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<ProfileWrapper />} />
+            <Route path="/profile/:username" element={<ProfileWrapper />} />
             <Route path="/dms" element={<DirectMessage />} />
             <Route path="/post" element={<MakePost />} />
             <Route path="/postPage" element={<PostPage />} />
