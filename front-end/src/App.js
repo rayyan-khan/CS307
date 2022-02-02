@@ -14,6 +14,7 @@ import Navbar from './components/navbar';
 
 import Signup from './layouts/new-user/signup';
 import Login from './layouts/new-user/login';
+import Homepage from './layouts/homepage';
 import Profile from './layouts/logged-in-user/profile';
 import DirectMessage from './layouts/logged-in-user/direct-message';
 import MakePost from './layouts/logged-in-user/make-post';
