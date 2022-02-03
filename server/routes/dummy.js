@@ -15,4 +15,13 @@ dummyRoutes.route("/test-token").post(async (req, res) => {
     res.json(user)
 });
 
+dummyRoutes.route("/dummy-get-profile/:username").get(async (req, res) => {
+    res.json({
+        bio: 'Purdue CS \'24. Greek Life baby- Kappa Delta Zeda Sigma Omega Phi Rho',
+        numTagsFollowing: 999000,
+        numFollowers: 999000,
+        numFollowing: 999000
+    })
+});
+
 module.exports = dummyRoutes;
