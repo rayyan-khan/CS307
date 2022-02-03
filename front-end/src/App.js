@@ -20,6 +20,7 @@ import MakePost from './layouts/logged-in-user/make-post';
 import SearchResult from './layouts/search-results';
 import ScreenTooSmall from './components/screenTooSmall';
 import PostPage from './layouts/logged-in-user/post-page';
+import CreatePost from './layouts/logged-in-user/create-post';
 
 export default class App extends React.Component {
   render() {
@@ -42,8 +43,10 @@ export default class App extends React.Component {
             <Route path="/profile" element={<Profile />} />
             <Route path="/dms" element={<DirectMessage />} />
             <Route path="/post" element={<MakePost />} />
+            <Route path= "/createPost" element = {<CreatePost />} />
             <Route path="/postPage" element={<PostPage />} />
             <Route path="/search" element={<SearchResult />} />
+          
           </Routes>
         </Router>,
       </div>
