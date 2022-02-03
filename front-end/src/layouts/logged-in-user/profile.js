@@ -13,7 +13,7 @@ class Profile extends React.Component {
             numTagsFollowing: 0,
             numFollowing: 0,
             numFollowers: 0,
-            viewingSelf: false
+            viewingSelf: true
         }
     }
 
