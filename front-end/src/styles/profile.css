@@ -65,6 +65,22 @@
     margin-right: 0;
 }
 
+.btn-primary {
+    background-color: #69a1ff;
+}
+
+.btn-primary:hover {
+    background-color: #5c8de0;
+}
+
+.btn-danger:hover {
+    background-color: #f2002a;
+}
+
+.btn {
+    font-size: 15px;
+}
+
 .profile-page-container .activity-row {
     margin-top: 50px;
 }
