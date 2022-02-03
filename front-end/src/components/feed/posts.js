@@ -3,11 +3,11 @@ let posts = {
         {
             "username": "Junaid",
             "profilePicture": "https://picsum.photos/200/300?random=1",
-            "body": "Hello World! This is the new social media platform",
+            "body": "Check out this awesome new video I saw on YouTube! Its about 3D printed rockets and stuff. I'm so excited to see what it will be like!",
             "bodyImage": "",
             "tag": "Purdue Circle",
             "numOfVotes": "0",
-            "bodyURL": "https://purdue.brightspace.com/d2l/login?"
+            "bodyURL": "https://www.youtube.com/watch?v=kz165f1g8-E"
         },
         {
             "username": "Misha",

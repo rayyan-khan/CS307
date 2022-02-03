@@ -45,7 +45,7 @@ export default function Post({ post }) {
             <Box
                 maxW={'620px'}
                 w={'full'}
-                bg={"#2C2B2F"}
+                bg={"#151516"}
                 boxShadow={'2xl'}
                 rounded={'lg'}
                 p={6}
