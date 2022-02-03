@@ -6,6 +6,7 @@ import {
   Route,
   Routes,
   Navigate,
+  useParams
 } from "react-router-dom";
 
 
@@ -17,6 +18,7 @@ import Homepage from './layouts/homepage';
 import Profile from './layouts/logged-in-user/profile';
 import DirectMessage from './layouts/logged-in-user/direct-message';
 import MakePost from './layouts/logged-in-user/make-post';
+import Verification from './layouts/logged-in-user/verification-page'
 import SearchResult from './layouts/search-results';
 import ScreenTooSmall from './components/screenTooSmall';
 import PostPage from './layouts/logged-in-user/post-page';
@@ -31,8 +33,14 @@ export default class App extends React.Component {
         <ScreenTooSmall />
       );
     }
+
+    const VerificationWrapper = props => {
+      const params = useParams();
+      return <Verification token={params.token} />
+    }
+
     return (
-      <div className="App">
+      <div>
         <Navbar />
         <Router>
           <Routes>
@@ -46,10 +54,10 @@ export default class App extends React.Component {
             <Route path= "/createPost" element = {<CreatePost />} />
             <Route path="/postPage" element={<PostPage />} />
             <Route path="/search" element={<SearchResult />} />
-          
+            <Route path="/verification/:token" element={<VerificationWrapper />} />
           </Routes>
-        </Router>,
-      </div>
+        </Router>
+      </div >
     );
   }
 }
