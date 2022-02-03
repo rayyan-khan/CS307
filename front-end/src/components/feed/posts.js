@@ -7,6 +7,7 @@ let posts = {
             "bodyImage": "",
             "tag": "Purdue Circle",
             "numOfVotes": "0",
+            "bodyURL": "https://purdue.brightspace.com/d2l/login?"
         },
         {
             "username": "Misha",
@@ -15,6 +16,7 @@ let posts = {
             "bodyImage": "https://img.wallpapersafari.com/desktop/1680/1050/93/95/AVXoBK.jpg",
             "tag": "Dev",
             "numOfVotes": "12",
+            "bodyURL": "https://www.purdue.edu"
         },
         {
             "username": "Max",
@@ -23,6 +25,7 @@ let posts = {
             "bodyImage": "",
             "tag": "snow",
             "numOfVotes": "16",
+            "bodyURL": ""
         },
         {
             "username": "Rayyan",
@@ -31,6 +34,7 @@ let posts = {
             "bodyImage": "",
             "tag": "gaming",
             "numOfVotes": "52",
+            "bodyURL": ""
         },
         {
             "username": "Atharva",
@@ -39,6 +43,7 @@ let posts = {
             "bodyImage": "",
             "tag": "IU",
             "numOfVotes": "93",
+            "bodyURL": ""
         },
         {
             "username": "Bhavey",
@@ -47,6 +52,7 @@ let posts = {
             "bodyImage": "",
             "tag": "computers",
             "numOfVotes": "236",
+            "bodyURL": ""
         },
         {
             "username": "Junaid",
@@ -55,6 +61,7 @@ let posts = {
             "bodyImage": "",
             "tag": "react",
             "numOfVotes": "23",
+            "bodyURL": ""
         },
         {
             "username": "Misha",
@@ -63,6 +70,7 @@ let posts = {
             "bodyImage": "https://img.wallpapersafari.com/desktop/1680/1050/93/95/AVXoBK.jpg",
             "tag": "iPhone",
             "numOfVotes": "38",
+            "bodyURL": ""
         },
         {
             "username": "Max",
@@ -71,6 +79,7 @@ let posts = {
             "bodyImage": "",
             "tag": "HelloWorld",
             "numOfVotes": "56",
+            "bodyURL": ""
         },
         {
             "username": "Rayyan",
@@ -79,6 +88,7 @@ let posts = {
             "bodyImage": "",
             "tag": "BoilerMake",
             "numOfVotes": "38",
+            "bodyURL": ""
         },
         {
             "username": "Atharva",
@@ -87,6 +97,7 @@ let posts = {
             "bodyImage": "",
             "tag": "Apple",
             "numOfVotes": "234",
+            "bodyURL": ""
         },
         {
             "username": "Bhavey",
@@ -95,6 +106,7 @@ let posts = {
             "bodyImage": "",
             "tag": "Windows",
             "numOfVotes": "93",
+            "bodyURL": ""
         },
         {
             "username": "Junaid",
@@ -103,6 +115,7 @@ let posts = {
             "bodyImage": "",
             "tag": "PS5",
             "numOfVotes": "14",
+            "bodyURL": ""
         },
         {
             "username": "Misha",
@@ -111,6 +124,7 @@ let posts = {
             "bodyImage": "https://img.wallpapersafari.com/desktop/1680/1050/93/95/AVXoBK.jpg",
             "tag": "CS307",
             "numOfVotes": "3",
+            "bodyURL": ""
         },
         {
             "username": "Max",
@@ -119,6 +133,7 @@ let posts = {
             "bodyImage": "",
             "tag": "PurdueCS",
             "numOfVotes": "76",
+            "bodyURL": ""
         },
         {
             "username": "Rayyan",
@@ -127,6 +142,7 @@ let posts = {
             "bodyImage": "",
             "tag": "Indiana",
             "numOfVotes": "93",
+            "bodyURL": ""
         },
         {
             "username": "Atharva",
@@ -135,6 +151,7 @@ let posts = {
             "bodyImage": "",
             "tag": "IUSucks",
             "numOfVotes": "125",
+            "bodyURL": ""
         },
         {
             "username": "Bhavey",
@@ -143,6 +160,7 @@ let posts = {
             "bodyImage": "",
             "tag": "BoilerUP",
             "numOfVotes": "10",
+            "bodyURL": ""
         }
     ]
 }

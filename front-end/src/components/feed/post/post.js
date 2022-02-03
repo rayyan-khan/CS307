@@ -13,7 +13,7 @@ import {
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
 import { FaRegBookmark } from "react-icons/fa"
 import React from 'react';
-
+import { LinkPreview } from "@dhaiwat10/react-link-preview";
 
 export default function Post({ post }) {
 
@@ -45,7 +45,7 @@ export default function Post({ post }) {
             <Box
                 maxW={'620px'}
                 w={'full'}
-                bg={"##2C2B2F"}
+                bg={"#2C2B2F"}
                 boxShadow={'2xl'}
                 rounded={'lg'}
                 p={6}
@@ -73,6 +73,12 @@ export default function Post({ post }) {
                 >
                     <Image src={post.bodyImage} />
                 </Box> : <></>}
+                {post.bodyURL !== "" ? <LinkPreview
+                    margin="30px auto"
+                    width="500px"
+                    url={post.bodyURL}
+                    backgroundColor='white'
+                /> : <></>}
 
                 <Stack align={'center'} justify={'center'} direction={'row'} mt={6}>
                     <Box
