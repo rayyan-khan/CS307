@@ -20,6 +20,7 @@ import {
 import { BsPlusSquare, BsPlusSquareFill } from 'react-icons/bs'
 import { AiFillMessage, AiOutlineMessage, AiOutlineHome } from 'react-icons/ai'
 import { RiProfileLine, RiProfileFill } from 'react-icons/ri'
+import SearchBar from './searchBar'
 
 
 class Navbar extends React.Component {
@@ -67,23 +68,19 @@ class Navbar extends React.Component {
 
 
   render() {
-
-    let barFront = <MDBNavbarNav right>
-      <div style={{ width: "16%" }}>
-        <MDBContainer>
-          <MDBNavbarBrand href='/homepage'>
-            <IconButton style={{ backgroundColor: this.state.currSection === "homepage" ? "#AD343E" : "#ffffff", color: this.state.currSection === "homepage" ? "#ffffff" : "#000000" }} aria-label='Search database' icon={<AiOutlineHome />} />
-          </MDBNavbarBrand>
-        </MDBContainer>
-      </div>
-      <MDBNavbar className="position-absolute start-25" style={{ left: "42%", width: "16%", top: "10%" }}>
-        <form onSubmit={this.submitForm} className="form-inline" style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <div className="md-form my-0">
-            <input className="form-control mr-sm-2" value={this.state.searchQuery} type="text" placeholder="Search" onChange={this.handleChange} />
-          </div>
-        </form>
-      </MDBNavbar>
-    </MDBNavbarNav>
+    let barFront =
+      <MDBNavbarNav right>
+        <div style={{ width: "16%" }}>
+          <MDBContainer>
+            <MDBNavbarBrand href='/homepage'>
+              <IconButton style={{ backgroundColor: this.state.currSection === "homepage" ? "#AD343E" : "#ffffff", color: this.state.currSection === "homepage" ? "#ffffff" : "#000000" }} aria-label='Search database' icon={<AiOutlineHome />} />
+            </MDBNavbarBrand>
+          </MDBContainer>
+        </div>
+        <div className="position-absolute" style={{left: "42%", width: "16%", textAlign: "left"}}>
+          <SearchBar onSubmit={this.submitForm} />
+        </div>
+      </MDBNavbarNav>
 
     if (sessionStorage.getItem("username") !== null) {
       return (
