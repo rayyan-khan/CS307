@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React from 'react'
-import logo from '../../logo.png';
 import '../../styles/profile.css'
 
 class Profile extends React.Component {
@@ -19,7 +18,9 @@ class Profile extends React.Component {
 
     componentDidMount() {
         var sessionUsername = sessionStorage.getItem("username")
-        axios.get('http://localhost:5000/api/dummy-get-profile/' + sessionUsername)
+        var userViewing = this.props.username ? this.props.username : sessionUsername;
+        console.log(userViewing)
+        axios.get('http://localhost:5000/api/dummy-get-profile/' + userViewing)
             .then(res => {
                 this.setState({
                     username: this.props.username,
@@ -43,24 +44,16 @@ class Profile extends React.Component {
                     <div className='container profile-page-container'>
                         <div className='row justify-content-center'>
                             <div className='col-3'>
-                                <img src={logo} className="img-fluid" alt="logo" />
+                                <div class="rect-img-container">
+                                    <img class="rect-img rounded-circle" src='https://picsum.photos/800/1500' alt="" />
+                                </div>
                             </div>
                             <div className='col-7'>
                                 <div className='profile-content'>
                                     <div className='profile-page-header'>
-                                        <h1><b>{this.state.username}</b></h1>
-                                        <p>
-                                            {
-                                                sessionStorage.getItem("username") != null && !this.state.viewingSelf ?
-                                                    <div>
-                                                        <button type="button" class="btn btn-primary">Follow/Unfollow</button>
-                                                        <button type="button" class="btn btn-dark">DM</button>
-                                                        <button type="button" class="btn btn-danger">Block</button>
-                                                    </div>
-                                                    :
-                                                    <div></div>
-                                            }
-                                        </p>
+                                        <div className='profile-username'>
+                                            <h1><b>{this.state.username}</b></h1>
+                                        </div>
                                     </div>
                                     <div className='numbers'>
                                         <div>
@@ -73,8 +66,21 @@ class Profile extends React.Component {
                                             <p><b>{this.state.numFollowing}</b> Following</p>
                                         </div>
                                     </div>
-                                    <div>
+                                    <div className='profile-bio'>
                                         <p style={{ 'overflow-wrap': 'anywhere' }}>My Bio: {this.state.bio}</p>
+                                    </div>
+
+                                    <div className='profile-buttons'>
+                                        {
+                                            !this.state.viewingSelf ?
+                                                <div>
+                                                    <button type="button" class="btn btn-primary">Follow/Unfollow</button>
+                                                    <button type="button" class="btn btn-dark">DM</button>
+                                                    <button type="button" class="btn btn-danger">Block</button>
+                                                </div>
+                                                :
+                                                <div></div>
+                                        }
                                     </div>
                                 </div>
                             </div>

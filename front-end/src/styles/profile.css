@@ -48,8 +48,8 @@
     margin-right: 100px;
 }
 
-.profile-content > div {
-    margin-bottom: 40px;
+.profile-content>div {
+    margin-bottom: 30px;
 }
 
 .profile-content p {
@@ -83,4 +83,23 @@
 
 .profile-page-container .activity-row {
     margin-top: 50px;
+}
+
+.rect-img-container {
+    position: relative;
+    justify-content: center;
+    display: flex;
+}
+
+.rect-img-container::after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+}
+
+.rect-img {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    object-fit: cover;
 }

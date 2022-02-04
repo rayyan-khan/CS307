@@ -1,7 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import Select from 'react-select';
-import { Link } from 'react-router-dom'
-import { useNavigate } from "react-router-dom";
 
 class SearchBar extends Component {
     constructor(props) {
@@ -18,10 +16,23 @@ class SearchBar extends Component {
             searchableNames: [
                 { value: 'goofy-username', label: 'Misha Rahimi', type: 'user' },
                 { value: 'john.quincy', label: 'John Quincy', type: 'user' },
+                { value: 'bayyan-sm', label: 'Bayyan', type: 'user' },
+                { value: 'rayyan23', label: 'Rayyan', type: 'user' },
+                { value: 'ReactJS-is-hard', label: 'ReactJS-is-hard', type: 'tag' },
+                { value: 'shell_project', label: 'shell_project', type: 'tag' },
+                { value: 'max-p', label: 'Max P', type: 'user' },
                 { value: 'purduecs', label: 'purduecs', type: 'tag' }
             ]
         })
     }
+
+    onChange = (input => {
+        if (input.type === 'user') {
+            window.location.href = 'http://localhost:3000/profile/' + input.value
+        } else {
+            window.location.href = 'http://localhost:3000/tag/' + input.value
+        }
+    })
 
     render() {
         return (

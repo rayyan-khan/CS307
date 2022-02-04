@@ -18,9 +18,9 @@ dummyRoutes.route("/test-token").post(async (req, res) => {
 dummyRoutes.route("/dummy-get-profile/:username").get(async (req, res) => {
     res.json({
         bio: 'Purdue CS \'24. Greek Life baby- Kappa Delta Zeda Sigma Omega Phi Rho',
-        numTagsFollowing: 999000,
+        numTagsFollowing: 69,
         numFollowers: 999000,
-        numFollowing: 999000
+        numFollowing: 420000000
     })
 });
 
