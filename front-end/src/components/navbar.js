@@ -10,10 +10,15 @@ import {
   MDBNavbarLink,
 } from 'mdb-react-ui-kit';
 
+import {
+  Button,
+  IconButton,
+  Stack
+} from '@chakra-ui/react';
+
 
 import { BsPlusSquare, BsPlusSquareFill } from 'react-icons/bs'
-import { AiFillMessage, AiOutlineMessage } from 'react-icons/ai'
-import { BiHome } from 'react-icons/bi'
+import { AiFillMessage, AiOutlineMessage, AiOutlineHome } from 'react-icons/ai'
 import { RiProfileLine, RiProfileFill } from 'react-icons/ri'
 import SearchBar from './searchBar'
 
@@ -43,6 +48,17 @@ class Navbar extends React.Component {
     sessionStorage.setItem("search_query", searchQuery);
   }
 
+  goToSignup() {
+    let url = window.location.href;
+    window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+  }
+
+  goToLogin() {
+    let url = window.location.href;
+    window.location.href = url.substring(0, url.indexOf("/")) + "/login";
+  }
+
+
   componentWillMount() {
     let url = window.location.href;
     let currSection = url.substring(url.lastIndexOf("/") + 1);
@@ -57,7 +73,7 @@ class Navbar extends React.Component {
         <div style={{ width: "16%" }}>
           <MDBContainer>
             <MDBNavbarBrand href='/homepage'>
-              <BiHome size={25} />
+              <IconButton style={{ backgroundColor: this.state.currSection === "homepage" ? "#AD343E" : "#ffffff", color: this.state.currSection === "homepage" ? "#ffffff" : "#000000" }} aria-label='Search database' icon={<AiOutlineHome />} />
             </MDBNavbarBrand>
           </MDBContainer>
         </div>
@@ -68,24 +84,24 @@ class Navbar extends React.Component {
 
     if (sessionStorage.getItem("username") !== null) {
       return (
-        <div>
-          <MDBNavbar expand='lg' dark bgColor='dark'>
+        <div style={{ height: "65px" }}>
+          <MDBNavbar style={{ height: "100%", backgroundColor: "#151516" }} expand='lg'>
             {barFront}
             <div>
               <MDBNavbarNav right>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href='/post'>
-                    {this.state.currSection === "post" ? <BsPlusSquareFill size={25} /> : <BsPlusSquare size={25} />}
+                  <MDBNavbarLink style={{ color: "#ffffff" }} href='/post'>
+                    {this.state.currSection === "post" ? <IconButton style={{ color: "white", backgroundColor: "#AD343E" }} aria-label='Create Post' icon={<BsPlusSquareFill />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} aria-label='Search database' icon={<BsPlusSquare />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href='/dms'>
-                  {this.state.currSection === "dms" ? <AiFillMessage size={25} /> : <AiOutlineMessage size={25} />}
+                  <MDBNavbarLink style={{ color: "#ffffff" }} href='/dms'>
+                    {this.state.currSection === "dms" ? <IconButton style={{ color: "white", backgroundColor: "#AD343E" }} aria-label='Direct Message' icon={<AiFillMessage />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} aria-label='Search database' icon={<AiOutlineMessage />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href='/profile'>
-                    {this.state.currSection === "profile" ? <RiProfileFill size={25} /> : <RiProfileLine size={25} />}
+                  <MDBNavbarLink style={{ color: "#ffffff" }} href='/profile'>
+                    {this.state.currSection === "profile" ? <IconButton style={{ color: "white", backgroundColor: "#AD343E" }} aria-label='Profile' icon={<RiProfileFill />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} aria-label='Search database' icon={<RiProfileLine />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
               </MDBNavbarNav>
@@ -96,16 +112,18 @@ class Navbar extends React.Component {
     } else {
       return (
         <div style={{ height: "65px" }}>
-          <MDBNavbar style={{ height: "100%" }} expand='lg' dark bgColor='dark'>
+          <MDBNavbar style={{ height: "100%", backgroundColor: "#151516" }} expand='lg'>
             {barFront}
             <div style={{ top: "100px" }}>
               <MDBNavbarNav right>
-                <MDBNavbarItem>
-                  <MDBNavbarLink href='/signup'>Signup</MDBNavbarLink>
-                </MDBNavbarItem>
-                <MDBNavbarItem>
-                  <MDBNavbarLink href='/login'>Login</MDBNavbarLink>
-                </MDBNavbarItem>
+                <Stack direction='row' spacing={4}>
+                  <Button onClick={this.goToSignup} style={{ backgroundColor: this.state.currSection === "signup" ? "#AD343E" : "#ffffff", color: this.state.currSection === "signup" ? "#ffffff" : "#000000", right: "25px" }} variant='solid'>
+                    Signup
+                  </Button>
+                  <Button onClick={this.goToLogin} style={{ backgroundColor: this.state.currSection === "login" ? "#AD343E" : "#ffffff", color: this.state.currSection === "login" ? "#ffffff" : "#000000", right: "25px" }} variant='solid'>
+                    Login
+                  </Button>
+                </Stack>
               </MDBNavbarNav>
             </div>
           </MDBNavbar>
