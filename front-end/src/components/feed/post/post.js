@@ -41,13 +41,13 @@ export default function Post({ post }) {
     const handleBookmarked = () => setIsBookmarked(!isBookmarked);
 
     return (
-        <Center py={6} bg={"#151516"}>
             <Box
                 maxW={'620px'}
                 w={'full'}
                 bg={"#151516"}
                 boxShadow={'2xl'}
                 rounded={'lg'}
+                ml={"30%"}
                 p={6}
                 textAlign={'center'}>
                 <Avatar
@@ -109,6 +109,5 @@ export default function Post({ post }) {
                     {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ left: "423px", backgroundColor: "#AD343E", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ left: "423px" }} aria-label='Search database' icon={<FaRegBookmark />} />}
                 </Stack>
             </Box>
-        </Center >
     );
 }

@@ -58,8 +58,8 @@ export default class App extends React.Component {
     }
     
     return (
-      <div className="App">
-      <Navbar />
+      <div style={{ backgroundColor: "#151516" }}>
+        <Navbar />
         <Router>
           <Routes>
             <Route path="/" element={<Navigate replace to="/homepage" />} />
