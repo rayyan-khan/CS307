@@ -15,6 +15,7 @@ import { FaRegBookmark } from "react-icons/fa"
 import React from 'react';
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 
+
 export default function Post({ post }) {
 
     // toggle state 
@@ -47,7 +48,6 @@ export default function Post({ post }) {
                 bg={"#151516"}
                 boxShadow={'2xl'}
                 rounded={'lg'}
-                ml={"30%"}
                 p={6}
                 textAlign={'center'}>
                 <Avatar
@@ -57,7 +57,11 @@ export default function Post({ post }) {
                     mb={4}
                     pos={'relative'}
                 />
-                <Heading style={{ color: "#AD343E" }} fontSize={'2xl'} fontFamily={'body'}>
+                <Heading onClick={(event) => {
+                    event.preventDefault();
+                    let url = window.location.href;
+                    window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
+                }} style={{ color: "#AD343E" }} fontSize={'2xl'} fontFamily={'body'}>
                     {post.username}
                 </Heading>
                 <Text
@@ -82,6 +86,11 @@ export default function Post({ post }) {
 
                 <Stack align={'center'} justify={'center'} direction={'row'} mt={6}>
                     <Box
+                        onClick={(event) => {
+                            event.preventDefault();
+                            let url = window.location.href;
+                            window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
+                        }}
                         px={2}
                         py={1}
                         bg={"#F2AF29"}

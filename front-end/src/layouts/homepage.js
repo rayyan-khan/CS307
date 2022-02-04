@@ -1,3 +1,4 @@
+import { Center, Stack } from '@chakra-ui/react';
 import React from 'react'
 
 import Post from '../components/feed/post/post';
@@ -10,11 +11,11 @@ class Homepage extends React.Component {
         console.log(posts.posts);
         return posts.posts.map((post) => {
             return (
-                <div>
+                <Center pb={5}>
                     <Post
                         post={post}
                     />
-                </div>
+                </Center>
             )
         }
         );
@@ -23,9 +24,13 @@ class Homepage extends React.Component {
 
     render() {
         return (
-            <div>
-                {this.postHandler(posts)}
-            </div>
+            <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
+                <Center bg={"#151516"} pb={20}>
+                    <Stack>
+                        {this.postHandler(posts)}
+                    </Stack>
+                </Center>
+            </div >
         );
     }
 
