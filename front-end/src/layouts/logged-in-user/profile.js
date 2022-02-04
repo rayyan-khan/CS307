@@ -1,27 +1,109 @@
+import axios from 'axios';
 import React from 'react'
-
-import logo from '../../logo.png';
+import '../../styles/profile.css'
 
 class Profile extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            username: '',
+            bio: '',
+            numTagsFollowing: 0,
+            numFollowing: 0,
+            numFollowers: 0,
+            viewingSelf: true
+        }
+    }
+
+    componentDidMount() {
+        var sessionUsername = sessionStorage.getItem("username")
+        var userViewing = this.props.username ? this.props.username : sessionUsername;
+        console.log(userViewing)
+        axios.get('http://localhost:5000/api/dummy-get-profile/' + userViewing)
+            .then(res => {
+                this.setState({
+                    username: this.props.username,
+                    bio: res.data.bio,
+                    numTagsFollowing: this.formatNum(res.data.numTagsFollowing),
+                    numFollowing: this.formatNum(res.data.numFollowing),
+                    numFollowers: this.formatNum(res.data.numFollowers),
+                    viewingSelf: sessionUsername != null && sessionUsername.localeCompare(this.props.username) === 0
+                })
+            })
+    }
+
+    formatNum(num) {
+        return Intl.NumberFormat('en', { notation: 'compact' }).format(num)
+    }
+
     render() {
         return (
             <div className="App">
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <p>
-                        This is the profile page for {sessionStorage.getItem("username")}
-                    </p>
-                    <a
-                        className="App-link"
-                        href="https://reactjs.org"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: "#C5B1F5" }}
-                    >
-                        Learn React
-                    </a>
-                </header>
-            </div>
+                <header className="App-header" style={{ 'justify-content': 'normal' }}>
+                    <div className='container profile-page-container'>
+                        <div className='row justify-content-center'>
+                            <div className='col-3'>
+                                <div class="rect-img-container">
+                                    <img class="rect-img rounded-circle" src='https://picsum.photos/800/1500' alt="" />
+                                </div>
+                            </div>
+                            <div className='col-7'>
+                                <div className='profile-content'>
+                                    <div className='profile-page-header'>
+                                        <div className='profile-username'>
+                                            <h1><b>{this.state.username}</b></h1>
+                                        </div>
+                                    </div>
+                                    <div className='numbers'>
+                                        <div>
+                                            <p><b>{this.state.numTagsFollowing}</b> Tags</p>
+                                        </div>
+                                        <div>
+                                            <p><b>{this.state.numFollowers}</b> Followers</p>
+                                        </div>
+                                        <div>
+                                            <p><b>{this.state.numFollowing}</b> Following</p>
+                                        </div>
+                                    </div>
+                                    <div className='profile-bio'>
+                                        <p style={{ 'overflow-wrap': 'anywhere' }}>My Bio: {this.state.bio}</p>
+                                    </div>
+
+                                    <div className='profile-buttons'>
+                                        {
+                                            !this.state.viewingSelf ?
+                                                <div>
+                                                    <button type="button" class="btn btn-primary">Follow/Unfollow</button>
+                                                    <button type="button" class="btn btn-dark">DM</button>
+                                                    <button type="button" class="btn btn-danger">Block</button>
+                                                </div>
+                                                :
+                                                <div></div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='row activity-row justify-content-center'>
+                            <div className='col-10 ' style={{ 'background-color': 'white' }} >
+                                <p style={{ 'color': 'black' }}>Posts go here</p>
+
+                                {
+                                    sessionStorage.getItem("username") == null ?
+                                        <div>Not logged in</div>
+                                        :
+                                        this.state.viewingSelf ?
+                                            <div>Viewing my own profile</div>
+                                            :
+                                            <div>Logged in viewing another profile</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </header >
+            </div >
         );
     }
 }
