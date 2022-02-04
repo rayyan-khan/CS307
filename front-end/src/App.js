@@ -39,7 +39,7 @@ export default class App extends React.Component {
     }
 
     return (
-      <div>
+      <div style={{ backgroundColor: "#151516" }}>
         <Navbar />
         <Router>
           <Routes>
