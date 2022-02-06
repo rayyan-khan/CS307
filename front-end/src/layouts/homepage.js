@@ -8,11 +8,9 @@ import { useEffect } from 'react';
 const axios = require('axios');
 
 
-
 function Homepage() {
-
     useEffect(() => {
-        axios.get("http://localhost:5000/api/posts")
+        axios.get("http://localhost:5000/api/getOrderedPost")
             .then(res => {
                 console.log(res.data);
             })
@@ -32,17 +30,17 @@ function Homepage() {
         );
     }
 
-    return (
-        <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
-            <Center bg={"#151516"} pb={20}>
-                <Stack>
-                    {postHandler(posts)}
-                </Stack>
-            </Center>
-        </div >
-    );
-
-
+    render() {
+        return (
+            <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
+                <Center bg={"#151516"} pb={20}>
+                    <Stack>
+                        {postHandler(posts)}
+                    </Stack>
+                </Center>
+            </div >
+        );
+    }
 }
 
 export default Homepage;
