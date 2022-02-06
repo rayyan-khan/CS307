@@ -3,11 +3,24 @@ import React from 'react'
 
 import Post from '../components/feed/post/post';
 import posts from '../components/feed/posts';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const axios = require('axios');
 
 
+function postHandler(posts) {
+    console.log(posts.posts);
+    return posts.posts.map((post) => {
+        return (
+            <Center pb={5}>
+                <Post
+                    post={post}
+                />
+            </Center>
+        )
+    }
+    );
+}
 
 function Homepage() {
 
@@ -17,20 +30,6 @@ function Homepage() {
                 console.log(res.data);
             })
     }, []);
-
-    function postHandler(posts) {
-        console.log(posts.posts);
-        return posts.posts.map((post) => {
-            return (
-                <Center pb={5}>
-                    <Post
-                        post={post}
-                    />
-                </Center>
-            )
-        }
-        );
-    }
 
     return (
         <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
