@@ -3,6 +3,7 @@ import React from 'react'
 import '../../styles/profile.css'
 import Post from '../../components/feed/post/post';
 import posts from '../../components/feed/posts';
+import { Center, Stack } from '@chakra-ui/react';
 
 class Profile extends React.Component {
     constructor(props) {
@@ -22,10 +23,12 @@ class Profile extends React.Component {
         console.log(posts.posts);
         return posts.posts.map((post) => {
             return (
-                <div>
-                    <Post
-                        post={post}
-                    />
+                <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
+                    <Center bg={"#151516"} pb={20}>
+                        <Post
+                            post={post}
+                        />
+                    </Center>
                 </div>
             )
         }
@@ -55,7 +58,7 @@ class Profile extends React.Component {
 
     render() {
         return (
-            <div className='profile-page'>
+            <div className='profile-page' style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
                 <div className='container justify-content-center profile-page-container'>
                     <div className='row justify-content-center'>
                         <div className='col-3'>
