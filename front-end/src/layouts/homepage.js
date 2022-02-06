@@ -1,13 +1,14 @@
-import { Center, Stack } from '@chakra-ui/react';
+import { Center, requiredChakraThemeKeys, Stack } from '@chakra-ui/react';
 import React from 'react'
 
 import Post from '../components/feed/post/post';
 import posts from '../components/feed/posts';
+import { useEffect } from 'react';
 
+const axios = require('axios');
 
 
 function Homepage() {
-
     useEffect(() => {
         axios.get("http://localhost:5000/api/getOrderedPost")
             .then(res => {
@@ -29,7 +30,6 @@ function Homepage() {
         );
     }
 
-
     render() {
         return (
             <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
@@ -41,8 +41,6 @@ function Homepage() {
             </div >
         );
     }
-
-
 }
 
 export default Homepage;
