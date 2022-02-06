@@ -9,7 +9,6 @@ const axios = require('axios');
 
 
 function postHandler(posts) {
-    console.log(posts.posts);
     return posts.posts.map((post) => {
         return (
             <Center pb={5}>
@@ -25,11 +24,16 @@ function postHandler(posts) {
 function Homepage() {
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/posts")
-            .then(res => {
-                console.log(res.data);
-            })
+        try {
+            axios.get("http://localhost:5000/api/getOrderedPost")
+                .then(res => {
+                    console.log(res.data);
+                })
+        } catch (error) {
+            console.log(error);
+        }
     }, []);
+
 
     return (
         <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
