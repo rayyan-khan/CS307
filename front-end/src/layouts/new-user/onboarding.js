@@ -5,43 +5,50 @@ import {
     Center,
     Text,
     Stack,
-    Badge,
+    Button,
     IconButton,
     Image,
 } from '@chakra-ui/react';
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
 import { FaRegBookmark } from "react-icons/fa"
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
+import UserOnboarding from "react-user-onboarding";
+import "react-user-onboarding/dist/index.css";
+
+import { useRef, useState } from 'react';
 
 
 import logo from '../../logo.png';
 import posts from '../../components/feed/posts';
 
-
-class Onboarding extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            username: '',
-            bio: '',
-            numTagsFollowing: 0,
-            numFollowing: 0,
-            numFollowers: 0,
-            viewingSelf: true
-        }
-    }
+const Onboarding = () => {
+    const [isVisible, setIsVisible] = useState(true);
+    const elem1 = useRef()
 
 
+    const story = [
 
-    render() {
+        {
+            component: "modal",
+            ref: elem1,
+            children: (
+                <div>
+                    <p>as;dfikjasd.</p>
+                </div>
+            )
+        },
+    ];
 
-        var post = posts.posts[0];
-        // #151516
-        return (
-            <Center overflow={"hidden"} style={{ paddingBottom: "51%" }} bg={"#151516"} pt={10}>
+
+
+
+    var post = posts.posts[0];
+    // #151516
+    return (
+        <>
+            <Center pb={"50vh"} h={'full'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
                 <Box
                     maxW={'620px'}
                     w={'full'}
@@ -57,6 +64,7 @@ class Onboarding extends React.Component {
                             alt={'Avatar Alt'}
                             mb={4}
                             pos={'relative'}
+                            ref={elem1}
                         />
                         <Text
                             pt={4}
@@ -124,8 +132,13 @@ class Onboarding extends React.Component {
                     </Stack>
                 </Box>
             </Center >
+            <UserOnboarding
+                story={story}
+                isVisible={isVisible}
+                onClose={() => setIsVisible(false)}
+            />
+        </>
 
-        );
-    }
+    );
 }
 export default Onboarding;
