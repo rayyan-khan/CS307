@@ -27,6 +27,10 @@ authRoutes.route("/register").post(async (req, res) => {
         return;
     }
 
+    if (password.length < 8) {
+        return res.status(400).json('Password too short.')
+    }
+
     //Ensure email and username aren't already taken
     var validAccountQueries = [
         await query.allUnverifiedUsersByEmail(email).catch((err) => console.log(err)),
