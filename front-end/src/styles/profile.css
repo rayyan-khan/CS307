@@ -1,0 +1,110 @@
+.profile-page-container {
+    padding-top: 50px;
+    text-align: left;
+}
+
+.profile-page-container .row {
+    border-radius: 10px;
+}
+
+.profile-page-container .col-3, .profile-page-container .col-7 {
+    background-color: white;
+    padding-top: 40px;
+}
+
+.profile-page-container .col-3 {
+    border-radius: 10px 0 0 10px;
+}
+
+.profile-page-container .col-7 {
+    border-radius: 0 10px 10px 0;
+}
+
+.profile-page-container .col-10 {
+    border-radius: 10px;
+}
+
+.profile-page-container {
+    color: black;
+    font-size: calc(10px + 2vmin);
+}
+
+.profile-page-container .numbers {
+    display: flex;
+}
+
+.profile-page-container .numbers div {
+    margin-right: 30px;
+}
+
+.profile-page-container .numbers div:last-child {
+    margin-right: 0;
+}
+
+.profile-page-header {
+    display: flex;
+}
+
+.profile-page-header h1 {
+    margin-right: 100px;
+}
+
+.profile-content>div {
+    margin-bottom: 30px;
+}
+
+.profile-content p {
+    margin: 0;
+}
+
+.profile-page {
+    background-color: #151516;
+}
+
+.profile-page-container .btn {
+    text-transform: none;
+    margin-right: 30px;
+}
+
+.profile-page-container .btn:last-child {
+    margin-right: 0;
+}
+
+.btn-primary {
+    background-color: #69a1ff;
+}
+
+.btn-primary:hover {
+    background-color: #5c8de0;
+}
+
+.btn-danger:hover {
+    background-color: #f2002a;
+}
+
+.btn {
+    font-size: 15px;
+}
+
+.profile-page-container .activity-row {
+    margin-top: 50px;
+}
+
+.rect-img-container {
+    position: relative;
+    justify-content: center;
+    display: flex;
+}
+
+.rect-img-container::after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+}
+
+.rect-img {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    object-fit: cover;
+}

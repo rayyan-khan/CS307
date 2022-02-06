@@ -1,28 +1,40 @@
+import { Center, Stack } from '@chakra-ui/react';
 import React from 'react'
-import { connect } from "react-redux";
 
-import logo from '../logo.png';
+import Post from '../components/feed/post/post';
+import posts from '../components/feed/posts';
 
-function Homepage() {
-    return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    This is the home page for {sessionStorage.getItem("username") !== null ? sessionStorage.getItem("username") : "a new user"}
-                </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: "#C5B1F5" }}
-                >
-                    Learn React
-                </a>
-            </header>
-        </div>
-    );
+
+
+class Homepage extends React.Component {
+    postHandler(posts) {
+        console.log(posts.posts);
+        return posts.posts.map((post) => {
+            return (
+                <Center pb={5}>
+                    <Post
+                        post={post}
+                    />
+                </Center>
+            )
+        }
+        );
+    }
+
+
+    render() {
+        return (
+            <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
+                <Center bg={"#151516"} pb={20}>
+                    <Stack>
+                        {this.postHandler(posts)}
+                    </Stack>
+                </Center>
+            </div >
+        );
+    }
+
+
 }
 
 export default Homepage;
