@@ -111,11 +111,6 @@ const Onboarding = () => {
                     </Stack>
                 </Box>
             </Center >
-            <UserOnboarding
-                story={story}
-                isVisible={isVisible}
-                onClose={() => setIsVisible(false)}
-            />
         </>
 
     );
