@@ -21,9 +21,9 @@ function postHandler(posts) {
     );
 }
 
-function Homepage() {
 
-    useEffect(() => {
+function Homepage() {
+    useEffect(() => {      
         try {
             axios.get("http://localhost:5000/api/getOrderedPost")
                 .then(res => {
@@ -34,7 +34,6 @@ function Homepage() {
         }
     }, []);
 
-
     return (
         <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
             <Center bg={"#151516"} pb={20}>
@@ -44,8 +43,6 @@ function Homepage() {
             </Center>
         </div >
     );
-
-
 }
 
 export default Homepage;

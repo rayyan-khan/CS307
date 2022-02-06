@@ -5,43 +5,30 @@ import {
     Center,
     Text,
     Stack,
-    Badge,
+    Button,
     IconButton,
     Image,
 } from '@chakra-ui/react';
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
 import { FaRegBookmark } from "react-icons/fa"
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 
+import { useState } from 'react';
+
 
 import logo from '../../logo.png';
 import posts from '../../components/feed/posts';
 
+const Onboarding = () => {
+    const [isVisible, setIsVisible] = useState(true);
 
-class Onboarding extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            username: '',
-            bio: '',
-            numTagsFollowing: 0,
-            numFollowing: 0,
-            numFollowers: 0,
-            viewingSelf: true
-        }
-    }
-
-
-
-    render() {
-
-        var post = posts.posts[0];
-        // #151516
-        return (
-            <Center overflow={"hidden"} style={{ paddingBottom: "51%" }} bg={"#151516"} pt={10}>
+    var post = posts.posts[0];
+    // #151516
+    return (
+        <>
+            <Center pb={"50vh"} h={'full'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
                 <Box
                     maxW={'620px'}
                     w={'full'}
@@ -124,8 +111,8 @@ class Onboarding extends React.Component {
                     </Stack>
                 </Box>
             </Center >
+        </>
 
-        );
-    }
+    );
 }
 export default Onboarding;
