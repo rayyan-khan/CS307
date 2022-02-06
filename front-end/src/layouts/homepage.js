@@ -6,8 +6,16 @@ import posts from '../components/feed/posts';
 
 
 
-class Homepage extends React.Component {
-    postHandler(posts) {
+function Homepage() {
+
+    useEffect(() => {
+        axios.get("http://localhost:5000/api/getOrderedPost")
+            .then(res => {
+                console.log(res.data);
+            })
+    }, []);
+
+    function postHandler(posts) {
         console.log(posts.posts);
         return posts.posts.map((post) => {
             return (
@@ -27,7 +35,7 @@ class Homepage extends React.Component {
             <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
                 <Center bg={"#151516"} pb={20}>
                     <Stack>
-                        {this.postHandler(posts)}
+                        {postHandler(posts)}
                     </Stack>
                 </Center>
             </div >
