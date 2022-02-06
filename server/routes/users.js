@@ -5,7 +5,7 @@ const userRoutes = express.Router();
 var con = require("../database/conn");
 
 userRoutes.route("/add").post(function (req, res) {
-    var sql = "INSERT INTO users (username, password) VALUES ('" + req.body.username + "', '" + req.body.password + "')";
+    var sql = "INSERT INTO User (username, password) VALUES ('" + req.body.username + "', '" + req.body.password + "')";
 
     con.query(sql, function (err, result) {
         if (err) throw err;
@@ -17,7 +17,11 @@ userRoutes.route("/add").post(function (req, res) {
 });
 
 userRoutes.route("/exists/:username").get(function (req, res) {
-    var sql = "SELECT * FROM users WHERE username = '" + req.params.username + "'";
+    var sql = "SELECT * FROM User WHERE username = '" + req.params.username + "'";
+    console.log(sql);
+
+
+
 
     con.query(sql, function (err, result) {
         if (err) throw err;
