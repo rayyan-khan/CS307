@@ -29,18 +29,15 @@ function Homepage() {
         }
         );
     }
-
-    render() {
-        return (
-            <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
-                <Center bg={"#151516"} pb={20}>
-                    <Stack>
-                        {postHandler(posts)}
-                    </Stack>
-                </Center>
-            </div >
-        );
-    }
+    return (
+        <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
+            <Center bg={"#151516"} pb={20}>
+                <Stack>
+                    {postHandler(posts)}
+                </Stack>
+            </Center>
+        </div >
+    );
 }
 
 export default Homepage;
