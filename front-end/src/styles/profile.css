@@ -1,5 +1,5 @@
 .profile-page-container {
-    margin-top: 50px;
+    padding-top: 50px;
     text-align: left;
 }
 
@@ -26,6 +26,7 @@
 
 .profile-page-container {
     color: black;
+    font-size: calc(10px + 2vmin);
 }
 
 .profile-page-container .numbers {
@@ -54,6 +55,10 @@
 
 .profile-content p {
     margin: 0;
+}
+
+.profile-page {
+    background-color: #151516;
 }
 
 .profile-page-container .btn {

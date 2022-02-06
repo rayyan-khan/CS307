@@ -5,7 +5,6 @@ import {
     Center,
     Text,
     Stack,
-    Badge,
     IconButton,
     Image,
 } from '@chakra-ui/react';
