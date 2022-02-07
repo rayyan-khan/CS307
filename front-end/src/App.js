@@ -13,7 +13,6 @@ import {
 import Navbar from './components/navbar';
 
 import Signup from './layouts/new-user/signup';
-import Onboarding from './layouts/new-user/onboarding';
 import Login from './layouts/new-user/login';
 import Homepage from './layouts/homepage';
 import Profile from './layouts/logged-in-user/profile';
@@ -23,6 +22,7 @@ import SearchResult from './layouts/search-results';
 import ScreenTooSmall from './components/screenTooSmall';
 import PostPage from './layouts/logged-in-user/post-page';
 import CreatePost from './layouts/logged-in-user/create-post';
+import personPostPage from './layouts/personPostPage.js'
 
 
 export default class App extends React.Component {
@@ -38,6 +38,11 @@ export default class App extends React.Component {
     const VerificationWrapper = () => {
       const params = useParams();
       return <Verification token={params.token} />
+    }
+
+    const PersonalPostPageWrapper = () => {
+      const params = useParams();
+      return personPostPage(params.id);
     }
 
     const ProfileWrapper = () => {
@@ -65,7 +70,6 @@ export default class App extends React.Component {
           <Routes>
             <Route path="/" element={<Navigate replace to="/homepage" />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/login" element={<Login />} />
             <Route path="/homepage" element={<Homepage />} />
             <Route path="/profile" element={<ProfileWrapper />} />
@@ -74,6 +78,7 @@ export default class App extends React.Component {
             <Route path="/createPost" element={<CreatePost />} />
             <Route path="/postPage" element={<PostPage />} />
             <Route path="/search" element={<SearchResult />} />
+            <Route path="/personalPostPage/:id" element = {<PersonalPostPageWrapper />}/>
             <Route path="/verification/:token" element={<VerificationWrapper />} />
           </Routes>
         </Router>
