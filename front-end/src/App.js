@@ -22,7 +22,7 @@ import SearchResult from './layouts/search-results';
 import ScreenTooSmall from './components/screenTooSmall';
 import PostPage from './layouts/logged-in-user/post-page';
 import CreatePost from './layouts/logged-in-user/create-post';
-import personPostPage from './layouts/personPostPage.js'
+import PersonPostPage from './layouts/personPostPage.js'
 
 
 export default class App extends React.Component {
@@ -42,7 +42,7 @@ export default class App extends React.Component {
 
     const PersonalPostPageWrapper = () => {
       const params = useParams();
-      return personPostPage(params.id);
+      return <PersonPostPage postid={params.id} />
     }
 
     const ProfileWrapper = () => {
@@ -78,7 +78,7 @@ export default class App extends React.Component {
             <Route path="/createPost" element={<CreatePost />} />
             <Route path="/postPage" element={<PostPage />} />
             <Route path="/search" element={<SearchResult />} />
-            <Route path="/personalPostPage/:id" element = {<PersonalPostPageWrapper />}/>
+            <Route path="/personalPostPage/:id" element={<PersonalPostPageWrapper />} />
             <Route path="/verification/:token" element={<VerificationWrapper />} />
           </Routes>
         </Router>
