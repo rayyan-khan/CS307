@@ -110,13 +110,15 @@ export default function Post({ post }) {
                         {post.postCaption}
                     </Text>
 
-                    {post.bodyImage !== "" ? <Box alignSelf={'center'}
+
+
+                    {/* {post.bodyImage !== "" ? <Box alignSelf={'center'}
                         px={0}
                         pt={10}
                         w={"100%"}
                     >
                         <Image src={post.bodyImage} />
-                    </Box> : <></>}
+                    </Box> : null}
 
 
                     {post.bodyURL !== "" ? <LinkPreview
@@ -124,7 +126,10 @@ export default function Post({ post }) {
                         width="500px"
                         url={post.bodyURL}
                         backgroundColor='white'
-                    /> : <></>}
+                    /> : null} */}
+
+
+
                     <Stack align={'center'} justify={'center'} direction={'row'} mt={6}>
                         <Box
                             onClick={(event) => {
