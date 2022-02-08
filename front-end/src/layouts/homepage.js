@@ -19,7 +19,6 @@ class Homepage extends React.Component {
     }
 
     fetchPosts() {
-        let allPosts = [];
         try {
             axios.get("http://localhost:5000/api/getOrderedPost")
                 .then(res => {
