@@ -5,41 +5,37 @@ const decodeHeader = require('../utils/decodeHeader')
 //Use the below line in any file to connect to the database
 var con = require("../database/conn");
 
-userRoutes.route("/add").post(function (req, res) {
-    var sql = "INSERT INTO User (username, password) VALUES ('" + req.body.username + "', '" + req.body.password + "')";
+userRoutes.route("/getProfile/:username").get( async (req, res) => {
+    var user;
+    var amUser = false;
+    try {
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        user = undefined
+    }
 
+    if (user != undefined) {
+        const {email, username} = user
+        if (username == req.params.username) {
+            amUser = true
+        }
+    }
+
+    var sql = `SELECT username, email, bio, private, firstName, lastName from User WHERE username = ${con.escape(req.params.username)}`;
+    
     con.query(sql, function (err, result) {
-        if (err) throw err;
-        console.log("1 record inserted");
         console.log(result)
-    });
+        if (err) {
+            console.log(result)
+            return res.status(500).json(err)
+        }
+        if ((result.private == 1) && !amUser) {
+            delete result.email
+            delete result.firstName
+            delete result.lastName
+        }
 
-    res.json("user added")
-});
-
-userRoutes.route("/exists/:username").get(function (req, res) {
-    var sql = "SELECT * FROM User WHERE username = '" + req.params.username + "'";
-    console.log(sql);
-
-
-
-
-    con.query(sql, function (err, result) {
-        if (err) throw err;
-        console.log(result)
-
-        res.json(result.length != 0)
-    })
-})
-
-userRoutes.route("/auth/:username/:password").get(function (req, res) {
-    var sql = "SELECT * FROM users WHERE username = '" + req.params.username + "'" + " AND password = '" + req.params.password + "'";
-
-    con.query(sql, function (err, result) {
-        if (err) throw err;
-        console.log(result)
-
-        res.json(result.length != 0)
+        res.status(200).json(result)
     })
 })
 
