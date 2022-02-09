@@ -1,8 +1,10 @@
 import { Center, Stack } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 
-import Post from '../components/feed/post/post';
+import LargePost from '../components/feed/post/large-post';
+import posts from '../components/feed/posts';
 const axios = require('axios');
+
 
 class PersonPostPage extends React.Component {
     constructor(props) {
@@ -38,10 +40,10 @@ class PersonPostPage extends React.Component {
     render() {
         return (
             <div style={{ backgroundColor: "#151516", overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
-                <Center bg={"#151516"} pt={200}>
+                <Center bg={"#151516"} pb={200} pt={200}>
                     <Stack>
-                        <Center pb={5}>
-                            <Post
+                        <Center>
+                            <LargePost
                                 post={this.state.post}
                             />
                         </Center>

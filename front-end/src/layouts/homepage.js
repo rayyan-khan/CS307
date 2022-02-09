@@ -2,6 +2,7 @@ import { Center, requiredChakraThemeKeys, Stack } from '@chakra-ui/react';
 import React from 'react'
 
 import Post from '../components/feed/post/post';
+import posts from '../components/feed/posts';
 import { useEffect, useState } from 'react';
 
 const axios = require('axios');
