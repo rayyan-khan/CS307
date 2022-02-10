@@ -53,6 +53,7 @@ const Onboarding = () => {
 
     const handleNextFrame = () => {
         if (currentFrame === 3) {
+            sessionStorage.setItem('username', 'Guest');
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
         }
@@ -128,7 +129,7 @@ const Onboarding = () => {
                             <Text fontSize='xl' color={'white'}>Let's get your profle setup.</Text>
                         </Center>
                         <Center pt={5}>
-                            <Text fontSize='xl' color={'white'}>Please upload an image to set as your profile picture</Text>
+                            <Text fontSize='xl' color={'white'}>Please upload an image to set as your profile picture.</Text>
                         </Center>
                         <Center>
                             <Box boxShadow={'xl'}>
@@ -171,7 +172,7 @@ const Onboarding = () => {
                     textAlign={'center'}>
                     <Stack>
                         <Center>
-                            <Text fontSize='xl' color={'white'}>Great! Now lets get your bio setup</Text>
+                            <Text fontSize='xl' color={'white'}>Great! Now let's get your bio setup.</Text>
                         </Center>
                         <Center>
                             <Box pt={5} boxShadow={'xl'}>
@@ -206,7 +207,7 @@ const Onboarding = () => {
                     textAlign={'center'}>
                     <Stack>
                         <Center>
-                            <Text fontSize='xl' color={'white'}>Last Step! Would you like to follow any of these tags</Text>
+                            <Text fontSize='xl' color={'white'}>Last Step! Would you like to follow any of these tags?</Text>
                         </Center>
                         <Center pt={10}>
                             <Stack direction={'column'} p={3}>
