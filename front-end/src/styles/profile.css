@@ -7,7 +7,7 @@
     border-radius: 10px;
 }
 
-.profile-page-container .col-3, .profile-page-container .col-7 {
+.profile-page-container .col-3, .profile-page-container .col-7, .profile-page-container .col-10 {
     background-color: white;
     padding-top: 40px;
 }
