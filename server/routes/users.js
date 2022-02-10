@@ -26,6 +26,7 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
     )}`
 
     con.query(sql, function (err, fullResponse) {
+        if (fullResponse.length === 0) return res.status(400).json('User doesn\'t exist')
         let result = fullResponse[0]
         console.log(result)
         if (err) {
