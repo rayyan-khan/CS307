@@ -23,6 +23,7 @@ import ScreenTooSmall from './components/screenTooSmall';
 import PostPage from './layouts/logged-in-user/post-page';
 import CreatePost from './layouts/logged-in-user/create-post';
 import PersonPostPage from './layouts/personPostPage.js'
+import Onboarding from './layouts/new-user/onboarding/onboarding';
 
 
 export default class App extends React.Component {
@@ -80,6 +81,7 @@ export default class App extends React.Component {
             <Route path="/search" element={<SearchResult />} />
             <Route path="/personalPostPage/:id" element={<PersonalPostPageWrapper />} />
             <Route path="/verification/:token" element={<VerificationWrapper />} />
+            <Route path="/onboarding" element={<Onboarding />} />
           </Routes>
         </Router>
       </div >
