@@ -25,24 +25,43 @@ export default function LargePost({ post }) {
 
     const handleLiked = (event) => {
         event.stopPropagation();
-        setIsLiked(!isLiked);
-        if (isLiked !== isDisliked) {
-            setIsDisliked(false);
+        if (sessionStorage.getItem('username') == null) {
+            event.preventDefault();
+            let url = window.location.href;
+            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+        } else {
+
+            setIsLiked(!isLiked);
+            if (isLiked !== isDisliked) {
+                setIsDisliked(false);
+            }
         }
     }
 
     const handleDisliked = (event) => {
         event.stopPropagation();
-        setIsDisliked(!isDisliked);
-        if (isLiked !== isDisliked) {
-            setIsLiked(false);
+        if (sessionStorage.getItem('username') == null) {
+            event.preventDefault();
+            let url = window.location.href;
+            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+        } else {
+            setIsDisliked(!isDisliked);
+            if (isLiked !== isDisliked) {
+                setIsLiked(false);
+            }
         }
     }
 
     const [isBookmarked, setIsBookmarked] = React.useState(false);
     const handleBookmarked = (event) => {
         event.stopPropagation();
-        setIsBookmarked(!isBookmarked);
+        if (sessionStorage.getItem('username') == null) {
+            event.preventDefault();
+            let url = window.location.href;
+            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+        } else {
+            setIsBookmarked(!isBookmarked);
+        }
     }
     let linkPageBool = true;
     if (post.postID == null) {
@@ -76,8 +95,13 @@ export default function LargePost({ post }) {
             onClick={(event) => {
                 if (linkPageBool) {
                     event.preventDefault();
-                    let url = window.location.href;
-                    window.location.href = url.substring(0, url.indexOf("/")) + "/personalPostPage/" + post.postID;
+                    if (sessionStorage.getItem('username') == null) {
+                        let url = window.location.href;
+                        window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                    } else {
+                        let url = window.location.href;
+                        window.location.href = url.substring(0, url.indexOf("/")) + "/personalPostPage/" + post.postID;
+                    }
                 }
             }}
         >
@@ -94,8 +118,13 @@ export default function LargePost({ post }) {
                 <Heading minW={"30px"} onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    let url = window.location.href;
-                    window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
+                    if (sessionStorage.getItem('username') == null) {
+                        let url = window.location.href;
+                        window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                    } else {
+                        let url = window.location.href;
+                        window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
+                    }
                 }} style={{ color: "#AD343E", cursor: 'pointer' }} fontSize={'5xl'} fontFamily={'body'}>
                     {post.username}
                 </Heading>
@@ -133,8 +162,13 @@ export default function LargePost({ post }) {
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
-                        let url = window.location.href;
-                        window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
+                        if (sessionStorage.getItem('username') == null) {
+                            let url = window.location.href;
+                            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                        } else {
+                            let url = window.location.href;
+                            window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
+                        }
                     }}
                     style={{ cursor: 'pointer' }}
                     px={5}
