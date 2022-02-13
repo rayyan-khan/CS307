@@ -19,8 +19,9 @@ var storage = multer.diskStorage(
 );
 
 var upload = multer( { storage: storage } );
-postRoutes.route("/posts/post").post( upload.single('image'), function (req, res) {
+postRoutes.route("/posts/post").post( upload.single('image'), async function (req, res) {
   //  var url = s3.uploadFile(req.file);
+
     //get username
     var user
 
@@ -30,10 +31,11 @@ postRoutes.route("/posts/post").post( upload.single('image'), function (req, res
     } catch (err) {
         return res.status(400).json(err)
     }
-    
+
 
     const { email, username } = user
     //
+
     var getId = "Select Max(postID) as ID From Post;"
     var Is;
     con.query(getId, function (err, result) {
@@ -107,7 +109,7 @@ postRoutes.route("/getSpecificPost/:postID").get(function (req,res) {
 //use the below route to get all the posts in order of time posted
 postRoutes.route("/getOrderedPost").get(function (req,res) {
     var sql = "SELECT * From Post Order BY timeStamp DESC";
- //   s3.uploadFile('./CS307/server/s3Bucket/cat.jpg');
+
 
     con.query(sql, function (err, result) {
         if (err){
