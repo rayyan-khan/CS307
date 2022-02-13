@@ -115,4 +115,19 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
     }
 })
 
+userRoutes.route('/searchUsers/:query').get(async (req, res) => {
+    var sql = `SELECT username FROM User WHERE locate(${con.escape(req.params.query)}, username) > 0`
+
+    con.query(sql, function (err, result) {
+        if (result.length === 0) return res.status(400).json('Users don\'t exist')
+        console.log(result)
+        if (err) {
+            console.log(result)
+            return res.status(500).json(err)
+        }
+
+        res.status(200).json(result)
+    })
+})
+
 module.exports = userRoutes
