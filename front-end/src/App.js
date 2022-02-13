@@ -74,6 +74,18 @@ export default class App extends React.Component {
             } else return loadComponent
         }
 
+
+        const SignUpToHomepageRoute = ({loadComponent}) => {
+           axios.post("http://localhost:5000/api/test-token").then((res) => {
+                    if (res.data === 'true') {
+                        let url = window.location.href;
+                        window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+                        
+                    }
+                });
+                return loadComponent
+        }
+
         return (
             <div className={'App'}>
                 <Navbar />
@@ -83,7 +95,13 @@ export default class App extends React.Component {
                             path="/"
                             element={<Navigate replace to="/homepage" />}
                         />
-                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/signup" 
+                        
+                        element={
+                            <SignUpToHomepageRoute loadComponent={<Signup />} />
+
+                        }
+                          />
                         <Route path="/login" element={<Login />} />
                         <Route path="/homepage" element={<Homepage />} />
                         <Route
