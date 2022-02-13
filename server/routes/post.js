@@ -19,7 +19,7 @@ var storage = multer.diskStorage(
 );
 
 var upload = multer( { storage: storage } );
-postRoutes.route("/posts/post").post( upload.single('image'), function (req, res) {
+postRoutes.route("/posts/post").post( upload.single('image'), async function (req, res) {
   //  var url = s3.uploadFile(req.file);
     //get username
     var user
@@ -30,7 +30,7 @@ postRoutes.route("/posts/post").post( upload.single('image'), function (req, res
     } catch (err) {
         return res.status(400).json(err)
     }
-    
+
 
     const { email, username } = user
     //
