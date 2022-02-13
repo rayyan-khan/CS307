@@ -22,6 +22,9 @@ import logo from '../../logo.png';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useAnimationFrame } from 'framer-motion';
 
+// Need to translate up a bit (line that junaid put then deleted)
+// need to figure out how to display specific message about why registration failed
+
 const axios = require('axios');
 
 class Login extends React.Component {
