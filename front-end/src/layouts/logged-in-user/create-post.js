@@ -35,13 +35,15 @@ class CreatePost extends React.Component {
     event.preventDefault();
 
     const data = new FormData();
-    
     data.append('image', this.state.selectedFile);
     data.append('anonymous', this.state.anonymous);
     data.append('caption', this.state.postText);
 
     if (this.state.selectedFile === null) {
-      axios.post("http://localhost:5000/api/posts/postNoImage")
+      let jsonObj = {}
+      jsonObj['anonymous'] = this.state.anonymous;
+      jsonObj['caption'] = this.state.postText;
+      axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj)
     } else {
       axios.post("http://localhost:5000/api/posts/postImage", data);
     }

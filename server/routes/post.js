@@ -66,7 +66,7 @@ postRoutes.route("/posts/postImage").post( upload.single('image'), async functio
     // // res.json("user added")
 })
 
-postRoutes.route("/posts/postNoImage").post( upload.single('image'), async function (req, res) {
+postRoutes.route("/posts/postNoImage").post(  async function (req, res) {
     //  var url = s3.uploadFile(req.file);
 
     //get username
