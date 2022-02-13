@@ -1,9 +1,14 @@
+
+
+
 const express = require('express')
 const userRoutes = express.Router()
 const decodeHeader = require('../utils/decodeHeader')
 
+
 //Use the below line in any file to connect to the database
 var con = require('../database/conn')
+
 
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var user
@@ -20,6 +25,7 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
             amUser = true
         }
     }
+
 
     var sql = `SELECT username, email, bio, private, firstName, lastName from User WHERE username = ${con.escape(
         req.params.username
