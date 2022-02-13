@@ -1,14 +1,9 @@
-
-
-
 const express = require('express')
 const userRoutes = express.Router()
 const decodeHeader = require('../utils/decodeHeader')
 
-
 //Use the below line in any file to connect to the database
 var con = require('../database/conn')
-
 
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var user
@@ -26,13 +21,13 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
         }
     }
 
-
     var sql = `SELECT username, email, bio, private, firstName, lastName from User WHERE username = ${con.escape(
         req.params.username
     )}`
 
     con.query(sql, function (err, fullResponse) {
-        if (fullResponse.length === 0) return res.status(400).json('User doesn\'t exist')
+        if (fullResponse.length === 0)
+            return res.status(400).json("User doesn't exist")
         let result = fullResponse[0]
         console.log(result)
         if (err) {
@@ -122,17 +117,32 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
 })
 
 userRoutes.route('/searchUsers/:query').get(async (req, res) => {
-    var sql = `SELECT username FROM User WHERE locate(${con.escape(req.params.query)}, username) > 0`
+    var sql = `SELECT username FROM User WHERE locate(${con.escape(
+        req.params.query
+    )}, username) > 0`
 
     con.query(sql, function (err, result) {
-        if (result.length === 0) return res.status(400).json('Users don\'t exist')
+        if (result.length === 0)
+            return res.status(400).json("Users don't exist")
         console.log(result)
         if (err) {
             console.log(result)
             return res.status(500).json(err)
         }
 
-        res.status(200).json(result)
+        try {
+            let list = result.map((user) => {
+                return {
+                    value: user.username,
+                    label: 'Name: ' + user.username,
+                    type: 'user',
+                }
+            })
+
+            return res.status(200).json(list)
+        } catch (error) {
+            return res.status(400).json(error)
+        }
     })
 })
 
