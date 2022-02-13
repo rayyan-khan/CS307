@@ -18,9 +18,20 @@ var storage = multer.diskStorage(
 
 var upload = multer( { storage: storage } );
 userRoutes.route("/profile").post( upload.single('image'), function (req, res) {
-    console.log(req.file)
-    s3.uploadFile(req.file.path);
-    res.json("user added")
+    var getId = "Select Max(postID) as ID From Post;"
+ var Is;
+    con.query(getId, function (err, result) {
+        if (err){
+            console.log(err);
+            res.status(500).json(err);
+        } else res.json(result)
+        console.log(result);
+        Is = result[0]
+    })
+    console.log(Is);
+    // console.log(req.file)
+    // s3.uploadFile(req.file.path);
+    // res.json("user added")
 })
 
 //

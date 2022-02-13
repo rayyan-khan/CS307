@@ -17,16 +17,21 @@ var storage = multer.diskStorage(
     }
 );
 
-var upload = multer( { storage: storage } );
-userRoutes.route("/profile").post( upload.single('image'), function (req, res) {
-    console.log("hi")
-    var url = s3.uploadFile(req.file);
-
-    res.json("user added")
-})
-
-
-
+// var upload = multer( { storage: storage } );
+// userRoutes.route("/profile").post( upload.single('image'), function (req, res) {
+//     var getId = "Select Max(postID) From Post;"
+//
+//     con.query(getId, function (err, result) {
+//         if (err){
+//             console.log(err);
+//             res.status(500).json(err);
+//         } else res.json(result)
+//     })
+//     //var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');
+//     console.log("hi")
+//     //var url = s3.uploadFile(req.file);
+//     res.json("user added")
+// })
 
 //
 postRoutes.route("/getSpecificPost/:postID").post(function (req,res) {
