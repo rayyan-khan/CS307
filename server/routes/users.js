@@ -25,10 +25,21 @@ userRoutes.route("/profile").post( upload.single('image'), function (req, res) {
             console.log(err);
             res.status(500).json(err);
         } else res.json(result)
-        console.log(result);
-        Is = result[0]
+        console.log(result[0].ID);
+        Is = result[0].ID
+        Is+=1//store the ID
+        var sql = "INSERT INTO Post Values ('" + Is+ "', '" + Is + "', '" +req.body.username+ "', '" +"12', '14" +"', '" + req.body.caption+"', NOW(),'12"+"', '" + req.body.anonymous+ "')";
+
+
+    //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
+        con.query(sql, function (err, results) {
+            if (err) throw err;
+            console.log("1 record inserted");
+            console.log(results)
+        });
+
     })
-    console.log(Is);
+
     // console.log(req.file)
     // s3.uploadFile(req.file.path);
     // res.json("user added")
