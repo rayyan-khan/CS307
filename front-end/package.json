@@ -14,6 +14,7 @@
     "dev": "file:..",
     "error-ex": "github:Qix-/node-error-ex",
     "framer-motion": "^6.2.4",
+    "image-upload-react": "^1.4.5",
     "mdb-react-ui-kit": "^2.3.0",
     "react": "^17.0.2",
     "react-bootstrap": "^2.1.2",

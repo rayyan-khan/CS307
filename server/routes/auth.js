@@ -5,6 +5,21 @@ var nodemailer = require('../utils/email');
 var query = require('../database/queries/authQueries');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
+const decodeHeader = require('../utils/decodeHeader')
+
+
+authRoutes.route("/test-token").post(async (req, res) => {
+    var user;
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.json('false')
+    }
+
+    res.json('true')
+});
 
 authRoutes.route("/register").post(async (req, res) => {
     const { email, username, password } = req.body
@@ -23,8 +38,7 @@ authRoutes.route("/register").post(async (req, res) => {
     }
 
     if (!isEmpty(errors)) {
-        res.status(400).json(errors)
-        return;
+        return res.status(400).json(errors)
     }
 
     if (password.length < 8) {
@@ -51,8 +65,7 @@ authRoutes.route("/register").post(async (req, res) => {
     //Go through results of queries to check if username or email is taken
     for (var i = 0; i < 4; i++) {
         if (!validAccountQueries[i]) {
-            res.status(500).json('Error executing MySQL statement')
-            return;
+            return res.status(500).json('Error executing MySQL statement')
         }
 
         if (validAccountQueries[i].length != 0) {
@@ -63,33 +76,37 @@ authRoutes.route("/register").post(async (req, res) => {
     //If username or email taken, return error
     if (errors.length != 0) {
         var errResult = { 'errors': errors };
-        res.status(400).json(errResult)
-        return;
+        return res.status(400).json(errResult)
     }
 
     var confirmationCode = Math.floor(100000 + Math.random() * 900000);
 
-    bcrypt.genSalt(10, async (err, salt) => {
-        bcrypt.hash(password, salt, async (err, hash) => {
-            if (err) {
-                console.log(err)
-                res.status(500).json('Error hashing password')
-            }
-
-            var result = await query.createUnverifiedUser(username, email, hash, confirmationCode).catch((err) => {
-                console.log(err);
+    nodemailer.sendVerificationEmail(email, confirmationCode).then(data => {
+        bcrypt.genSalt(10, async (err, salt) => {
+            bcrypt.hash(password, salt, async (err, hash) => {
+                if (err) {
+                    console.log(err)
+                    return res.status(500).json('Error hashing password')
+                }
+    
+                var result = await query.createUnverifiedUser(username, email, hash, confirmationCode).catch((err) => {
+                    console.log(err);
+                    return res.status(500).json(err)
+                })
+    
+                if (!result) {
+                    return res.status(500).json('Error when trying to create unverfied account')
+                }
+    
+                return res.json("Successfully created an unverified acount")
             })
-
-            if (!result) {
-                res.status(500).json('Error when trying to create unverfied account')
-                return;
-            }
-
-            nodemailer.sendVerificationEmail(email, confirmationCode)
-
-            res.json("Successfully created an unverified acount")
         })
+    }).catch(err => {
+        console.log(err);
+        return res.status(500).json('Unable to register user due to internal error when sending verification email.')
     })
+
+    
 });
 
 authRoutes.route('/resend-email/:email').get(async (req, res) => {

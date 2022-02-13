@@ -1,4 +1,6 @@
 import React from 'react'
+const axios = require('axios');
+
 
 class CreatePost extends React.Component {
 
@@ -8,6 +10,7 @@ class CreatePost extends React.Component {
     this.state = {
       postText: '',
       anonymous: '',
+      selectedFile: null
 
 
     }
@@ -17,7 +20,7 @@ class CreatePost extends React.Component {
     this.setState({
       postText: event.target.value
     })
-  };
+  }
 
   makeAnonymous = (event) => {
     var checkBox = document.getElementById("checkbox");
@@ -33,9 +36,16 @@ class CreatePost extends React.Component {
     let jsonObj = {};
     jsonObj['anonymous'] = this.state.anonymous;
     jsonObj['postText'] = this.state.postText;
+    jsonObj['image'] = this.state.selectedFile;
 
-    // axios.post("http://localhost:5000/api/testing", jsonObj);
+    axios.post("http://localhost:5000/api/testing", jsonObj);
 
+  }
+
+  fileSelecteHandler = (events) => {
+    this.setState({
+      selectedFile: events.target.files[0]
+    })
   }
 
 
@@ -50,10 +60,15 @@ class CreatePost extends React.Component {
             <div>
               <div className="form-group row">
               <label>Post Text:</label>
-              <textarea type = 'text' value= {this.state.postText} 
+              <textarea className="textA" type = 'text' value= {this.state.postText} 
                onChange= {this.handlePostTextChange} rows="3" maxlength="150"> </textarea>
                </div>
-               <div class="form-check">
+               <div className="form-group row">
+              <label>Upload Image:</label>
+              <input type = 'file' 
+               onChange= {this.fileSelecteHandler} /> 
+               </div>
+               <div className="form-check">
                   <input type="checkbox" className="form-check-input" id = "checkbox" onClick = {this.makeAnonymous}/>
                   <label className="form-check-label">Make Anonymous</label>
                 </div>

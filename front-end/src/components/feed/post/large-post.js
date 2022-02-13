@@ -16,6 +16,8 @@ import { LinkPreview } from "@dhaiwat10/react-link-preview";
 
 
 export default function LargePost({ post }) {
+
+    // toggle state 
     const [isLiked, setIsLiked] = React.useState(false);
     const [isDisliked, setIsDisliked] = React.useState(false);
 
@@ -43,7 +45,6 @@ export default function LargePost({ post }) {
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
         } else {
-
             setIsDisliked(!isDisliked);
             if (isLiked !== isDisliked) {
                 setIsLiked(false);
@@ -62,7 +63,6 @@ export default function LargePost({ post }) {
             setIsBookmarked(!isBookmarked);
         }
     }
-
     let linkPageBool = true;
     if (post.postID == null) {
         console.log(post);
@@ -82,8 +82,9 @@ export default function LargePost({ post }) {
     }
     return (
         <Box
-            minW={'620px'}
-            maxW={'620px'}
+            minW={'820px'}
+            maxW={'820px'}
+            minH={'400px'}
             w={'full'}
             bg={"#151516"}
             boxShadow={'2xl'}
@@ -124,30 +125,28 @@ export default function LargePost({ post }) {
                         let url = window.location.href;
                         window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
                     }
-                }} style={{ color: "#AD343E", cursor: 'pointer' }} fontSize={'2xl'} fontFamily={'body'}>
+                }} style={{ color: "#AD343E", cursor: 'pointer' }} fontSize={'5xl'} fontFamily={'body'}>
                     {post.username}
                 </Heading>
             </Center>
             <Text
                 textAlign={'center'}
                 color={"#DEDDDD"}
-                px={3}>
+                px={3}
+                pt={4}
+                fontSize={'2xl'}
+            >
                 {post.postCaption}
             </Text>
 
 
-            {/* <Center>
-                {post.url !== "" ? <Box alignSelf={'center'}
-                    px={0}
-                    pt={10}
-                    w={"100%"}
-                >
-                    <Image src={post.url} />
-                </Box> : <></>}
-            </Center> */}
-
-
-            {/* 
+            {/* {post.bodyImage !== "" ? <Box alignSelf={'center'}
+                px={0}
+                pt={10}
+                w={"100%"}
+            >
+                <Image src={post.bodyImage} />
+            </Box> : <></>}
             {post.bodyURL !== "" ? <LinkPreview
                 margin="30px auto"
                 width="500px"
@@ -158,7 +157,7 @@ export default function LargePost({ post }) {
 
 
 
-            <Stack align={'center'} justify={'center'} direction={'row'} mt={6}>
+            <Stack align={'center'} justify={'center'} direction={'row'} mt={"13%"}>
                 <Box
                     onClick={(event) => {
                         event.preventDefault();
@@ -172,11 +171,12 @@ export default function LargePost({ post }) {
                         }
                     }}
                     style={{ cursor: 'pointer' }}
-                    px={2}
-                    py={1}
+                    px={5}
+                    py={2}
                     bg={"#F2AF29"}
                     color={'#151516'}
                     rounded={'full'}
+                    fontSize={'2xl'}
                     fontWeight={'300'}>
                     {"#" + post.tagID}
                 </Box>
@@ -186,26 +186,26 @@ export default function LargePost({ post }) {
                     <Text
                         textAlign={'center'}
                         color={"#DEDDDD"}
-                        fontSize={'sm'}
+                        fontSize={'xl'}
                         fontFamily={'body'}
                     >
                         {post.likesCount}
                     </Text>
-                    {isLiked ? <IconButton onClick={handleLiked} style={{ backgroundColor: "#AD343E", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
+                    {isLiked ? <IconButton size={'lg'} onClick={handleLiked} style={{ backgroundColor: "#AD343E", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton size={'lg'} onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
                 </Stack>
                 <Stack direction={'column'}>
                     <Text
                         textAlign={'center'}
                         color={"#DEDDDD"}
-                        fontSize={'sm'}
+                        fontSize={'xl'}
                         fontFamily={'body'}
                     >
                         {post.dislikeCount}
                     </Text>
-                    {isDisliked ? <IconButton onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "#AD343E", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton style={{ cursor: 'pointer' }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
+                    {isDisliked ? <IconButton size={'lg'} onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "#AD343E", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton size={'lg'} style={{ cursor: 'pointer' }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
                 </Stack>
                 <Stack direction={'column'}>
-                    {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px", backgroundColor: "#AD343E", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                    {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px", backgroundColor: "#AD343E", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
                 </Stack>
             </Stack>
         </Box>
