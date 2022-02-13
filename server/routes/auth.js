@@ -5,6 +5,21 @@ var nodemailer = require('../utils/email');
 var query = require('../database/queries/authQueries');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
+const decodeHeader = require('../utils/decodeHeader')
+
+
+authRoutes.route("/test-token").post(async (req, res) => {
+    var user;
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.json('false')
+    }
+
+    res.json('true')
+});
 
 authRoutes.route("/register").post(async (req, res) => {
     const { email, username, password } = req.body
