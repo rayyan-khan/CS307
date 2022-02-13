@@ -41,9 +41,9 @@ class CreatePost extends React.Component {
     data.append('caption', this.state.postText);
 
     if (this.state.selectedFile === null) {
-      axios.post("http://localhost:5000/api")
+      axios.post("http://localhost:5000/api/posts/postNoImage")
     } else {
-      axios.post("http://localhost:5000/api/posts/post", data);
+      axios.post("http://localhost:5000/api/posts/postImage", data);
     }
     
   }

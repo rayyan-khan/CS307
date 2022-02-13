@@ -19,7 +19,7 @@ var storage = multer.diskStorage(
 );
 
 var upload = multer( { storage: storage } );
-postRoutes.route("/posts/post").post( upload.single('image'), async function (req, res) {
+postRoutes.route("/posts/postImage").post( upload.single('image'), async function (req, res) {
   //  var url = s3.uploadFile(req.file);
 
     //get username
@@ -52,6 +52,50 @@ postRoutes.route("/posts/post").post( upload.single('image'), async function (re
         url =  "https://cs307.s3.amazonaws.com/"+ req.file.path
         console.log(url);
         var sql = "INSERT INTO Post Values ('" + Is+ "', '" + Is + "', '" +"yoloooo"+ "', '" +"12', '14" +"', '" + req.body.caption+"', NOW(),'12"+"', '" + req.body.anonymous+"', '" +url+ "')";
+        //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
+        con.query(sql, function (err, results) {
+            if (err) throw err;
+            console.log("1 record inserted");
+            console.log(results)
+        });
+
+    })
+    //
+    // // console.log(req.file)
+    // // s3.uploadFile(req.file.path);
+    // // res.json("user added")
+})
+
+postRoutes.route("/posts/postNoImage").post( upload.single('image'), async function (req, res) {
+    //  var url = s3.uploadFile(req.file);
+
+    //get username
+    // var user
+    console.log(req.body)
+    // try {
+    //     //Use decodeHeader to extract user info from header or throw an error
+    //    // user = await decodeHeader.decodeAuthHeader(req)
+    // } catch (err) {
+
+    //     return res.status(400).json(err)
+    // }
+
+
+    //   const { email, username } = user
+    // console.log(username);
+    //
+
+    var getId = "Select Max(postID) as ID From Post;"
+    var Is;
+    con.query(getId, function (err, result) {
+        if (err){
+            console.log(err);
+            res.status(500).json(err);
+        } else res.json(result)
+        console.log(result[0].ID);
+        Is = result[0].ID
+        Is+=1//store the ID
+        var sql = "INSERT INTO Post Values ('" + Is+ "', '" + Is + "', '" +"yoloooo"+ "', '" +"12', '14" +"', '" + req.body.caption+"', NOW(),'12"+"', '" + req.body.anonymous+"', '" +"undefined"+ "')";
         //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
         con.query(sql, function (err, results) {
             if (err) throw err;
