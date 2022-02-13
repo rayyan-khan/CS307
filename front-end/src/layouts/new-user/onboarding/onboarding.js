@@ -1,20 +1,12 @@
 import {
-    Heading,
-    Avatar,
     Box,
     Center,
     Text,
     Stack,
     Button,
-    IconButton,
-    Image,
     Input,
     FormControl,
     FormLabel,
-    FormErrorMessage,
-    FormHelperText,
-    Field,
-    Formik
 } from '@chakra-ui/react';
 import AutoTextArea from '../../../components/autoTextArea.tsx';
 import Tags from './tags';
@@ -24,28 +16,68 @@ import React, { useEffect, useState } from 'react'
 import { GrNext } from "react-icons/gr"
 import ImageUpload from 'image-upload-react'
 import 'image-upload-react/dist/index.css'
-import posts from '../../../components/feed/posts';
+
+const axios = require('axios');
 
 const Onboarding = () => {
-    const [imageNextDisabled, setImageNextDisabled] = useState(true);
     const [nameNextDisabled, setNameNextDisabled] = useState(true);
-
-    const [imageSrc, setImageSrc] = useState()
-    const [currentFrame, setCurrentFrame] = useState(0);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+
+    const [imageNextDisabled, setImageNextDisabled] = useState(true);
+    const [imageSrc, setImageSrc] = useState();
+
     const [bio, setBio] = useState('');
-    const [tags, setTags] = useState([]);
+
+    const [currentFrame, setCurrentFrame] = useState(0);
+
+    const handleNameSubmit = (event) => {
+        try {
+            axios.put("http://localhost:5000/api/updateProfile", {
+                firstName: firstName,
+                lastName: lastName,
+            })
+        } catch (error) {
+            console.log(error);
+        }
+
+
+        console.log(firstName + ' ' + lastName)
+        setCurrentFrame(1);
+    }
 
     const handleImageSelect = (event) => {
         setImageNextDisabled(false);
         setImageSrc(URL.createObjectURL(event.target.files[0]))
     }
 
-    const handleNameSubmit = (event) => {
-        console.log(firstName + ' ' + lastName)
-        setCurrentFrame(1);
+    const handleImageSubmit = (event) => {
+        // TODO: Sent axios PUT request to update image
+        setCurrentFrame(2);
     }
+
+    const handleBioSubmit = (event) => {
+        // TODO: Sent axios PUT request to update bio
+        try {
+            axios.put("http://localhost:5000/api/updateProfile", {
+                bio: bio,
+            })
+        } catch (error) {
+            console.log(error);
+        }
+        setCurrentFrame(3);
+    }
+
+    const handleTagsSubmit = (event) => {
+        // TODO: Sent axios PUT request to update tags
+        sessionStorage.setItem('username', 'Guest');
+        let url = window.location.href;
+        window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+
+    }
+
+
+
 
     useEffect(() => {
         console.log(imageSrc);
@@ -55,27 +87,6 @@ const Onboarding = () => {
             setImageNextDisabled(true);
         }
     }, [imageSrc])
-
-    const handleSkipButton = (event) => {
-        event.preventDefault();
-        sessionStorage.setItem('username', 'Guest');
-        let url = window.location.href;
-        window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
-    }
-
-    const handleNextFrame = () => {
-        if (currentFrame === 3) {
-            sessionStorage.setItem('username', 'Guest');
-            let url = window.location.href;
-            window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
-        }
-        setCurrentFrame(currentFrame + 1);
-    }
-
-    const handleNameChange = (event) => {
-        console.log(event.target.value);
-    }
-
 
 
     let tagsFirstRow = [
@@ -229,7 +240,7 @@ const Onboarding = () => {
 
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button width={'5vw'} isDisabled={imageNextDisabled} onClick={handleNextFrame} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                                <Button width={'5vw'} isDisabled={imageNextDisabled} onClick={handleImageSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
@@ -267,7 +278,7 @@ const Onboarding = () => {
 
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button width={'5vw'} onClick={handleNextFrame} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                                <Button width={'5vw'} onClick={handleBioSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
@@ -327,7 +338,7 @@ const Onboarding = () => {
 
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button width={'5vw'} isDisabled={imageNextDisabled} onClick={handleNextFrame} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                                <Button width={'5vw'} isDisabled={imageNextDisabled} onClick={handleTagsSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
