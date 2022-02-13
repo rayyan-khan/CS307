@@ -21,6 +21,18 @@ var storage = multer.diskStorage(
 var upload = multer( { storage: storage } );
 postRoutes.route("/posts/post").post( upload.single('image'), function (req, res) {
   //  var url = s3.uploadFile(req.file);
+    //get username
+    var user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+    //
     var getId = "Select Max(postID) as ID From Post;"
     var Is;
     con.query(getId, function (err, result) {
@@ -34,7 +46,7 @@ postRoutes.route("/posts/post").post( upload.single('image'), function (req, res
         var url = s3.uploadFile(req.file);
         url =  "https://cs307.s3.amazonaws.com/"+ req.file.path
         console.log(url);
-        var sql = "INSERT INTO Post Values ('" + Is+ "', '" + Is + "', '" +req.body.username+ "', '" +"12', '14" +"', '" + req.body.caption+"', NOW(),'12"+"', '" + req.body.anonymous+"', '" +url+ "')";
+        var sql = "INSERT INTO Post Values ('" + Is+ "', '" + Is + "', '" +username+ "', '" +"12', '14" +"', '" + req.body.caption+"', NOW(),'12"+"', '" + req.body.anonymous+"', '" +url+ "')";
         //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
         con.query(sql, function (err, results) {
             if (err) throw err;
