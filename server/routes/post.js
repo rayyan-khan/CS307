@@ -7,13 +7,13 @@ const postRoutes = express.Router();
 //Use the below route to create a post and store into the database and S3
 const s3 = require("../s3Bucket/create-bucket")
 //
-const multer  = require('multer')
+const multer = require('multer')
 var storage = multer.diskStorage(
     {
         destination: './uploads/',
-        filename: function ( req, file, cb ) {
+        filename: function (req, file, cb) {
             console.log(file.originalname)
-            cb( null, file.originalname +".jpg");
+            cb(null, file.originalname + ".jpg");
         }
     }
 );
@@ -35,19 +35,18 @@ postRoutes.route("/posts/post").post( upload.single('image'), async function (re
 
     const { email, username } = user
     //
-
     var getId = "Select Max(postID) as ID From Post;"
     var Is;
     con.query(getId, function (err, result) {
-        if (err){
+        if (err) {
             console.log(err);
             res.status(500).json(err);
         } else res.json(result)
         console.log(result[0].ID);
         Is = result[0].ID
-        Is+=1//store the ID
+        Is += 1//store the ID
         var url = s3.uploadFile(req.file);
-        url =  "https://cs307.s3.amazonaws.com/"+ req.file.path
+        url = "https://cs307.s3.amazonaws.com/" + req.file.path
         console.log(url);
         var sql = "INSERT INTO Post Values ('" + Is+ "', '" + Is + "', '" +username+ "', '" +"12', '14" +"', '" + req.body.caption+"', NOW(),'12"+"', '" + req.body.anonymous+"', '" +url+ "')";
         //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
@@ -82,10 +81,10 @@ postRoutes.route("/posts/post").post( upload.single('image'), async function (re
 // })
 
 //
-postRoutes.route("/getSpecificPost/:postID").post(function (req,res) {
+postRoutes.route("/getSpecificPost/:postID").post(function (req, res) {
     var sql = "SELECT * From Post WHERE postId = '" + req.params.postID + "'";
     con.query(sql, function (err, result) {
-        if (err){
+        if (err) {
             console.log(err);
             res.status(500).json(err);
         } else res.json(result)
@@ -96,10 +95,10 @@ postRoutes.route("/getSpecificPost/:postID").post(function (req,res) {
 //Use the below line in any file to connect to the database
 var con = require("../database/conn");
 //use the below route to get information on a specific post
-postRoutes.route("/getSpecificPost/:postID").get(function (req,res) {
-  var sql = "SELECT * From Post WHERE postId = '" + req.params.postID + "'";
+postRoutes.route("/getSpecificPost/:postID").get(function (req, res) {
+    var sql = "SELECT * From Post WHERE postId = '" + req.params.postID + "'";
     con.query(sql, function (err, result) {
-        if (err){
+        if (err) {
             console.log(err);
             res.status(500).json(err);
         } else res.json(result)
@@ -107,12 +106,11 @@ postRoutes.route("/getSpecificPost/:postID").get(function (req,res) {
 })
 
 //use the below route to get all the posts in order of time posted
-postRoutes.route("/getOrderedPost").get(function (req,res) {
+postRoutes.route("/getOrderedPost").get(function (req, res) {
     var sql = "SELECT * From Post Order BY timeStamp DESC";
 
-
     con.query(sql, function (err, result) {
-        if (err){
+        if (err) {
             console.log(err);
             res.status(500).json(err);
         } else res.json(result)
