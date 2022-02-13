@@ -3,7 +3,18 @@ import {
   FormLabel,
   FormErrorMessage,
   FormHelperText,
-  Input
+  Input,
+  Badge,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  Button,
+  PopoverAnchor
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
@@ -23,12 +34,14 @@ class Login extends React.Component {
         Email:'',
         Username:'',
         Password:'',
-        PasswordCheck:''
+        PasswordCheck:'',
       },
       emailError: false,
       userError: false,
       passwordError: false,
-      passwordCheckError: false
+      passwordCheckError: false,
+      axiosError: true,
+      registrationError: ''
     }
 }
 
@@ -67,7 +80,7 @@ registerUser=()=>{
   // check that username meets requirements
   // requirements: only contains A-Za-z, 0-9, _ or .
   // max length 20 characters
-  let checkUser = /(?=^.{0,20}$)^[A-Za-z0-9_.]*$/;
+  let checkUser = /(?=^.{1,20}$)^[A-Za-z0-9_.]*$/;
   if(checkUser.test(this.state.user.Username)) {
     // meets requirements
     console.log("Username meets requirements");
@@ -114,6 +127,8 @@ registerUser=()=>{
 
   // AXIOS STUFF
   // pass to axios if there are no errors
+  
+  console.log(this.state.axiosError);
   if(this.state.emailError === false && 
     this.state.userError === false && 
     this.state.passwordError === false && 
@@ -128,10 +143,13 @@ registerUser=()=>{
       .then((response) => {
         console.log("got a response");
         console.log(response.data);
+        this.setState({axiosError: false});
       })
       .catch(({response}) => {
         console.log("got an error");
         console.log(response.data);
+        this.setState({registrationError: response.data});
+        this.setState({axiosError: true});
       })
   }
   
@@ -139,9 +157,9 @@ registerUser=()=>{
 
   render() {   
     return (
+      // translate up?? 
       <div className="App">
         <header  className="App-header">  
-
           <h2>Signup</h2>
           <p></p>
           <form>
@@ -207,7 +225,17 @@ registerUser=()=>{
           </FormControl>
 
         </form>
-        <button onClick={this.registerUser}>Submit</button>
+        <Popover>
+          <PopoverTrigger>
+            <Button colorScheme='black' onClick={this.registerUser} fontSize={25}>Submit</Button>
+          </PopoverTrigger>
+          <PopoverContent bg='black' fontWeight='bold' fontSize={18}>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            {!this.state.axiosError ? (<PopoverHeader>Success! You are registered.</PopoverHeader>) 
+             : (<PopoverHeader> There were problems with your registration :(</PopoverHeader>)}
+          </PopoverContent>
+        </Popover>
         </header>
       </div>
 
