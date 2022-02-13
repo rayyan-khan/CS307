@@ -9,6 +9,12 @@ import {
     IconButton,
     Image,
     Input,
+    FormControl,
+    FormLabel,
+    FormErrorMessage,
+    FormHelperText,
+    Field,
+    Formik
 } from '@chakra-ui/react';
 import AutoTextArea from '../../../components/autoTextArea.tsx';
 import Tags from './tags';
@@ -21,26 +27,32 @@ import 'image-upload-react/dist/index.css'
 import posts from '../../../components/feed/posts';
 
 const Onboarding = () => {
-    const [isDisabled, setIsDisabled] = useState(true);
+    const [imageNextDisabled, setImageNextDisabled] = useState(true);
+    const [nameNextDisabled, setNameNextDisabled] = useState(true);
+
     const [imageSrc, setImageSrc] = useState()
-    const [currentFrame, setCurrentFrame] = useState(1);
+    const [currentFrame, setCurrentFrame] = useState(0);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [bio, setBio] = useState('');
+    const [tags, setTags] = useState([]);
 
     const handleImageSelect = (event) => {
-        setIsDisabled(false);
+        setImageNextDisabled(false);
         setImageSrc(URL.createObjectURL(event.target.files[0]))
     }
 
-    const deleteImage = () => {
-        setIsDisabled(true);
-        setImageSrc('');
+    const handleNameSubmit = (event) => {
+        console.log(firstName + ' ' + lastName)
+        setCurrentFrame(1);
     }
 
     useEffect(() => {
         console.log(imageSrc);
         if (imageSrc) {
-            setIsDisabled(false);
+            setImageNextDisabled(false);
         } else {
-            setIsDisabled(true);
+            setImageNextDisabled(true);
         }
     }, [imageSrc])
 
@@ -58,6 +70,10 @@ const Onboarding = () => {
             window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
         }
         setCurrentFrame(currentFrame + 1);
+    }
+
+    const handleNameChange = (event) => {
+        console.log(event.target.value);
     }
 
 
@@ -109,14 +125,18 @@ const Onboarding = () => {
 
 
 
-    if (currentFrame === 1) {
+    function updateName(value) {
+        console.log(value);
+    }
+
+
+    if (currentFrame === 0) {
         return (
             <Center h={'full'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
                 <Box
                     position={'relative'}
                     maxW={"820px"}
                     w={'37vw'}
-                    h={'fit-content'}
                     boxShadow={'xl'}
                     rounded={'lg'}
                     p={6}
@@ -126,7 +146,68 @@ const Onboarding = () => {
                             <Text fontSize='xl' color={'white'}>Hello there, welcome to Purdue Circle!</Text>
                         </Center>
                         <Center>
-                            <Text fontSize='xl' color={'white'}>Let's get your profle setup.</Text>
+                            <Text fontSize='lg' color={'white'}>Let's get to know you a little bit more</Text>
+                        </Center>
+                        <Center pt={5}>
+                            <Text fontSize='md' color={'white'}>What's your full name?</Text>
+                        </Center>
+                        <Center>
+                            <Stack>
+                                <FormControl>
+                                    <FormLabel color={'white'} htmlFor='email'>First Name</FormLabel>
+                                    <Input focusBorderColor='#AD343E' value={firstName} color={'white'} id='email' type='name' onChange={(e) => {
+                                        if (!(e.currentTarget.value.length > 30)) {
+                                            setFirstName(e.currentTarget.value)
+                                        }
+                                        if (firstName && lastName) {
+                                            setNameNextDisabled(false);
+                                        } else {
+                                            setNameNextDisabled(true);
+                                        }
+                                    }} />
+                                </FormControl>
+                                <FormControl>
+                                    <FormLabel color={'white'} htmlFor='email'>Last Name</FormLabel>
+                                    <Input focusBorderColor='#AD343E' value={lastName} color={'white'} id='email' type='name' onChange={(e) => {
+                                        if (!(e.currentTarget.value.length > 30)) {
+                                            setLastName(e.currentTarget.value)
+                                        }
+                                        if (firstName && lastName) {
+                                            setNameNextDisabled(false);
+                                        } else {
+                                            setNameNextDisabled(true);
+                                        }
+                                    }} />
+                                </FormControl>
+                            </Stack>
+                        </Center>
+                        <Stack pt={5} direction={"row"}>
+                            <Center position={'relative'} left={'86%'}>
+                                <Button width={'5vw'} isDisabled={nameNextDisabled} onClick={handleNameSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>
+                                    Next
+                                </Button>
+                            </Center>
+                        </Stack>
+                    </Stack>
+                </Box>
+            </Center >
+        );
+    }
+    if (currentFrame === 1) {
+        return (
+            <Center h={'full'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
+                <Box
+                    position={'relative'}
+                    maxW={"820px"}
+                    w={'37vw'}
+
+                    boxShadow={'xl'}
+                    rounded={'lg'}
+                    p={6}
+                    textAlign={'center'}>
+                    <Stack>
+                        <Center>
+                            <Text fontSize='xl' color={'white'}>{"Nice to meet you " + firstName}</Text>
                         </Center>
                         <Center pt={5}>
                             <Text fontSize='xl' color={'white'}>Please upload an image to set as your profile picture.</Text>
@@ -147,11 +228,8 @@ const Onboarding = () => {
                         </Center>
 
                         <Stack pt={5} direction={"row"}>
-                            <Center>
-                                <Button width={'5vw'} onClick={handleSkipButton} fontSize='inherit' color={'black'}>Skip</Button>
-                            </Center>
-                            <Center position={'relative'} left={'70%'}>
-                                <Button width={'5vw'} isDisabled={isDisabled} onClick={handleNextFrame} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                            <Center position={'relative'} left={'86%'}>
+                                <Button width={'5vw'} isDisabled={imageNextDisabled} onClick={handleNextFrame} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
@@ -175,17 +253,21 @@ const Onboarding = () => {
                             <Text fontSize='xl' color={'white'}>Great! Now let's get your bio setup.</Text>
                         </Center>
                         <Center>
+                            <Text fontSize='sm' color={'white'}>Don't worry, you can always change it later.</Text>
+                        </Center>
+                        <Center>
                             <Box pt={5} boxShadow={'xl'}>
-                                <AutoTextArea />
+                                <AutoTextArea value={bio} onChange={(e) => {
+                                    if (!(e.currentTarget.value.length > 200)) {
+                                        setBio(e.currentTarget.value)
+                                    }
+                                }} />
                             </Box>
                         </Center>
 
                         <Stack pt={5} direction={"row"}>
-                            <Center>
-                                <Button width={'5vw'} onClick={handleSkipButton} fontSize='inherit' color={'black'}>Skip</Button>
-                            </Center>
-                            <Center position={'relative'} left={'70%'}>
-                                <Button width={'5vw'} isDisabled={isDisabled} onClick={handleNextFrame} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                            <Center position={'relative'} left={'86%'}>
+                                <Button width={'5vw'} onClick={handleNextFrame} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
@@ -244,11 +326,8 @@ const Onboarding = () => {
                         </Center>
 
                         <Stack pt={5} direction={"row"}>
-                            <Center>
-                                <Button width={'5vw'} onClick={handleSkipButton} fontSize='inherit' color={'black'}>Skip</Button>
-                            </Center>
-                            <Center position={'relative'} left={'70%'}>
-                                <Button width={'5vw'} isDisabled={isDisabled} onClick={handleNextFrame} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                            <Center position={'relative'} left={'86%'}>
+                                <Button width={'5vw'} isDisabled={imageNextDisabled} onClick={handleNextFrame} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
