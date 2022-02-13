@@ -18,15 +18,15 @@ const s3 = new AWS.S3({
 
 module.exports.uploadFile = (fileName) => {
     // read content from the file
-    const fileContent = fs.readFileSync(fileName);
+    const fileContent = fs.readFileSync(fileName.path);
    // console.log(fileName.path);
   //  console.log(fileName.originalname);
-    const k = keyName
+    //const k = keyName
 
     // setting up s3 upload parameters
     let params = {
         Bucket: BUCKET_NAME,
-        Key: fileName , // file name you want to save as
+        Key: fileName.path , // file name you want to save as
         Body: fileContent
     };
 
