@@ -25,24 +25,29 @@ class CreatePost extends React.Component {
   makeAnonymous = (event) => {
     var checkBox = document.getElementById("checkbox");
     if (checkBox.checked === true) {
-      this.setState({anonymous: true})
+      this.setState({anonymous: 1})
     } else {
-      this.setState({anonymous: false})
+      this.setState({anonymous: 0})
     }
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
-    let jsonObj = {};
+
     const data = new FormData();
     data.append('image', this.state.selectedFile);
+    data.append('anonymous', this.state.anonymous);
+    data.append('caption', this.state.postText);
 
-    jsonObj['anonymous'] = this.state.anonymous;
-    jsonObj['caption'] = this.state.postText;
-    // jsonObj['image'] = this.state.selectedFile;
-
-    axios.post("http://localhost:5000/api/posts/post", data, JSON.stringify(jsonObj));
-    console.log(jsonObj)
+    if (this.state.selectedFile === null) {
+      let jsonObj = {}
+      jsonObj['anonymous'] = this.state.anonymous;
+      jsonObj['caption'] = this.state.postText;
+      axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj)
+    } else {
+      axios.post("http://localhost:5000/api/posts/postImage", data);
+    }
+    
   }
 
   fileSelecteHandler = (events) => {
