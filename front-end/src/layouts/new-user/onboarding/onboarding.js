@@ -17,7 +17,7 @@ import { GrNext } from "react-icons/gr"
 import ImageUpload from 'image-upload-react'
 import 'image-upload-react/dist/index.css'
 
-const axios = require('axios');
+import axios from 'axios';
 
 const Onboarding = () => {
     const [nameNextDisabled, setNameNextDisabled] = useState(true);
@@ -30,6 +30,9 @@ const Onboarding = () => {
     const [bio, setBio] = useState('');
 
     const [currentFrame, setCurrentFrame] = useState(0);
+
+    // TODO: Remove this and get auth header from backend
+    axios.defaults.headers.common['authorization'] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bmFpZGphdmVkQGljbG91ZC5jb20iLCJ1c2VybmFtZSI6Ikp1bmFpZCIsImlhdCI6MTY0NDc4NDQxNCwiZXhwIjoxNjQ0Nzk1MjE0fQ.33420pEJo0luudwFtSq6PftMUoSLPP3IzGVAqwXx6ck"
 
     const handleNameSubmit = (event) => {
         try {
