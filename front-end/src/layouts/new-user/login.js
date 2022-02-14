@@ -77,7 +77,7 @@ class Login extends React.Component {
             value={this.state.user.Username} 
             onChange={this.changeHandler}
             style={{color:'darkturquoise'}}/>
-          {!this.state.userError ? ( <FormHelperText> Username must be less then 20 characters and consist of letters, numbers, underscore and period. </FormHelperText>) 
+          {!this.state.userError ? ( <FormHelperText>  </FormHelperText>) 
            : (<FormErrorMessage>The username you entered is invalid.</FormErrorMessage>)}
           </FormControl>
 
