@@ -90,7 +90,7 @@ class Navbar extends React.Component {
             <div>
               <MDBNavbarNav right>
                 <MDBNavbarItem>
-                  <MDBNavbarLink style={{ color: "#ffffff" }} href='/post'>
+                  <MDBNavbarLink style={{ color: "#ffffff" }} href='/createPost'>
                     {this.state.currSection === "post" ? <IconButton style={{ color: "white", backgroundColor: "#AD343E" }} aria-label='Create Post' icon={<BsPlusSquareFill />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} aria-label='Search database' icon={<BsPlusSquare />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
