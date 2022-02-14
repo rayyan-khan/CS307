@@ -14,7 +14,8 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   Button,
-  PopoverAnchor
+  PopoverAnchor,
+  transform
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
@@ -22,8 +23,9 @@ import logo from '../../logo.png';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useAnimationFrame } from 'framer-motion';
 
-// Need to translate up a bit (line that junaid put then deleted)
-// need to figure out how to display specific message about why registration failed
+// need to figure out how to display specific registration errors \
+// putting {this.state.registrationError} on line 245 (as text for popover header)
+// creates big error
 
 const axios = require('axios');
 
@@ -44,7 +46,7 @@ class Login extends React.Component {
       passwordError: false,
       passwordCheckError: false,
       axiosError: true,
-      registrationError: ''
+      registrationError: 'There were problems with your registration.'
     }
 }
 
@@ -152,6 +154,7 @@ registerUser=()=>{
         console.log("got an error");
         console.log(response.data);
         this.setState({registrationError: response.data});
+        console.log(this.state.registrationError);
         this.setState({axiosError: true});
       })
   }
@@ -160,10 +163,9 @@ registerUser=()=>{
 
   render() {   
     return (
-      // translate up?? 
       <div className="App">
-        <header  className="App-header">  
-          <h2>Signup</h2>
+        <header  className="App-header" style = {{transform: "translateY(-8vh)"}}>  
+          <h2 style={{color:'mediumturquoise'}}>Signup</h2>
           <p></p>
           <form>
 
@@ -177,7 +179,8 @@ registerUser=()=>{
               type = "text" 
               name="Email" 
               value={this.state.user.Email} 
-              onChange={this.changeHandler}/>
+              onChange={this.changeHandler}
+              style={{color:'darkturquoise'}}/>
               {!this.state.emailError ? ( <FormHelperText> Enter a valid email. </FormHelperText>) 
               : (<FormErrorMessage>The email you entered is invalid.</FormErrorMessage>)}
           </FormControl>
@@ -192,7 +195,8 @@ registerUser=()=>{
             type = "text" 
             name="Username" 
             value={this.state.user.Username} 
-            onChange={this.changeHandler}/>
+            onChange={this.changeHandler}
+            style={{color:'darkturquoise'}}/>
           {!this.state.userError ? ( <FormHelperText> Username must be less then 20 characters and consist of letters, numbers, underscore and period. </FormHelperText>) 
            : (<FormErrorMessage>The username you entered is invalid.</FormErrorMessage>)}
           </FormControl>
@@ -207,7 +211,8 @@ registerUser=()=>{
             type = "text" 
             name="Password" 
             value={this.state.user.Password} 
-            onChange={this.changeHandler}/>
+            onChange={this.changeHandler}
+            style={{color:'darkturquoise'}}/>
           {!this.state.passwordError ? ( <FormHelperText> Make a good password if you don't want to get hacked. </FormHelperText>) 
            : (<FormErrorMessage>Enter a valid password (must be at least 8 characters and have at least 1 letter and 1 number).</FormErrorMessage>)}
           </FormControl>
@@ -222,7 +227,8 @@ registerUser=()=>{
             type = "text" 
             name="PasswordCheck" 
             value={this.state.user.PasswordCheck} 
-            onChange={this.changeHandler}/>
+            onChange={this.changeHandler}
+            style={{color:'darkturquoise'}}/>
           {!this.state.passwordCheckError ? ( <FormHelperText>Make sure this password matches the one above. </FormHelperText>) 
            : (<FormErrorMessage>Your password doesn't match the one above.</FormErrorMessage>)}
           </FormControl>
@@ -230,13 +236,14 @@ registerUser=()=>{
         </form>
         <Popover>
           <PopoverTrigger>
-            <Button colorScheme='black' onClick={this.registerUser} fontSize={25}>Submit</Button>
+            <Button colorScheme='black' onClick={this.registerUser} fontSize={25} 
+            bg='mediumturquoise' style = {{transform: "translateY(2vh)"}} >Submit</Button>
           </PopoverTrigger>
           <PopoverContent bg='black' fontWeight='bold' fontSize={18}>
             <PopoverArrow />
             <PopoverCloseButton />
             {!this.state.axiosError ? (<PopoverHeader>Success! You are registered.</PopoverHeader>) 
-             : (<PopoverHeader> There were problems with your registration :(</PopoverHeader>)}
+             : (<PopoverHeader> There were problems with your registration </PopoverHeader>)}
           </PopoverContent>
         </Popover>
         </header>
