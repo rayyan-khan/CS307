@@ -34,12 +34,15 @@ class CreatePost extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
     let jsonObj = {};
+    const data = new FormData();
+    data.append('image', this.state.selectedFile);
+
     jsonObj['anonymous'] = this.state.anonymous;
-    jsonObj['postText'] = this.state.postText;
-    jsonObj['image'] = this.state.selectedFile;
+    jsonObj['caption'] = this.state.postText;
+    // jsonObj['image'] = this.state.selectedFile;
 
-    axios.post("http://localhost:5000/api/testing", jsonObj);
-
+    axios.post("http://localhost:5000/api/posts/post", data, JSON.stringify(jsonObj));
+    console.log(jsonObj)
   }
 
   fileSelecteHandler = (events) => {
@@ -61,7 +64,7 @@ class CreatePost extends React.Component {
               <div className="form-group row">
               <label>Post Text:</label>
               <textarea className="textA" type = 'text' value= {this.state.postText} 
-               onChange= {this.handlePostTextChange} rows="3" maxlength="150"> </textarea>
+               onChange= {this.handlePostTextChange} rows="3" maxLength="150"> </textarea>
                </div>
                <div className="form-group row">
               <label>Upload Image:</label>
