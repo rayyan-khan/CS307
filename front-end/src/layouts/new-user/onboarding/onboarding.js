@@ -60,7 +60,6 @@ const Onboarding = () => {
     }
 
     const handleBioSubmit = (event) => {
-        // TODO: Sent axios PUT request to update bio
         try {
             axios.put("http://localhost:5000/api/updateProfile", {
                 bio: bio,

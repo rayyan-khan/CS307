@@ -136,7 +136,7 @@ export default function LargePost({ post }) {
             </Text>
 
 
-            {/* <Center>
+            <Center>
                 {post.url !== "" ? <Box alignSelf={'center'}
                     px={0}
                     pt={10}
@@ -144,7 +144,7 @@ export default function LargePost({ post }) {
                 >
                     <Image src={post.url} />
                 </Box> : <></>}
-            </Center> */}
+            </Center>
 
 
             {/* 
