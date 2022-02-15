@@ -14,24 +14,7 @@ class SearchBar extends Component {
     componentDidMount() {
         //Future API call
         this.setState({
-            searchableNames: [
-                {
-                    value: 'goofy-username',
-                    label: 'Misha Rahimi',
-                    type: 'user',
-                },
-                { value: 'john.quincy', label: 'John Quincy', type: 'user' },
-                { value: 'bayyan-sm', label: 'Bayyan', type: 'user' },
-                { value: 'rayyan23', label: 'Rayyan', type: 'user' },
-                {
-                    value: 'ReactJS-is-hard',
-                    label: 'ReactJS-is-hard',
-                    type: 'tag',
-                },
-                { value: 'shell_project', label: 'shell_project', type: 'tag' },
-                { value: 'max-p', label: 'Max P', type: 'user' },
-                { value: 'purduecs', label: 'purduecs', type: 'tag' },
-            ],
+            searchableNames: [],
         })
     }
 
@@ -46,19 +29,25 @@ class SearchBar extends Component {
     }
 
     onInputChange = (input) => {
-        console.log(input)
-        axios
-            .get('http://localhost:5000/api/searchUsers/' + input)
-            .then((response) => {
-                console.log(response.data)
-                this.setState({
-                    searchableNames: response.data,
+        console.log('input: ' + input)
+
+        if (input === '') {
+            console.log('empty value, resetting searchable names')
+            this.setState({ searchableNames: [] })
+        } else {
+            axios
+                .get('http://localhost:5000/api/searchUsers/' + input)
+                .then((response) => {
+                    console.log(response.data)
+                    this.setState({
+                        searchableNames: response.data,
+                    })
                 })
-            })
-            .catch((err) => {
-                console.log('error')
-                console.log(err)
-            })
+                .catch((err) => {
+                    console.log('error')
+                    this.setState({ searchableNames: [] })
+                })
+        }
     }
 
     render() {
@@ -76,6 +65,7 @@ class SearchBar extends Component {
                     }}
                     onChange={this.onChange}
                     onInputChange={this.onInputChange}
+                    placeholder="Search for a user"
                 />
             </Fragment>
         )
