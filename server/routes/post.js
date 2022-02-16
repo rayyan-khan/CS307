@@ -47,10 +47,13 @@ postRoutes.route("/posts/postImage").post( upload.single('image'), async functio
         console.log(result[0].ID);
         Is = result[0].ID
         Is += 1//store the ID
+        //check if file is okay to store
+
+        //
         var url = s3.uploadFile(req.file);
         url = "https://cs307.s3.amazonaws.com/" + req.file.path
         console.log(url);
-        var sql = "INSERT INTO Post Values ('" + Is+ "', '" + Is + "', '" +"yoloooo"+ "', '" +"12', '14" +"', '" + req.body.caption+"', NOW(),'12"+"', '" + req.body.anonymous+"', '" +url+ "')";
+        var sql = "INSERT INTO Post Values ('" + Is+ "', '" + Is + "', '" +"yoloooo"+ "', '" +"12', '14" +"', '" + req.body.caption+"', NOW(),'12"+"', '" + req.body.anonymous+"', '" +url+"', '" +req.body.hyperlink+ "')";
         //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
         con.query(sql, function (err, results) {
             if (err) throw err;
@@ -94,7 +97,7 @@ postRoutes.route("/posts/postNoImage").post(  async function (req, res) {
         console.log(result[0].ID);
         Is = result[0].ID
         Is+=1//store the ID
-        var sql = "INSERT INTO Post Values ('" + Is+ "', '" + Is + "', '" +"yoloooo"+ "', '" +"12', '14" +"', '" + req.body.caption+"', NOW(),'12"+"', '" + req.body.anonymous+"', '" +"undefined"+ "')";
+        var sql = "INSERT INTO Post Values ('" + Is+ "', '" + Is + "', '" +"yoloooo"+ "', '" +"12', '14" +"', '" + req.body.caption+"', NOW(),'12"+"', '" + req.body.anonymous+"', '" +"undefined"+"', '" +req.body.hyperlink+ "')";
         //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
         con.query(sql, function (err, results) {
             if (err) throw err;
