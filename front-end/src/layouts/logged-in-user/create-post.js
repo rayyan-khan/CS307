@@ -25,21 +25,29 @@ class CreatePost extends React.Component {
   makeAnonymous = (event) => {
     var checkBox = document.getElementById("checkbox");
     if (checkBox.checked === true) {
-      this.setState({anonymous: true})
+      this.setState({anonymous: 1})
     } else {
-      this.setState({anonymous: false})
+      this.setState({anonymous: 0})
     }
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
-    let jsonObj = {};
-    jsonObj['anonymous'] = this.state.anonymous;
-    jsonObj['postText'] = this.state.postText;
-    jsonObj['image'] = this.state.selectedFile;
 
-    axios.post("http://localhost:5000/api/testing", jsonObj);
+    const data = new FormData();
+    data.append('image', this.state.selectedFile);
+    data.append('anonymous', this.state.anonymous);
+    data.append('caption', this.state.postText);
 
+    if (this.state.selectedFile === null) {
+      let jsonObj = {}
+      jsonObj['anonymous'] = this.state.anonymous;
+      jsonObj['caption'] = this.state.postText;
+      axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj)
+    } else {
+      axios.post("http://localhost:5000/api/posts/postImage", data);
+    }
+    
   }
 
   fileSelecteHandler = (events) => {
@@ -61,7 +69,7 @@ class CreatePost extends React.Component {
               <div className="form-group row">
               <label>Post Text:</label>
               <textarea className="textA" type = 'text' value= {this.state.postText} 
-               onChange= {this.handlePostTextChange} rows="3" maxlength="150"> </textarea>
+               onChange= {this.handlePostTextChange} rows="3" maxLength="150"> </textarea>
                </div>
                <div className="form-group row">
               <label>Upload Image:</label>
