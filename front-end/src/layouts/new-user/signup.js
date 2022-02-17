@@ -4,6 +4,8 @@ import {
   FormErrorMessage,
   FormHelperText,
   Input,
+  InputGroup,
+  InputRightElement,
   Badge,
   Popover,
   PopoverTrigger,
@@ -62,6 +64,7 @@ changeHandler=e=>{
     [name]:value
   }});
 }
+
 
 registerUser=()=>{
   // check that email is a real email format (___@___.___)
@@ -153,13 +156,14 @@ registerUser=()=>{
       .catch(({response}) => {
         console.log("got an error");
         console.log(response.data);
-        this.setState({registrationError: response.data});
+        this.setState({registrationError: response.data.errors[0]});
         console.log(this.state.registrationError);
         this.setState({axiosError: true});
       })
   }
   
 }
+
 
   render() {   
     return (
@@ -242,8 +246,8 @@ registerUser=()=>{
           <PopoverContent bg='black' fontWeight='bold' fontSize={18}>
             <PopoverArrow />
             <PopoverCloseButton />
-            {!this.state.axiosError ? (<PopoverHeader>Success! You are registered.</PopoverHeader>) 
-             : (<PopoverHeader> There were problems with your registration </PopoverHeader>)}
+            {!this.state.axiosError ? (<PopoverHeader>Success! You are registered. Check your email for a verification link!</PopoverHeader>) 
+             : (<PopoverHeader> {this.state.registrationError} </PopoverHeader>)}
           </PopoverContent>
         </Popover>
         </header>
