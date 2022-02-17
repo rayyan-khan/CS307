@@ -1,4 +1,4 @@
-import { Center, requiredChakraThemeKeys, Stack } from '@chakra-ui/react';
+import { Center, requiredChakraThemeKeys, Stack, Spinner } from '@chakra-ui/react';
 import React, { Suspense } from 'react'
 
 import Post from '../components/feed/post/post';
@@ -20,17 +20,18 @@ class Homepage extends React.Component {
 
     fetchPosts() {
         try {
-            axios.get("http://localhost:5000/api/getOrderedPost")
+            axios.get("https://still-sierra-32456.herokuapp.com/api/getOrderedPost")
                 .then(res => {
                     const posts = res.data
-                    console.log(posts);
                     this.setState({ allPosts: posts });
                     this.setState({ loading: 1 });
                 })
                 .catch(function (error) {
+                    console.log(error);
                     this.setState({ loading: -1 })
                 })
         } catch (error) {
+            console.log(error);
         }
     }
 
@@ -64,7 +65,7 @@ class Homepage extends React.Component {
             return (
                 <Center bg={"#151516"} pb={'100vh'}>
                     <Center fontSize={'4xl'} color={'white'} pt={'40vh'}>
-                        Loading...
+                        <Spinner color='#AD343E' size='xl' />
                     </Center>
                 </Center>
             );
