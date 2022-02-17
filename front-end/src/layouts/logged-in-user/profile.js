@@ -53,7 +53,7 @@ class Profile extends React.Component {
                 this.setState({
                     username: this.props.username,
                     bio: res.data.bio,
-                    numTagsFollowing: this.formatNum(69),
+                    numTagsFollowing: this.formatNum(6900),
                     numFollowing: this.formatNum(420000),
                     numFollowers: this.formatNum(44444444),
                     // numTagsFollowing: this.formatNum(res.data.numTagsFollowing),
@@ -62,7 +62,7 @@ class Profile extends React.Component {
                     viewingSelf:
                         sessionUsername != null &&
                         sessionUsername.localeCompare(this.props.username) ===
-                            0,
+                        0,
                     loading: false,
                 })
             })
