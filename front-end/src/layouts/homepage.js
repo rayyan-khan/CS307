@@ -1,9 +1,7 @@
 import { Center, requiredChakraThemeKeys, Stack } from '@chakra-ui/react';
-import React from 'react'
+import React, { Suspense } from 'react'
 
 import Post from '../components/feed/post/post';
-import posts from '../components/feed/posts';
-import { useEffect, useState } from 'react';
 
 const axios = require('axios');
 
@@ -12,6 +10,7 @@ class Homepage extends React.Component {
         super();
         this.state = {
             allPosts: [],
+            loading: 0,
         }
     }
 
@@ -24,14 +23,14 @@ class Homepage extends React.Component {
             axios.get("http://localhost:5000/api/getOrderedPost")
                 .then(res => {
                     const posts = res.data
+                    console.log(posts);
                     this.setState({ allPosts: posts });
+                    this.setState({ loading: 1 });
+                })
+                .catch(function (error) {
+                    this.setState({ loading: -1 })
                 })
         } catch (error) {
-            return (
-                <Center pb={5}>
-                    Error
-                </Center>
-            )
         }
     }
 
@@ -53,15 +52,33 @@ class Homepage extends React.Component {
 
 
     render() {
-        return (
-            <div style={{ backgroundColor: "#151516", overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
-                <Center bg={"#151516"} pb={20}>
-                    <Stack>
-                        {this.postHandler()}
-                    </Stack>
+        if (this.state.loading == -1) {
+            return (
+                <Center bg={"#151516"} pb={'100vh'}>
+                    <Center fontSize={'4xl'} color={'white'} pt={'40vh'}>
+                        Failed to get posts. Please check your internet and try again
+                    </Center>
                 </Center>
-            </div >
-        );
+            );
+        } else if (this.state.loading == 0) {
+            return (
+                <Center bg={"#151516"} pb={'100vh'}>
+                    <Center fontSize={'4xl'} color={'white'} pt={'40vh'}>
+                        Loading...
+                    </Center>
+                </Center>
+            );
+        } else if (this.state.loading == 1) {
+            return (
+                <div style={{ backgroundColor: "#151516", overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
+                    <Center bg={"#151516"} pb={20}>
+                        <Stack>
+                            {this.postHandler()}
+                        </Stack>
+                    </Center>
+                </div >
+            );
+        }
     }
 }
 
