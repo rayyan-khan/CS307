@@ -15,7 +15,7 @@ import React from 'react';
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 
 
-export default function LargePost({ post }) {
+export default function Post({ post }) {
     const [isLiked, setIsLiked] = React.useState(false);
     const [isDisliked, setIsDisliked] = React.useState(false);
 
@@ -147,8 +147,7 @@ export default function LargePost({ post }) {
             </Center>
 
 
-            {/* 
-            {post.bodyURL !== "" ? <LinkPreview
+            {/* {post.bodyURL !== "" ? <LinkPreview
                 margin="30px auto"
                 width="500px"
                 url={post.bodyURL}
