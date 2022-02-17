@@ -147,7 +147,6 @@ export default function Post({ post }) {
             </Center>
 
 
-
             {/* {post.bodyURL !== "" ? <LinkPreview
                 margin="30px auto"
                 width="500px"
