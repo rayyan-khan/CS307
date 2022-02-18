@@ -18,30 +18,44 @@ class Profile extends React.Component {
             viewingSelf: true,
             userExists: true,
             loading: true,
+            allPosts: [],
         }
     }
 
-    postHandler(posts) {
-        console.log(posts.posts)
-        return posts.posts.map((post) => {
+    fetchPosts() {
+        try {
+            axios
+                .get(
+                    'https://still-sierra-32456.herokuapp.com/api/getOrderedPost'
+                )
+                .then((res) => {
+                    const posts = res.data
+                    this.setState({ allPosts: posts })
+                    this.setState({ loading: 1 })
+                })
+                .catch(function (error) {
+                    console.log(error)
+                    this.setState({ loading: -1 })
+                })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    postHandler() {
+        console.log(this.state.allPosts)
+        return this.state.allPosts.map((post, key) => {
             return (
-                <div
-                    style={{
-                        overflowX: 'hidden',
-                        overflowY: 'scroll',
-                        width: '100%',
-                        height: '100%',
-                    }}
-                >
-                    <Center bg={'#151516'} pb={20}>
-                        <Post post={post} />
-                    </Center>
-                </div>
+                <Center pb={5}>
+                    <Post post={post} />
+                </Center>
             )
         })
     }
 
     componentDidMount() {
+        this.fetchPosts()
+
         var sessionUsername = sessionStorage.getItem('username')
         var userViewing = this.props.username
             ? this.props.username
@@ -62,7 +76,7 @@ class Profile extends React.Component {
                     viewingSelf:
                         sessionUsername != null &&
                         sessionUsername.localeCompare(this.props.username) ===
-                        0,
+                            0,
                     loading: false,
                 })
             })
@@ -234,7 +248,7 @@ class Profile extends React.Component {
                                     </div>
                                 </div>
                                 <div className="posts-container">
-                                    {this.postHandler(posts)}
+                                    {this.postHandler()}
                                 </div>
                             </div>
                         ) : (
