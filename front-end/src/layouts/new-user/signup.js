@@ -48,7 +48,8 @@ class Login extends React.Component {
       passwordError: false,
       passwordCheckError: false,
       axiosError: true,
-      registrationError: 'There were problems with your registration.'
+      registrationError: 'There were problems with your registration.',
+      show: false
     }
 }
 
@@ -141,6 +142,7 @@ registerUser=()=>{
     this.state.userError === false && 
     this.state.passwordError === false && 
     this.state.passwordCheckError === false) {
+    this.setState({registrationError: "waiting..."})  
     console.log("Passed to axios");
     const payload = {
       email: this.state.user.Email,
@@ -164,6 +166,10 @@ registerUser=()=>{
   
 }
 
+handleClick=()=>{
+  console.log("Show clicked");
+  this.setState({show:!this.state.show});
+}
 
   render() {   
     return (
@@ -216,7 +222,14 @@ registerUser=()=>{
             name="Password" 
             value={this.state.user.Password} 
             onChange={this.changeHandler}
-            style={{color:'darkturquoise'}}/>
+            style={{color:'darkturquoise'}}
+            type={this.state.show ? 'text' : 'password'}/>
+            <InputRightElement width='4.5rem'>
+            <Button colorScheme='black'  bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}
+            style = {{transform: "translateY(1vh)"}}>
+              {this.state.show ? 'Hide' : 'Show'}
+            </Button>
+          </InputRightElement>
           {!this.state.passwordError ? ( <FormHelperText> Make a good password if you don't want to get hacked. </FormHelperText>) 
            : (<FormErrorMessage>Enter a valid password (must be at least 8 characters and have at least 1 letter and 1 number).</FormErrorMessage>)}
           </FormControl>
@@ -232,7 +245,14 @@ registerUser=()=>{
             name="PasswordCheck" 
             value={this.state.user.PasswordCheck} 
             onChange={this.changeHandler}
-            style={{color:'darkturquoise'}}/>
+            style={{color:'darkturquoise'}}
+            type={this.state.show ? 'text' : 'password'}/>
+            <InputRightElement width='4.5rem'>
+            <Button colorScheme='black'  bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}
+            style = {{transform: "translateY(1vh)"}}>
+              {this.state.show ? 'Hide' : 'Show'}
+            </Button>
+            </InputRightElement>
           {!this.state.passwordCheckError ? ( <FormHelperText>Make sure this password matches the one above. </FormHelperText>) 
            : (<FormErrorMessage>Your password doesn't match the one above.</FormErrorMessage>)}
           </FormControl>
