@@ -16,6 +16,7 @@ import { LinkPreview } from "@dhaiwat10/react-link-preview";
 
 
 export default function LargePost({ post }) {
+    console.log(post);
 
     // toggle state 
     const [isLiked, setIsLiked] = React.useState(false);
@@ -140,19 +141,20 @@ export default function LargePost({ post }) {
             </Text>
 
 
-            {/* {post.bodyImage !== "" ? <Box alignSelf={'center'}
+            {post.url !== "" ? <Box alignSelf={'center'}
                 px={0}
                 pt={10}
                 w={"100%"}
             >
-                <Image src={post.bodyImage} />
+                <Image src={post.url} />
             </Box> : <></>}
+
             {post.bodyURL !== "" ? <LinkPreview
                 margin="30px auto"
                 width="500px"
                 url={post.bodyURL}
                 backgroundColor='white'
-            /> : <></>} */}
+            /> : <></>}
 
 
 
