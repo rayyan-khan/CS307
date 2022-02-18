@@ -12,6 +12,8 @@ class Profile extends React.Component {
         this.state = {
             username: '',
             bio: '',
+            firstName: '',
+            lastName: '',
             numTagsFollowing: 0,
             numFollowing: 0,
             numFollowers: 0,
@@ -67,6 +69,8 @@ class Profile extends React.Component {
                 this.setState({
                     username: this.props.username,
                     bio: res.data.bio,
+                    firstName: res.data.firstName ? res.data.firstName : '',
+                    lastName: res.data.lastName ? res.data.lastName : '',
                     numTagsFollowing: this.formatNum(6900),
                     numFollowing: this.formatNum(420000),
                     numFollowers: this.formatNum(44444444),
@@ -170,6 +174,25 @@ class Profile extends React.Component {
                                                             Following
                                                         </p>
                                                     </div>
+                                                </div>
+                                                <div
+                                                    className="profile-fullname"
+                                                    style={{
+                                                        marginBottom: '0',
+                                                    }}
+                                                >
+                                                    <p
+                                                        style={{
+                                                            'overflow-wrap':
+                                                                'anywhere',
+                                                            fontStyle: 'italic',
+                                                            fontWeight: '500',
+                                                        }}
+                                                    >
+                                                        {this.state.firstName +
+                                                            ' ' +
+                                                            this.state.lastName}
+                                                    </p>
                                                 </div>
                                                 <div className="profile-bio">
                                                     <p

@@ -36,8 +36,6 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
         }
         if (result.private == 1 && !amUser) {
             delete result.email
-            delete result.firstName
-            delete result.lastName
         }
 
         res.status(200).json(result)
