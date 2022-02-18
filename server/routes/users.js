@@ -115,7 +115,7 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
 })
 
 userRoutes.route('/searchUsers/:query').get(async (req, res) => {
-    var sql = `SELECT username FROM User WHERE locate(${con.escape(
+    var sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
         req.params.query
     )}, username) > 0`
 
@@ -132,7 +132,10 @@ userRoutes.route('/searchUsers/:query').get(async (req, res) => {
             let list = result.map((user) => {
                 return {
                     value: user.username,
-                    label: 'Name: ' + user.username,
+                    label:
+                        user.firstName && user.lastName
+                            ? `${user.firstName} ${user.lastName}`
+                            : '',
                     type: 'user',
                 }
             })

@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import Select from 'react-select'
 import axios from 'axios'
+import FormatOptionLabel from './option'
 
 class SearchBar extends Component {
     constructor(props) {
@@ -12,7 +13,6 @@ class SearchBar extends Component {
     }
 
     componentDidMount() {
-        //Future API call
         this.setState({
             searchableNames: [],
         })
@@ -63,6 +63,7 @@ class SearchBar extends Component {
                             ? `${option.label} @${option.value}`
                             : `r/${option.label}`
                     }}
+                    formatOptionLabel={FormatOptionLabel}
                     onChange={this.onChange}
                     onInputChange={this.onInputChange}
                     placeholder="Search for a user"
