@@ -4,18 +4,9 @@ import {
   FormErrorMessage,
   FormHelperText,
   Input,
-  Badge,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
   Button,
-  PopoverAnchor,
-  transform
+  InputGroup,
+  InputRightElement
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
@@ -37,7 +28,8 @@ class Login extends React.Component {
       userError: false,
       passwordError: false,
       axiosError: true,
-      loginError: 'There were problems with your login.'
+      loginError: 'There were problems with your login.',
+      show: false
     }
   }
 
@@ -54,6 +46,11 @@ class Login extends React.Component {
 
   registerUser=()=>{ 
     console.log("Pressed login");
+  }
+
+  handleClick=()=>{
+    console.log("Show clicked");
+    this.setState({show:!this.state.show});
   }
 
   render() {
@@ -84,32 +81,24 @@ class Login extends React.Component {
           {/* password entry part of form */}
           <FormControl isInvalid={this.state.passwordError}>
           <FormLabel htmlFor='password'> </FormLabel>
-          <Input 
-            focusBorderColor='teal.200'
-            errorBorderColor='red.300'
-            placeholder = 'Password' 
-            type = "text" 
-            name="Password" 
-            value={this.state.user.Password} 
-            onChange={this.changeHandler}
-            style={{color:'darkturquoise'}}/>
+          <Input
+            pr='4.5rem'
+            type={this.state.show ? 'text' : 'password'}
+            placeholder='Enter password' 
+            style={{color:'darkturquoise'}} 
+          />
+          <InputRightElement width='4.5rem'>
+            <Button colorScheme='black'  bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}
+            style = {{transform: "translateY(1vh)"}}>
+              {this.state.show ? 'Hide' : 'Show'}
+            </Button>
+          </InputRightElement>
           {!this.state.passwordError ? ( <FormHelperText> </FormHelperText>) 
            : (<FormErrorMessage>Your password was incorrect</FormErrorMessage>)}
           </FormControl>
 
         </form>
-        <Popover>
-          <PopoverTrigger>
-            <Button colorScheme='black' onClick={this.loginUser} fontSize={25} 
-            bg='mediumturquoise' style = {{transform: "translateY(2vh)"}} >Login</Button>
-          </PopoverTrigger>
-          <PopoverContent bg='black' fontWeight='bold' fontSize={18}>
-            <PopoverArrow />
-            <PopoverCloseButton />
-            {!this.state.axiosError ? (<PopoverHeader>Success! You are logged in.</PopoverHeader>) 
-             : (<PopoverHeader> There were problems with your login. </PopoverHeader>)}
-          </PopoverContent>
-        </Popover>
+      
 
         </header>
       </div>
