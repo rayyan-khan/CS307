@@ -63,18 +63,23 @@ class Navbar extends React.Component {
 
 
   componentWillMount() {
-    console.log('test');
-    console.log(axios.defaults.headers.common['authorization'])
     let url = window.location.href;
     let currSection = url.substring(url.lastIndexOf("/") + 1);
     this.setState({ currSection: currSection });
     console.log(currSection);
-    axios.post("http://localhost:5000/api/test-token" + sessionStorage.getItem('token')).then((res) => {
-      if (res.data === 'true') {
-        this.setState({ validToken: true });
-        console.log('done')
-      }
-    });
+    console.log('lets see')
+    try {
+      axios.get("http://localhost:5000/api/test-token/" + sessionStorage.getItem('token')).then((res) => {
+        console.log(res.data);
+        if (res.data === 'true') {
+          this.setState({ validToken: true });
+          console.log('done')
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
   }
 
 

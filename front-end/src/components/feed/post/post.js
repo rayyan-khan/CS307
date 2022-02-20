@@ -13,6 +13,7 @@ import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
 import { FaRegBookmark } from "react-icons/fa"
 import React from 'react';
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
+import axios from 'axios';
 
 
 export default function Post({ post, label }) {
