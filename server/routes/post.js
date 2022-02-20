@@ -23,16 +23,16 @@ postRoutes
         //get username
         // var user
         console.log(req.body)
-        // try {
-        //     //Use decodeHeader to extract user info from header or throw an error
-        //    // user = await decodeHeader.decodeAuthHeader(req)
-        // } catch (err) {
+        try {
+            //Use decodeHeader to extract user info from header or throw an error
+           // user = await decodeHeader.decodeAuthHeader(req)
+        } catch (err) {
 
-        //     return res.status(400).json(err)
-        // }
+            return res.status(400).json(err)
+        }
 
-        //   const { email, username } = user
-        // console.log(username);
+          const { email, username } = user
+        console.log(username);
         //
         var getId = 'Select Max(postID) as ID From Post;'
         var Is
@@ -59,7 +59,7 @@ postRoutes
                     "', '" +
                     Is +
                     "', '" +
-                    'yoloooo' +
+                    username +
                     "', '" +
                     "12', '14" +
                     "', '" +
@@ -92,16 +92,16 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
     //get username
     // var user
     console.log(req.body)
-    // try {
-    //     //Use decodeHeader to extract user info from header or throw an error
-    //    // user = await decodeHeader.decodeAuthHeader(req)
-    // } catch (err) {
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+       // user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
 
-    //     return res.status(400).json(err)
-    // }
+        return res.status(400).json(err)
+    }
 
-    //   const { email, username } = user
-    // console.log(username);
+      const { email, username } = user
+    console.log(username);
     //
 
     var getId = 'Select Max(postID) as ID From Post;'
@@ -120,7 +120,7 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
             "', '" +
             Is +
             "', '" +
-            'yoloooo' +
+            username +
             "', '" +
             "12', '14" +
             "', '" +

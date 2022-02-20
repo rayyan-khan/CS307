@@ -8,12 +8,11 @@ const bcrypt = require('bcrypt')
 const decodeHeader = require('../utils/decodeHeader')
 
 
-authRoutes.route("/test-token").post(async (req, res) => {
+authRoutes.route("/test-token/:token").get(async (req, res) => {
     var user;
-
     try {
         //Use decodeHeader to extract user info from header or throw an error
-        user = await decodeHeader.decodeAuthHeader(req)
+        user = await decodeHeader.decodeAuthHeader(req.params.token)
     } catch (err) {
         return res.json('false')
     }
