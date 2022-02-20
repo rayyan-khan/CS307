@@ -104,7 +104,7 @@ class CreatePost extends React.Component {
           <form>
             <div>
               <FormControl isInvalid={this.state.postError}>
-                <h2>Post Caption </h2>
+                <h2 style={{ color: "white" }}>Post Caption </h2>
                 <Textarea
                   size="lg"
                   focusBorderColor='teal.200'
@@ -121,15 +121,15 @@ class CreatePost extends React.Component {
                 {!this.state.postError ? (<FormHelperText> </FormHelperText>)
                   : (<FormErrorMessage>Please enter a non-empty post Caption.</FormErrorMessage>)}
 
-                <h2>Upload Image</h2>
-                <Input type='file'
+                <h2 style={{ color: "white" }}>Upload Image</h2>
+                <Input style={{ color: "white" }} type='file'
                   accept="image/*"
                   onChange={this.fileSelecteHandler} />
               </FormControl>
 
               <div className="form-check">
                 <input type="checkbox" className="form-check-input" id="checkbox" onClick={this.makeAnonymous} />
-                <label className="form-check-label">Make Anonymous</label>
+                <label style={{ color: "white" }} className="form-check-label">Make Anonymous</label>
               </div>
 
               <Popover>
