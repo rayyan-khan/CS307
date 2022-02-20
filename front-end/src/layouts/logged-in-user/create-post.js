@@ -17,7 +17,9 @@ import {
   PopoverCloseButton,
   Button,
   PopoverAnchor,
-  transform
+  transform,
+  Textarea,
+  Checkbox
 } from '@chakra-ui/react'
 
 import React from 'react'
@@ -31,7 +33,7 @@ class CreatePost extends React.Component {
 
     this.state = {
       postText: '',
-      anonymous: '',
+      anonymous: 0,
       selectedFile: null,
       postError: false
 
@@ -57,7 +59,8 @@ class CreatePost extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
 
-    if (this.state.postText === '') {
+    if (this.state.postText.trim() === '') {
+      this.setState({postError: true})
       return;
     }
 
@@ -70,14 +73,18 @@ class CreatePost extends React.Component {
       let jsonObj = {}
       jsonObj['anonymous'] = this.state.anonymous;
       jsonObj['caption'] = this.state.postText;
-      axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj)
-      window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+      
+      axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj).then((response) => {
+        let url = window.location.href;
+        window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+      })
     } else {
-      axios.post("http://localhost:5000/api/posts/postImage", data);
-      window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+      axios.post("http://localhost:5000/api/posts/postImage", data).then((response) => {
+        let url = window.location.href;
+        window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+      })
     }
-
-
+    
   }
 
   fileSelecteHandler = (events) => {
@@ -94,24 +101,47 @@ class CreatePost extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          <form onSubmit={this.handleSubmit}>
+          <form>
             <div>
-              <div className="form-group row">
-                <label>Post Text:</label>
-                <textarea className="textA" type='text' value={this.state.postText}
-                  onChange={this.handlePostTextChange} rows="3" maxLength="150"> </textarea>
-              </div>
-              <div className="form-group row">
-                <label>Upload Image:</label>
-                <input type='file'
-                  onChange={this.fileSelecteHandler} />
-              </div>
+              <FormControl isInvalid={this.state.postError}>
+                <h2>Post Caption </h2>
+                <Textarea
+                  size="lg"
+                  focusBorderColor='teal.200'
+                  errorBorderColor='red.300'
+                  placeholder='Enter Post Caption Here'
+                  type="text"
+                  name="postCaption"
+                  value={this.state.postText}
+                  onChange={this.handlePostTextChange}
+                  rows="3"
+                  maxLength="150"
+                  style={{ color: 'darkturquoise' }}
+                   />
+                {!this.state.postError ? (<FormHelperText> </FormHelperText>)
+                  : (<FormErrorMessage>Please enter a non-empty post Caption.</FormErrorMessage>)}
+
+                <h2>Upload Image</h2>
+                <Input type='file'
+                  accept="image/*"
+                  onChange={this.fileSelecteHandler} />                
+              </FormControl>
+              
               <div className="form-check">
                 <input type="checkbox" className="form-check-input" id="checkbox" onClick={this.makeAnonymous} />
                 <label className="form-check-label">Make Anonymous</label>
               </div>
-              <button type="submit" className="btn btn-primary">Submit</button>
 
+              <Popover>
+                <PopoverTrigger>
+                  <Button colorScheme='black' onClick={this.handleSubmit} fontSize={25}
+                    bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
+                </PopoverTrigger>
+                <PopoverContent bg='black' fontWeight='bold' fontSize={18}>
+                  <PopoverArrow />
+                  <PopoverCloseButton />
+                </PopoverContent>
+              </Popover>
             </div>
           </form>
         </header>
