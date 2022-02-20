@@ -6,7 +6,7 @@ import {
   Input,
   Button,
   InputRightElement,
-  Popover, 
+  Popover,
   PopoverTrigger,
   PopoverArrow,
   PopoverCloseButton,
@@ -22,13 +22,13 @@ import { useAnimationFrame } from 'framer-motion';
 const axios = require('axios');
 
 class Login extends React.Component {
-  
+
   constructor(props) {
     super();
     this.state = {
-      user:{
-        Username:'',
-        Password:'',
+      user: {
+        Username: '',
+        Password: '',
       },
       userError: false,
       passwordError: false,
@@ -38,24 +38,26 @@ class Login extends React.Component {
     }
   }
 
-  changeHandler=e=>{
+  changeHandler = e => {
     const name = e.target.name;
     const value = e.target.value;
     //console.log(value);
-  
-    this.setState({user:{
-      ...this.state.user,
-      [name]:value
-    }});
+
+    this.setState({
+      user: {
+        ...this.state.user,
+        [name]: value
+      }
+    });
   }
 
-  loginUser=()=>{ 
-    
+  loginUser = () => {
+
     console.log("Passed to axios");
-      const payload = {
-        username: this.state.user.Username,
-        password: this.state.user.Password
-      }
+    const payload = {
+      username: this.state.user.Username,
+      password: this.state.user.Password
+    }
     axios.post("http://localhost:5000/api/login", payload)
       .then((response) => {
         console.log("got a response");
@@ -70,67 +72,70 @@ class Login extends React.Component {
         this.setState({ axiosError: true });
       })
 
-      if(this.state.axiosError === false) {
-        let url = window.location.href;
-        window.location.href = url.substring(0, url.indexOf("/")) + "/homepage"; 
-      }
+    if (this.state.axiosError === false) {
+      let url = window.location.href;
+      window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+    }
 
   }
 
-  handleClick=()=>{
+  handleClick = () => {
     console.log("Show clicked");
-    this.setState({show:!this.state.show});
+    this.setState({ show: !this.state.show });
   }
 
   render() {
     return (
       <div className="App">
-        <header className="App-header" style = {{transform: "translateY(-8vh)"}}>
-          
-        <h2 style={{color:'mediumturquoise'}}>Login</h2>
+        <header className="App-header" style={{ transform: "translateY(-8vh)" }}>
+
+          <h2 style={{ color: 'mediumturquoise' }}>Login</h2>
           <p></p>
           <form>
 
-          {/* username entry part of form */}
-          <FormControl isInvalid={this.state.userError}>
-          <FormLabel htmlFor='username'> </FormLabel>
-          <Input 
-            focusBorderColor='teal.200'
-            errorBorderColor='red.300'
-            placeholder = 'Username' 
-            type = "text" 
-            name="Username" 
-            value={this.state.user.Username} 
-            onChange={this.changeHandler}
-            style={{color:'darkturquoise'}}/>
-          {!this.state.userError ? ( <FormHelperText>  </FormHelperText>) 
-           : (<FormErrorMessage>The username you entered is invalid.</FormErrorMessage>)}
-          </FormControl>
+            {/* username entry part of form */}
+            <FormControl isInvalid={this.state.userError}>
+              <FormLabel htmlFor='username'> </FormLabel>
+              <Input
+                focusBorderColor='teal.200'
+                errorBorderColor='red.300'
+                placeholder='Username'
+                type="text"
+                name="Username"
+                value={this.state.user.Username}
+                onChange={this.changeHandler}
+                style={{ color: 'darkturquoise' }} />
+              {!this.state.userError ? (<FormHelperText>  </FormHelperText>)
+                : (<FormErrorMessage>The username you entered is invalid.</FormErrorMessage>)}
+            </FormControl>
 
-          {/* password entry part of form */}
-          <FormControl isInvalid={this.state.passwordError}>
-          <FormLabel htmlFor='password'> </FormLabel>
-          <Input
-            pr='4.5rem'
-            type={this.state.show ? 'text' : 'password'}
-            placeholder='Enter password' 
-            style={{color:'darkturquoise'}} 
-          />
-          <InputRightElement width='4.5rem'>
-            <Button colorScheme='black'  bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}
-            style = {{transform: "translateY(1vh)"}}>
-              {this.state.show ? 'Hide' : 'Show'}
-            </Button>
-          </InputRightElement>
-          {!this.state.passwordError ? ( <FormHelperText> </FormHelperText>) 
-           : (<FormErrorMessage>Your password was incorrect</FormErrorMessage>)}
-          </FormControl>
+            {/* password entry part of form */}
+            <FormControl isInvalid={this.state.passwordError}>
+              <FormLabel htmlFor='password'> </FormLabel>
+              <Input
+                pr='4.5rem'
+                type={this.state.show ? 'text' : 'password'}
+                placeholder='Enter password'
+                style={{ color: 'darkturquoise' }}
+                name="Password"
+                value={this.state.user.Password}
+                onChange={this.changeHandler}
+              />
+              <InputRightElement width='4.5rem'>
+                <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}
+                  style={{ transform: "translateY(1vh)" }}>
+                  {this.state.show ? 'Hide' : 'Show'}
+                </Button>
+              </InputRightElement>
+              {!this.state.passwordError ? (<FormHelperText> </FormHelperText>)
+                : (<FormErrorMessage>Your password was incorrect</FormErrorMessage>)}
+            </FormControl>
 
-        </form>
-        <Popover>
-          <PopoverTrigger>
-            <Button colorScheme='black' onClick={this.loginUser} fontSize={25}
-              bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
+          </form>
+          <Popover>
+            <PopoverTrigger>
+              <Button colorScheme='black' onClick={this.loginUser} fontSize={25}
+                bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
             </PopoverTrigger>
             <PopoverContent bg='black' fontWeight='bold' fontSize={16}>
               <PopoverArrow />
@@ -138,7 +143,7 @@ class Login extends React.Component {
               {!this.state.axiosError ? (<PopoverHeader>Logging in...</PopoverHeader>)
                 : (<PopoverHeader> {this.state.loginError} </PopoverHeader>)}
             </PopoverContent>
-        </Popover>
+          </Popover>
 
         </header>
       </div>
