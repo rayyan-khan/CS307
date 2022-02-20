@@ -72,7 +72,7 @@ class Login extends React.Component {
 
       if(this.state.axiosError === false) {
         let url = window.location.href;
-        //window.location.href = url.substring(0, url.indexOf("/")) + "/idkwhereitgoes"; // figure out where this goes
+        window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
         console.log("Figure out where this should go to.")
       }
 
