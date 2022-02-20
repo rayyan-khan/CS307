@@ -21,10 +21,12 @@ class Profile extends React.Component {
             userExists: true,
             loading: true,
             allPosts: [],
+            edit: "edit"
         }
     }
 
     fetchPosts() {
+
         try {
             axios
                 .get(
@@ -103,6 +105,29 @@ class Profile extends React.Component {
         return Intl.NumberFormat('en', { notation: 'compact' }).format(num)
     }
 
+    updateProf() {
+        //console.log(this.state)
+        if(this.state.edit === "edit"){
+            this.setState({edit: "submit"})
+        } else {
+            this.setState({edit: "edit"})
+            console.log(document.getElementById("bioname").value)
+            console.log(document.getElementById("fname").value)
+            console.log(document.getElementById("lname").value)
+            try {
+              //  axios.defaults.headers.common['authorization'] = '$2b$10$7qO4zbtYsg8gRmNrVMgjtu3jd5QejoNTKGQ4gb24QX/Slymkix65e'
+                axios.put("http://localhost:5000/api/updateProfile", {
+                 //   firstName: document.getElementById("fnama").value,
+                  //  lastName: document.getElementById("lname").value,
+                   // bio: document.getElementById("bioname").value
+
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
     render() {
         return (
             <div
@@ -139,9 +164,16 @@ class Profile extends React.Component {
                                                 </Box>
                                                 <Box pl={'1vw'}>
                                                     <Stack direction={'column'} >
+
                                                         <Box>
+
                                                             <Text fontSize={'2xl'} color={'white'}>
-                                                                {this.state.firstName} {this.state.lastName}
+                                                                {this.state.edit==="edit"? <text color={'white'}>{this.state.firstName} {this.state.lastName}</text>:
+                                                                    <div>
+                                                                    <input type="text" defaultValue={this.state.firstName} id="fname" name="fname" size="8" style={{backgroundColor:"#151516"}} ></input>
+                                                                    <input type="text" defaultValue={this.state.lastName} id="lname" name="lname" size="7" style={{backgroundColor:"#151516"}} ></input>
+                                                                    </div>
+                                                                }
                                                             </Text>
                                                             <Text pl={'.15vw'} fontWeight={'bold'} color={'white'} fontSize={'xs'}>
                                                                 @{this.state.username}
@@ -188,20 +220,17 @@ class Profile extends React.Component {
                                                             <Text fontWeight={'bold'} color={'white'}>
                                                                 Bio:
                                                             </Text>
-                                                            <Text color='white'>
+                                                            {this.state.edit ==="edit"?
+                                                                <Text color='white'>
                                                                 {this.state.bio}
-                                                            </Text>
+                                                            </Text>:<p><textarea type="text" defaultValue={this.state.bio} id="bioname" name="bioname"  style={{backgroundColor:"#151516", color:"white"}}></textarea></p>}
+
                                                         </Stack>
                                                     </Box>
                                                     <Box pr={'5px'} pt={'1vh'}>
                                                         {this.state.viewingSelf ? (
                                                             <Box>
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-primary"
-                                                                >
-                                                                    Edit Profile
-                                                                </button>
+                                                                <Button variant='solid' onClick={this.updateProf.bind(this)}>{this.state.edit}</Button>
                                                             </Box>
                                                         ) : (
                                                             <Stack direction={'row'}>
