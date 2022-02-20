@@ -70,10 +70,13 @@ export default class App extends React.Component {
         }
 
         const PrivateRoute = ({ loadComponent }) => {
-            if (sessionStorage.getItem('username') == null) {
-                //Not logged in
-                return <Navigate replace to="/signup" />
-            } else return loadComponent
+            axios.post("http://localhost:5000/api/test-token").then((res) => {
+                if (res.data === 'false') {
+                    let url = window.location.href;
+                    window.location.href = url.substring(0, url.indexOf("/")) + "/login";
+                } 
+            });
+            return loadComponent
         }
 
 
@@ -82,8 +85,7 @@ export default class App extends React.Component {
                 if (res.data === 'true') {
                     let url = window.location.href;
                     window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
-
-                }
+                } 
             });
             return loadComponent
         }
