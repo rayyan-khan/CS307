@@ -36,7 +36,7 @@ class Tags extends React.Component {
 
     render() {
         return (
-            <Button width={'5vw'} fontSize={'0.65vw'} onClick={this.handleClick} p={5} textColor={this.state.isClicked ? 'white' : 'black'} bg={this.state.isClicked ? '#AD343E' : 'white'}>{this.props.tagName}</Button>
+            <Button width={'5vw'} fontSize={'0.65vw'} onClick={this.handleClick} p={5} textColor={this.state.isClicked ? 'white' : 'black'} bg={this.state.isClicked ? 'darkturquoise' : 'white'}>{this.props.tagName}</Button>
         );
     }
 }

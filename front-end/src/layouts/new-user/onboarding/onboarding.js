@@ -36,7 +36,7 @@ const Onboarding = () => {
 
     const handleNameSubmit = (event) => {
         try {
-            axios.put("http://localhost:5000/api/updateProfile", {
+            axios.put("https://still-sierra-32456.herokuapp.com/api/updateProfile", {
                 firstName: firstName,
                 lastName: lastName,
             })
@@ -61,7 +61,7 @@ const Onboarding = () => {
 
     const handleBioSubmit = (event) => {
         try {
-            axios.put("http://localhost:5000/api/updateProfile", {
+            axios.put("https://still-sierra-32456.herokuapp.com/api/updateProfile", {
                 bio: bio,
             })
         } catch (error) {
@@ -168,7 +168,7 @@ const Onboarding = () => {
                             <Stack>
                                 <FormControl>
                                     <FormLabel color={'white'} htmlFor='email'>First Name</FormLabel>
-                                    <Input focusBorderColor='#AD343E' value={firstName} color={'white'} id='email' type='name' onChange={(e) => {
+                                    <Input focusBorderColor='darkturquoise' value={firstName} color={'white'} id='email' type='name' onChange={(e) => {
                                         if (!(e.currentTarget.value.length > 30)) {
                                             setFirstName(e.currentTarget.value)
                                         }
@@ -181,7 +181,7 @@ const Onboarding = () => {
                                 </FormControl>
                                 <FormControl>
                                     <FormLabel color={'white'} htmlFor='email'>Last Name</FormLabel>
-                                    <Input focusBorderColor='#AD343E' value={lastName} color={'white'} id='email' type='name' onChange={(e) => {
+                                    <Input focusBorderColor='darkturquoise' value={lastName} color={'white'} id='email' type='name' onChange={(e) => {
                                         if (!(e.currentTarget.value.length > 30)) {
                                             setLastName(e.currentTarget.value)
                                         }
