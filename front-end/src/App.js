@@ -25,6 +25,8 @@ import PersonPostPage from './layouts/personPostPage.js'
 import Onboarding from './layouts/new-user/onboarding/onboarding'
 import axios from 'axios'
 
+import { Box } from '@chakra-ui/react'
+
 export default class App extends React.Component {
     render() {
         console.log(window.innerWidth)
@@ -87,50 +89,52 @@ export default class App extends React.Component {
         }
 
         return (
-            <div className={'App'}>
-                <Navbar />
-                <Router>
-                    <Routes>
-                        <Route
-                            path="/"
-                            element={<Navigate replace to="/homepage" />}
-                        />
-                        <Route path="/signup"
+            <Box backgroundColor={'#151516'} h={'100vh'}>
+                <div className={'App'}>
+                    <Navbar />
+                    <Router>
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={<Navigate replace to="/homepage" />}
+                            />
+                            <Route path="/signup"
 
-                            element={
-                                <SignUpToHomepageRoute loadComponent={<Signup />} />
+                                element={
+                                    <SignUpToHomepageRoute loadComponent={<Signup />} />
 
-                            }
-                        />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/homepage" element={<Homepage />} />
-                        <Route
-                            path="/createPost"
-                            element={
-                                <PrivateRoute loadComponent={<CreatePost />} />
-                            }
-                        />
-                        <Route path="/profile" element={<ProfileWrapper />} />
-                        <Route
-                            path="/profile/:username"
-                            element={<ProfileWrapper />}
-                        />
-                        <Route path="/dms" element={<DirectMessage />} />
-                        {/* <Route path="/createPost" element={<CreatePost />} /> */}
-                        <Route path="/postPage" element={<PostPage />} />
-                        <Route path="/search" element={<SearchResult />} />
-                        <Route
-                            path="/personalPostPage/:id"
-                            element={<PersonalPostPageWrapper />}
-                        />
-                        <Route
-                            path="/verification/:token"
-                            element={<VerificationWrapper />}
-                        />
-                        <Route path="/onboarding" element={<Onboarding />} />
-                    </Routes>
-                </Router>
-            </div>
+                                }
+                            />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/homepage" element={<Homepage />} />
+                            <Route
+                                path="/createPost"
+                                element={
+                                    <PrivateRoute loadComponent={<CreatePost />} />
+                                }
+                            />
+                            <Route path="/profile" element={<ProfileWrapper />} />
+                            <Route
+                                path="/profile/:username"
+                                element={<ProfileWrapper />}
+                            />
+                            <Route path="/dms" element={<DirectMessage />} />
+                            {/* <Route path="/createPost" element={<CreatePost />} /> */}
+                            <Route path="/postPage" element={<PostPage />} />
+                            <Route path="/search" element={<SearchResult />} />
+                            <Route
+                                path="/personalPostPage/:id"
+                                element={<PersonalPostPageWrapper />}
+                            />
+                            <Route
+                                path="/verification/:token"
+                                element={<VerificationWrapper />}
+                            />
+                            <Route path="/onboarding" element={<Onboarding />} />
+                        </Routes>
+                    </Router>
+                </div>
+            </Box>
         )
     }
 }

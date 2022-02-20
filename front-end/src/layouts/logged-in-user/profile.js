@@ -3,7 +3,11 @@ import React from 'react'
 import '../../styles/profile.css'
 import Post from '../../components/feed/post/post'
 import posts from '../../components/feed/posts'
-import { Box, Button, Center, Image, Stack, Text } from '@chakra-ui/react'
+import {
+    Box, Button, Center, Image, Stack, Text, Input,
+    FormControl,
+    FormLabel,
+} from '@chakra-ui/react'
 
 class Profile extends React.Component {
     constructor(props) {
@@ -21,7 +25,7 @@ class Profile extends React.Component {
             userExists: true,
             loading: true,
             allPosts: [],
-            edit: "edit"
+            editMode: true,
         }
     }
 
@@ -57,6 +61,15 @@ class Profile extends React.Component {
                 </Center>
             )
         })
+    }
+
+    firstNameHandler(e) {
+        this.setState({ firstName: e.target.value })
+    }
+
+
+    lastNameHandler(e) {
+        this.setState({ lastName: e.target.value })
     }
 
     componentDidMount() {
@@ -107,19 +120,19 @@ class Profile extends React.Component {
 
     updateProf() {
         //console.log(this.state)
-        if(this.state.edit === "edit"){
-            this.setState({edit: "submit"})
+        if (this.state.edit === "edit") {
+            this.setState({ edit: "submit" })
         } else {
-            this.setState({edit: "edit"})
+            this.setState({ edit: "edit" })
             console.log(document.getElementById("bioname").value)
             console.log(document.getElementById("fname").value)
             console.log(document.getElementById("lname").value)
             try {
-              //  axios.defaults.headers.common['authorization'] = '$2b$10$7qO4zbtYsg8gRmNrVMgjtu3jd5QejoNTKGQ4gb24QX/Slymkix65e'
+                //  axios.defaults.headers.common['authorization'] = '$2b$10$7qO4zbtYsg8gRmNrVMgjtu3jd5QejoNTKGQ4gb24QX/Slymkix65e'
                 axios.put("http://localhost:5000/api/updateProfile", {
-                 //   firstName: document.getElementById("fnama").value,
-                  //  lastName: document.getElementById("lname").value,
-                   // bio: document.getElementById("bioname").value
+                    //   firstName: document.getElementById("fnama").value,
+                    //  lastName: document.getElementById("lname").value,
+                    // bio: document.getElementById("bioname").value
 
                 })
             } catch (error) {
@@ -166,18 +179,41 @@ class Profile extends React.Component {
                                                     <Stack direction={'column'} >
 
                                                         <Box>
+                                                            {
+                                                                this.state.editMode ? (
+                                                                    <>
+                                                                        <Stack direction={'row'}>
+                                                                            <Text contentEditable={'true'} fontSize={'2xl'} color={'white'} onChange={
+                                                                                (e) => {
+                                                                                    this.setState({ firstName: e.target.value })
+                                                                                }
+                                                                            }>
+                                                                                {this.state.firstName}
+                                                                            </Text>
+                                                                            <Text contentEditable={'true'} fontSize={'2xl'} color={'white'} onChange={
+                                                                                (e) => {
+                                                                                    this.setState({ lastName: e.target.value })
+                                                                                }
+                                                                            }>
+                                                                                {this.state.lastName}
+                                                                            </Text>
+                                                                        </Stack>
+                                                                        <Text pl={'.15vw'} fontWeight={'bold'} color={'white'} fontSize={'xs'}>
+                                                                            @{this.state.username}
+                                                                        </Text>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Text fontSize={'2xl'} color={'white'}>
+                                                                            {this.state.firstName} {this.state.lastName}
+                                                                        </Text>
+                                                                        <Text pl={'.15vw'} fontWeight={'bold'} color={'white'} fontSize={'xs'}>
+                                                                            @{this.state.username}
+                                                                        </Text>
+                                                                    </>
+                                                                )
 
-                                                            <Text fontSize={'2xl'} color={'white'}>
-                                                                {this.state.edit==="edit"? <text color={'white'}>{this.state.firstName} {this.state.lastName}</text>:
-                                                                    <div>
-                                                                    <input type="text" defaultValue={this.state.firstName} id="fname" name="fname" size="8" style={{backgroundColor:"#151516"}} ></input>
-                                                                    <input type="text" defaultValue={this.state.lastName} id="lname" name="lname" size="7" style={{backgroundColor:"#151516"}} ></input>
-                                                                    </div>
-                                                                }
-                                                            </Text>
-                                                            <Text pl={'.15vw'} fontWeight={'bold'} color={'white'} fontSize={'xs'}>
-                                                                @{this.state.username}
-                                                            </Text>
+                                                            }
                                                         </Box>
                                                     </Stack>
                                                     <Stack pt={'1vh'} direction={'row'}>
@@ -220,17 +256,81 @@ class Profile extends React.Component {
                                                             <Text fontWeight={'bold'} color={'white'}>
                                                                 Bio:
                                                             </Text>
-                                                            {this.state.edit ==="edit"?
-                                                                <Text color='white'>
-                                                                {this.state.bio}
-                                                            </Text>:<p><textarea type="text" defaultValue={this.state.bio} id="bioname" name="bioname"  style={{backgroundColor:"#151516", color:"white"}}></textarea></p>}
+                                                            {
+                                                                this.state.editMode ? (
+                                                                    <>
+                                                                        <Text contentEditable={'true'} color='white' onChange={
+                                                                            (e) => {
+                                                                                this.setState({
+                                                                                    bio: e.target.value
+                                                                                })
+                                                                            }
+                                                                        }>
+                                                                            {this.state.bio}
+                                                                        </Text>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Text color='white'>
+                                                                            {this.state.bio}
+                                                                        </Text>
+                                                                    </>
+                                                                )
 
+                                                            }
                                                         </Stack>
                                                     </Box>
                                                     <Box pr={'5px'} pt={'1vh'}>
                                                         {this.state.viewingSelf ? (
                                                             <Box>
-                                                                <Button variant='solid' onClick={this.updateProf.bind(this)}>{this.state.edit}</Button>
+
+                                                                {
+                                                                    this.state.editMode ? (
+                                                                        <>
+                                                                            <Button
+                                                                                backgroundColor={'#5581D7'}
+                                                                                color={'white'}
+
+
+
+
+                                                                                onClick={() => {
+                                                                                    this.setState({
+                                                                                        editMode: false
+                                                                                    })
+                                                                                    // TODO: Remove this and get auth header from backend
+                                                                                    axios.defaults.headers.common['authorization'] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bmFpZGphdmVkQGljbG91ZC5jb20iLCJ1c2VybmFtZSI6Ikp1bmFpZCIsImlhdCI6MTY0NTMyMzU3NSwiZXhwIjoxNjQ1MzM0Mzc1fQ.ElcL0uSViMVYJ6Lip_UTA9MjsuZ8m29Y8yoLyIeFM6A"
+                                                                                    try {
+                                                                                        axios.put("http://localhost:5000/api/updateProfile", {
+                                                                                            firstName: this.state.firstName,
+                                                                                            lastName: this.state.firstName,
+                                                                                            bio: this.state.bio,
+                                                                                        })
+                                                                                    } catch (error) {
+                                                                                        console.log(error);
+                                                                                    }
+                                                                                }}
+                                                                            >
+                                                                                Save Changes
+                                                                            </Button>
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <Button
+                                                                                backgroundColor={'#5581D7'}
+                                                                                color={'white'}
+                                                                                onClick={() => {
+                                                                                    this.setState({
+                                                                                        editMode: true
+                                                                                    })
+                                                                                }}
+                                                                            >
+                                                                                Edit Profile
+                                                                            </Button>
+                                                                        </>
+                                                                    )
+
+                                                                }
                                                             </Box>
                                                         ) : (
                                                             <Stack direction={'row'}>

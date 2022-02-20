@@ -15,10 +15,13 @@ import React from 'react';
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 
 
-export default function Post({ post }) {
+export default function Post({ post, label }) {
     const [isLiked, setIsLiked] = React.useState(false);
     const [isDisliked, setIsDisliked] = React.useState(false);
-
+    var posts = JSON.parse(localStorage.getItem('allPosts'));
+    var postIndex = posts.length - label;
+    console.log(postIndex)
+    console.log(posts)
 
 
     const handleLiked = (event) => {
@@ -30,8 +33,18 @@ export default function Post({ post }) {
         } else {
 
             setIsLiked(!isLiked);
+            post.likesCount += 1;
+            console.log(posts[postIndex])
+            posts[postIndex].likesCount += 1;
+            console.log(posts[postIndex])
+            localStorage.removeItem('allPosts');
+            localStorage.setItem('allPosts', JSON.stringify(posts));
             if (isLiked !== isDisliked) {
                 setIsDisliked(false);
+                post.dislikeCount -= 1;
+                posts[postIndex].dislikeCount -= 1;
+                localStorage.removeItem('allPosts');
+                localStorage.setItem('allPosts', JSON.stringify(posts));
             }
         }
     }
@@ -44,9 +57,17 @@ export default function Post({ post }) {
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
         } else {
 
+            post.dislikeCount += 1;
+            posts[postIndex].dislikeCount += 1;
+            localStorage.removeItem('allPosts');
+            localStorage.setItem('allPosts', JSON.stringify(posts));
             setIsDisliked(!isDisliked);
             if (isLiked !== isDisliked) {
                 setIsLiked(false);
+                post.likesCount -= 1;
+                posts[postIndex].likesCount -= 1;
+                localStorage.removeItem('allPosts');
+                localStorage.setItem('allPosts', JSON.stringify(posts));
             }
         }
     }
@@ -65,12 +86,10 @@ export default function Post({ post }) {
 
     let linkPageBool = true;
     if (post.postID == null) {
-        console.log(post);
         if (post[0] != null) {
             post = post[0];
             linkPageBool = false;
         } else {
-            console.log("post undefined");
             return (
                 <Center pb={5}>
                     <Text>
@@ -136,7 +155,7 @@ export default function Post({ post }) {
                 </Text>
 
 
-                {post.url !== "" ? <Box alignSelf={'center'}
+                {post.url !== "undefined" ? <Box alignSelf={'center'}
                     px={0}
                     pt={5}
                     w={"100%"}
@@ -187,7 +206,7 @@ export default function Post({ post }) {
                     >
                         {post.likesCount}
                     </Text>
-                    {isLiked ? <IconButton onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
+                    {isLiked ? <IconButton onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<AiOutlineLike />} /> : <IconButton onClick={handleLiked} icon={<AiOutlineLike />} />}
                 </Stack>
                 <Stack direction={'column'}>
                     <Text
@@ -198,10 +217,10 @@ export default function Post({ post }) {
                     >
                         {post.dislikeCount}
                     </Text>
-                    {isDisliked ? <IconButton onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton style={{ cursor: 'pointer' }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
+                    {isDisliked ? <IconButton onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} icon={<AiOutlineDislike />} /> : <IconButton style={{ cursor: 'pointer' }} onClick={handleDisliked} icon={<AiOutlineDislike />} />}
                 </Stack>
                 <Stack direction={'column'}>
-                    {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                    {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px", backgroundColor: "darkturquoise", color: "white" }} icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px" }} icon={<FaRegBookmark />} />}
                 </Stack>
             </Stack>
         </Box>

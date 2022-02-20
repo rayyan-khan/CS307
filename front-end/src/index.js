@@ -1,9 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
-import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 
 const rootElement = document.getElementById("root");
+const darkMode = {
+  config: {
+    initialColorMode: "dark"
+  }
+}
+
 ReactDOM.render(
   <ChakraProvider>
     <App />

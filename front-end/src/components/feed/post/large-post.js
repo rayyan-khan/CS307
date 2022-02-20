@@ -142,7 +142,7 @@ export default function LargePost({ post }) {
 
 
 
-                {post.url !== "" ? <Center> <Box
+                {post.url !== "undefined" ? <Center> <Box
                     pt={5}
                     w={"100%"}
                 >
@@ -150,12 +150,12 @@ export default function LargePost({ post }) {
                 </Box>  </Center> : <></>}
 
 
-                {/* {post.bodyURL !== "" ? <LinkPreview
-                margin="30px auto"
-                width="500px"
-                url={post.bodyURL}
-                backgroundColor='white'
-            /> : <></>} */}
+                {post.bodyURL !== "" ? <LinkPreview
+                    margin="30px auto"
+                    width="500px"
+                    url={post.bodyURL}
+                    backgroundColor='white'
+                /> : <></>}
             </Stack>
 
 

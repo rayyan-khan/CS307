@@ -32,7 +32,7 @@ const Onboarding = () => {
     const [currentFrame, setCurrentFrame] = useState(0);
 
     // TODO: Remove this and get auth header from backend
-    axios.defaults.headers.common['authorization'] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bmFpZGphdmVkQGljbG91ZC5jb20iLCJ1c2VybmFtZSI6Ikp1bmFpZCIsImlhdCI6MTY0NDc4NDQxNCwiZXhwIjoxNjQ0Nzk1MjE0fQ.33420pEJo0luudwFtSq6PftMUoSLPP3IzGVAqwXx6ck"
+    axios.defaults.headers.common['authorization'] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bmFpZGphdmVkQGljbG91ZC5jb20iLCJ1c2VybmFtZSI6Ikp1bmFpZCIsImlhdCI6MTY0NTMyMzU3NSwiZXhwIjoxNjQ1MzM0Mzc1fQ.ElcL0uSViMVYJ6Lip_UTA9MjsuZ8m29Y8yoLyIeFM6A"
 
     const handleNameSubmit = (event) => {
         try {
@@ -145,7 +145,7 @@ const Onboarding = () => {
 
     if (currentFrame === 0) {
         return (
-            <Center h={'full'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
+            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
                 <Box
                     position={'relative'}
                     maxW={"820px"}
@@ -208,7 +208,7 @@ const Onboarding = () => {
     }
     if (currentFrame === 1) {
         return (
-            <Center h={'full'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
+            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
                 <Box
                     position={'relative'}
                     maxW={"820px"}
@@ -251,7 +251,7 @@ const Onboarding = () => {
         );
     } else if (currentFrame === 2) {
         return (
-            <Center h={'full'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
+            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
                 <Box
                     position={'relative'}
                     maxW={"820px"}
@@ -290,7 +290,7 @@ const Onboarding = () => {
 
     } else if (currentFrame === 3) {
         return (
-            <Center h={'full'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
+            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
                 <Box
                     position={'relative'}
                     maxW={"820px"}

@@ -60,7 +60,7 @@ class CreatePost extends React.Component {
     event.preventDefault();
 
     if (this.state.postText.trim() === '') {
-      this.setState({postError: true})
+      this.setState({ postError: true })
       return;
     }
 
@@ -73,7 +73,7 @@ class CreatePost extends React.Component {
       let jsonObj = {}
       jsonObj['anonymous'] = this.state.anonymous;
       jsonObj['caption'] = this.state.postText;
-      
+
       axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj).then((response) => {
         let url = window.location.href;
         window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
@@ -84,7 +84,7 @@ class CreatePost extends React.Component {
         window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
       })
     }
-    
+
   }
 
   fileSelecteHandler = (events) => {
@@ -117,16 +117,16 @@ class CreatePost extends React.Component {
                   rows="3"
                   maxLength="150"
                   style={{ color: 'darkturquoise' }}
-                   />
+                />
                 {!this.state.postError ? (<FormHelperText> </FormHelperText>)
                   : (<FormErrorMessage>Please enter a non-empty post Caption.</FormErrorMessage>)}
 
                 <h2>Upload Image</h2>
                 <Input type='file'
                   accept="image/*"
-                  onChange={this.fileSelecteHandler} />                
+                  onChange={this.fileSelecteHandler} />
               </FormControl>
-              
+
               <div className="form-check">
                 <input type="checkbox" className="form-check-input" id="checkbox" onClick={this.makeAnonymous} />
                 <label className="form-check-label">Make Anonymous</label>
