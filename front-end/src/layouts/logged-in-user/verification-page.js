@@ -9,7 +9,7 @@ class Verification extends Component {
         this.onChangeMessage = this.onChangeMessage.bind(this)
 
         this.state = {
-            message: 'Verifying email',
+            message: 'Verifying email...',
         }
     }
 
@@ -33,6 +33,11 @@ class Verification extends Component {
                 if (!response || !response.data) {
                     this.setState({ message: 'Some other error' })
                 } else this.setState({ message: JSON.stringify(response.data) })
+                if(this.state.message.replace(/["']/g, "") === "Account already verified") {
+                    let url = window.location.href
+                    window.location.href =
+                        url.substring(0, url.indexOf('/')) + '/homepage'
+                }
             })
     }
 
@@ -46,17 +51,10 @@ class Verification extends Component {
     // This following section will display the form that takes the input from the user.
     render() {
         return (
-            <div className="App">
-                <header className="App-header">
-                    <p>Response from API: {this.state.message}</p>
-                    <a
-                        className="App-link"
-                        href="https://reactjs.org"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Learn React
-                    </a>
+            <div className="App" style={{backgroundColor: 'black'}}>
+                <header className="App-header"  style = {{transform: "translateY(-10vh)"}}>
+                    <p style={{color:'mediumturquoise'}}>{this.state.message.replace(/["']/g, "")}</p>                  
+
                 </header>
             </div>
         )
