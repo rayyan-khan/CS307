@@ -20,7 +20,7 @@ class Homepage extends React.Component {
 
     fetchPosts() {
         try {
-            axios.get("https://still-sierra-32456.herokuapp.com/api/getOrderedPost")
+            axios.get("http://localhost:5000/api/getOrderedPost")
                 .then(res => {
                     const posts = res.data
                     this.setState({ allPosts: posts });

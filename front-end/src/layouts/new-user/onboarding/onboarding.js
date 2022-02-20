@@ -36,7 +36,7 @@ const Onboarding = () => {
 
     const handleNameSubmit = (event) => {
         try {
-            axios.put("https://still-sierra-32456.herokuapp.com/api/updateProfile", {
+            axios.put("http://localhost:5000/api/updateProfile", {
                 firstName: firstName,
                 lastName: lastName,
             })
@@ -61,7 +61,7 @@ const Onboarding = () => {
 
     const handleBioSubmit = (event) => {
         try {
-            axios.put("https://still-sierra-32456.herokuapp.com/api/updateProfile", {
+            axios.put("http://localhost:5000/api/updateProfile", {
                 bio: bio,
             })
         } catch (error) {
