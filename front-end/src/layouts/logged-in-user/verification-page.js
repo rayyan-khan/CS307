@@ -1,5 +1,21 @@
+import {
+    FormControl,
+    FormLabel,
+    FormErrorMessage,
+    FormHelperText,
+    Input,
+    Button,
+    InputRightElement,
+    Popover, 
+    PopoverTrigger,
+    PopoverArrow,
+    PopoverCloseButton,
+    PopoverHeader,
+    PopoverContent
+  } from '@chakra-ui/react'
 import React, { Component } from 'react'
 import axios from 'axios'
+import { color } from '@chakra-ui/react'
 
 class Verification extends Component {
     // This is the constructor that stores the data.
@@ -10,6 +26,8 @@ class Verification extends Component {
 
         this.state = {
             message: 'Verifying email',
+            verify: '',
+            verificationError: false
         }
     }
 
@@ -41,22 +59,38 @@ class Verification extends Component {
         this.setState({
             message: e.target.value,
         })
+        console.log(this.state.message);
     }
 
     // This following section will display the form that takes the input from the user.
     render() {
         return (
-            <div className="App">
-                <header className="App-header">
+            <div className="App" style={{backgroundColor: 'black'}}>
+                <header className="App-header"  style = {{transform: "translateY(-10vh)"}}>
                     <p>Response from API: {this.state.message}</p>
-                    <a
-                        className="App-link"
-                        href="https://reactjs.org"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Learn React
-                    </a>
+                    
+                    <h2 style={{color:'mediumturquoise'}}>Verification Page</h2>
+                    <p></p>
+                    <form>
+
+                    {/* username entry part of form */}
+                    <FormControl isInvalid={this.state.verificationError}>
+                    <FormLabel htmlFor='verification'> </FormLabel>
+                    <Input 
+                        focusBorderColor='teal.200'
+                        errorBorderColor='red.300'
+                        placeholder = 'Verification' 
+                        type = "text" 
+                        name="Verification" 
+                        value={this.state.verification} 
+                        onChange={this.changeHandler}
+                        style={{color:'darkturquoise'}}/>
+                    {!this.state.userError ? ( <FormHelperText>  </FormHelperText>) 
+                    : (<FormErrorMessage>The verification code you entered is invalid.</FormErrorMessage>)}
+                    </FormControl>
+
+                    </form>
+
                 </header>
             </div>
         )
