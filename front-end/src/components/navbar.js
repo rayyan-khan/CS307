@@ -68,8 +68,9 @@ class Navbar extends React.Component {
     this.setState({ currSection: currSection });
     console.log(currSection);
     console.log('lets see')
+    console.log(sessionStorage.getItem('token'))
     try {
-      axios.get("http://localhost:5000/api/test-token/" + sessionStorage.getItem('token')).then((res) => {
+      axios.get("http://localhost:5000/api/test-token/token=" + sessionStorage.getItem('token')).then((res) => {
         console.log(res.data);
         if (res.data === 'true') {
           this.setState({ validToken: true });
@@ -98,7 +99,7 @@ class Navbar extends React.Component {
         </div>
       </MDBNavbarNav>
 
-    if (axios.defaults.headers.common['authorization'] !== undefined) {
+    if (this.state.validToken) {
       return (
         <div style={{ height: "65px" }}>
           <MDBNavbar style={{ height: "100%", backgroundColor: "#151516" }} expand='lg'>
