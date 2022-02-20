@@ -16,6 +16,8 @@ import {
   Stack
 } from '@chakra-ui/react';
 
+import axios from 'axios';
+
 
 import { BsPlusSquare, BsPlusSquareFill } from 'react-icons/bs'
 import { AiFillMessage, AiOutlineMessage, AiOutlineHome } from 'react-icons/ai'
@@ -29,6 +31,7 @@ class Navbar extends React.Component {
     this.state = {
       searchQuery: "",
       currSection: "homepage",
+      validToken: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -60,10 +63,18 @@ class Navbar extends React.Component {
 
 
   componentWillMount() {
+    console.log('test');
+    console.log(axios.defaults.headers.common['authorization'])
     let url = window.location.href;
     let currSection = url.substring(url.lastIndexOf("/") + 1);
     this.setState({ currSection: currSection });
     console.log(currSection);
+    axios.post("http://localhost:5000/api/test-token" + sessionStorage.getItem('token')).then((res) => {
+      if (res.data === 'true') {
+        this.setState({ validToken: true });
+        console.log('done')
+      }
+    });
   }
 
 
@@ -82,7 +93,7 @@ class Navbar extends React.Component {
         </div>
       </MDBNavbarNav>
 
-    if (sessionStorage.getItem("username") !== null) {
+    if (axios.defaults.headers.common['authorization'] !== undefined) {
       return (
         <div style={{ height: "65px" }}>
           <MDBNavbar style={{ height: "100%", backgroundColor: "#151516" }} expand='lg'>

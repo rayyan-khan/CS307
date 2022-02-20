@@ -63,7 +63,10 @@ class Login extends React.Component {
         console.log("got a response");
         console.log(response.data);
         var token = response.data.token
-        axios.defaults.headers.common['authorization'] = token
+        // TODO: Change the token in the local storage
+        sessionStorage.setItem("token", token);
+        // let url = window.location.href;
+        // window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
         this.setState({ axiosError: false });
       })
       .catch(({ response }) => {
