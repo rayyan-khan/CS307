@@ -5,8 +5,13 @@ import {
   FormHelperText,
   Input,
   Button,
-  InputGroup,
-  InputRightElement
+  InputRightElement,
+  Popover, 
+  PopoverTrigger,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverContent
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
@@ -28,7 +33,7 @@ class Login extends React.Component {
       userError: false,
       passwordError: false,
       axiosError: true,
-      loginError: 'There were problems with your login.',
+      loginError: 'No account with this username/password combination.',
       show: false
     }
   }
@@ -44,8 +49,33 @@ class Login extends React.Component {
     }});
   }
 
-  registerUser=()=>{ 
-    console.log("Pressed login");
+  loginUser=()=>{ 
+    
+    console.log("Passed to axios");
+      const payload = {
+        username: this.state.user.Username,
+        password: this.state.user.Password
+      }
+    axios.post("http://localhost:5000/api/login", payload)
+      .then((response) => {
+        console.log("got a response");
+        console.log(response.data);
+        this.setState({ axiosError: false });
+      })
+      .catch(({ response }) => {
+        console.log("got an error");
+        console.log(response.data);
+        this.setState({ loginError: response.data.errors[0] });
+        console.log(this.state.loginError);
+        this.setState({ axiosError: true });
+      })
+
+      if(this.state.axiosError === false) {
+        let url = window.location.href;
+        window.location.href = url.substring(0, url.indexOf("/")) + "/idkwhereitgoes"; // figure out where this goes
+        console.log("Figure out where this should go to.")
+      }
+
   }
 
   handleClick=()=>{
@@ -98,7 +128,18 @@ class Login extends React.Component {
           </FormControl>
 
         </form>
-      
+        <Popover>
+          <PopoverTrigger>
+            <Button colorScheme='black' onClick={this.loginUser} fontSize={25}
+              bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
+            </PopoverTrigger>
+            <PopoverContent bg='black' fontWeight='bold' fontSize={16}>
+              <PopoverArrow />
+              <PopoverCloseButton />
+              {!this.state.axiosError ? (<PopoverHeader>Logging in...</PopoverHeader>)
+                : (<PopoverHeader> {this.state.loginError} </PopoverHeader>)}
+            </PopoverContent>
+        </Popover>
 
         </header>
       </div>
