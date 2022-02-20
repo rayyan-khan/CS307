@@ -121,6 +121,9 @@ class CreatePost extends React.Component {
                 {!this.state.postError ? (<FormHelperText> </FormHelperText>)
                   : (<FormErrorMessage>Please enter a non-empty post Caption.</FormErrorMessage>)}
 
+              </FormControl>
+
+              <FormControl>
                 <h2 style={{ color: "white" }}>Upload Image</h2>
                 <Input style={{ color: "white" }} type='file'
                   accept="image/*"
