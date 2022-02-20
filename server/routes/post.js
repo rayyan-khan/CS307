@@ -19,7 +19,6 @@ postRoutes
     .route('/posts/postImage')
     .post(upload.single('image'), async function (req, res) {
         //  var url = s3.uploadFile(req.file);
-
         //get username
         // var user
         console.log(req.body)
