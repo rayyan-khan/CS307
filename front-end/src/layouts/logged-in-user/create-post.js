@@ -35,8 +35,8 @@ class CreatePost extends React.Component {
       postText: '',
       anonymous: 0,
       selectedFile: null,
-      postError: false
-
+      postError: false,
+      hyperlink: ''
 
     }
   }
