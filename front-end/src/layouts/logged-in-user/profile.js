@@ -130,9 +130,9 @@ class Profile extends React.Component {
             try {
                 //  axios.defaults.headers.common['authorization'] = '$2b$10$7qO4zbtYsg8gRmNrVMgjtu3jd5QejoNTKGQ4gb24QX/Slymkix65e'
                 axios.put("http://localhost:5000/api/updateProfile", {
-                    //   firstName: document.getElementById("fnama").value,
-                    //  lastName: document.getElementById("lname").value,
-                    // bio: document.getElementById("bioname").value
+                      firstName: document.getElementById("fnama").value,
+                      lastName: document.getElementById("lname").value,
+                      bio: document.getElementById("bioname").value
 
                 })
             } catch (error) {
