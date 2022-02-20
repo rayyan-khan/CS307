@@ -36,7 +36,7 @@ class SearchBar extends Component {
             this.setState({ searchableNames: [] })
         } else {
             axios
-                .get('https://still-sierra-32456.herokuapp.com/api/searchUsers/' + input)
+                .get('http://localhost:5000/api/searchUsers/' + input)
                 .then((response) => {
                     console.log(response.data)
                     this.setState({

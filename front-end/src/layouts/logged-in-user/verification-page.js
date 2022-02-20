@@ -15,7 +15,7 @@ class Verification extends Component {
 
     componentDidMount() {
         axios
-            .get('https://still-sierra-32456.herokuapp.com/api/verify/' + this.props.token)
+            .get('http://localhost:5000/api/verify/' + this.props.token)
             .then((response) => {
                 this.setState({ message: JSON.stringify(response.data) })
 
