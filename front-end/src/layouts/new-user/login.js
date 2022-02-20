@@ -142,7 +142,7 @@ class Login extends React.Component {
               <Button colorScheme='black' onClick={this.loginUser} fontSize={25}
                 bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
             </PopoverTrigger>
-            <PopoverContent bg='black' fontWeight='bold' fontSize={16}>
+            <PopoverContent bg='black' fontWeight='bold' fontSize={16} style={{ color: 'mediumturquoise' }}>
               <PopoverArrow />
               <PopoverCloseButton />
               {!this.state.axiosError ? (<PopoverHeader>Logging in...</PopoverHeader>)
