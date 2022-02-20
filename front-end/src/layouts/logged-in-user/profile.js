@@ -28,7 +28,7 @@ class Profile extends React.Component {
         try {
             axios
                 .get(
-                    'https://still-sierra-32456.herokuapp.com/api/getOrderedPost'
+                    'http://localhost:5000/api/getOrderedPost'
                 )
                 .then((res) => {
                     console.log(this.state.username)
@@ -66,7 +66,7 @@ class Profile extends React.Component {
             : sessionUsername
         console.log(userViewing)
         axios
-            .get('https://still-sierra-32456.herokuapp.com/api/getProfile/' + userViewing)
+            .get('http://localhost:5000/api/getProfile/' + userViewing)
             .then((res) => {
                 console.log(res.data)
                 this.setState({

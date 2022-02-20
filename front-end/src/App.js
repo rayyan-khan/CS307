@@ -76,7 +76,7 @@ export default class App extends React.Component {
 
 
         const SignUpToHomepageRoute = ({ loadComponent }) => {
-            axios.post("https://still-sierra-32456.herokuapp.com/api/test-token").then((res) => {
+            axios.post("http://localhost:5000/api/test-token").then((res) => {
                 if (res.data === 'true') {
                     let url = window.location.href;
                     window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
