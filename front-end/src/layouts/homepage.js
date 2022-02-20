@@ -20,26 +20,26 @@ class Homepage extends React.Component {
     }
 
     fetchPosts() {
-        if (localStorage.getItem('allPosts') != null) {
-            console.log('using local storage');
-            this.setState({ allPosts: JSON.parse(localStorage.getItem('allPosts')) });
-            this.setState({ loading: 1 });
-        } else {
-            try {
-                axios.get("http://localhost:5000/api/getOrderedPost")
-                    .then(res => {
-                        const posts = res.data
-                        this.setState({ allPosts: posts });
-                        this.setState({ loading: 1 });
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        this.setState({ loading: -1 })
-                    })
-            } catch (error) {
-                console.log(error);
-            }
+        // if (localStorage.getItem('allPosts') != null) {
+        //     console.log('using local storage');
+        //     this.setState({ allPosts: JSON.parse(localStorage.getItem('allPosts')) });
+        //     this.setState({ loading: 1 });
+        // } else {
+        try {
+            axios.get("http://localhost:5000/api/getOrderedPost")
+                .then(res => {
+                    const posts = res.data
+                    this.setState({ allPosts: posts });
+                    this.setState({ loading: 1 });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    this.setState({ loading: -1 })
+                })
+        } catch (error) {
+            console.log(error);
         }
+        // }
     }
 
 

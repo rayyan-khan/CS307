@@ -62,6 +62,8 @@ class Login extends React.Component {
       .then((response) => {
         console.log("got a response");
         console.log(response.data);
+        var token = response.data.token
+        axios.defaults.headers.common['authorization'] = token
         this.setState({ axiosError: false });
       })
       .catch(({ response }) => {
