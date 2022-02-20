@@ -12,6 +12,8 @@ class Profile extends React.Component {
         this.state = {
             username: '',
             bio: '',
+            firstName: '',
+            lastName: '',
             numTagsFollowing: 0,
             numFollowing: 0,
             numFollowers: 0,
@@ -72,6 +74,8 @@ class Profile extends React.Component {
                     firstName: res.data.firstName,
                     lastName: res.data.lastName,
                     bio: res.data.bio,
+                    firstName: res.data.firstName ? res.data.firstName : '',
+                    lastName: res.data.lastName ? res.data.lastName : '',
                     numTagsFollowing: this.formatNum(6900),
                     numFollowing: this.formatNum(420000),
                     numFollowers: this.formatNum(44444444),
@@ -189,7 +193,6 @@ class Profile extends React.Component {
                                                             </Text>
                                                         </Stack>
                                                     </Box>
-
                                                     <Box pr={'5px'} pt={'1vh'}>
                                                         {this.state.viewingSelf ? (
                                                             <Box>
