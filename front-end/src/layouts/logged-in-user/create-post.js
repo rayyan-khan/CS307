@@ -47,7 +47,8 @@ class CreatePost extends React.Component {
     } else {
       axios.post("https://still-sierra-32456.herokuapp.com/api/posts/postImage", data);
     }
-
+    let url = window.location.href;
+    window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
   }
 
   fileSelecteHandler = (events) => {
