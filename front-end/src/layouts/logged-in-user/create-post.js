@@ -65,17 +65,19 @@ class CreatePost extends React.Component {
     data.append('image', this.state.selectedFile);
     data.append('anonymous', this.state.anonymous);
     data.append('caption', this.state.postText);
-
+    let url = window.location.href;
     if (this.state.selectedFile === null) {
       let jsonObj = {}
       jsonObj['anonymous'] = this.state.anonymous;
       jsonObj['caption'] = this.state.postText;
       axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj)
+      window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
     } else {
       axios.post("http://localhost:5000/api/posts/postImage", data);
+      window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
     }
-    let url = window.location.href;
-    window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+
+
   }
 
   fileSelecteHandler = (events) => {
