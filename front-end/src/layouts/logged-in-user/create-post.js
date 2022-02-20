@@ -1,3 +1,25 @@
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Badge,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  Button,
+  PopoverAnchor,
+  transform
+} from '@chakra-ui/react'
+
 import React from 'react'
 const axios = require('axios');
 
@@ -10,7 +32,8 @@ class CreatePost extends React.Component {
     this.state = {
       postText: '',
       anonymous: '',
-      selectedFile: null
+      selectedFile: null,
+      postError: false
 
 
     }
@@ -34,6 +57,10 @@ class CreatePost extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
 
+    if (this.state.postText === '') {
+      return;
+    }
+
     const data = new FormData();
     data.append('image', this.state.selectedFile);
     data.append('anonymous', this.state.anonymous);
@@ -43,9 +70,9 @@ class CreatePost extends React.Component {
       let jsonObj = {}
       jsonObj['anonymous'] = this.state.anonymous;
       jsonObj['caption'] = this.state.postText;
-      axios.post("https://still-sierra-32456.herokuapp.com/api/posts/postNoImage", jsonObj)
+      axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj)
     } else {
-      axios.post("https://still-sierra-32456.herokuapp.com/api/posts/postImage", data);
+      axios.post("http://localhost:5000/api/posts/postImage", data);
     }
     let url = window.location.href;
     window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
@@ -82,6 +109,7 @@ class CreatePost extends React.Component {
                 <label className="form-check-label">Make Anonymous</label>
               </div>
               <button type="submit" className="btn btn-primary">Submit</button>
+
             </div>
           </form>
         </header>
