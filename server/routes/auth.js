@@ -10,6 +10,7 @@ const decodeHeader = require('../utils/decodeHeader')
 
 authRoutes.route("/test-token/:token").get(async (req, res) => {
     var user;
+    console.log(req.params.token.substring(6))
     try {
         //Use decodeHeader to extract user info from header or throw an error
         user = await decodeHeader.decodeAuthHeader(req.params.token)

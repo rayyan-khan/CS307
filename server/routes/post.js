@@ -188,7 +188,9 @@ postRoutes.route('/getSpecificPost/:postID').get(function (req, res) {
 
 //use the below route to get all the posts in order of time posted
 postRoutes.route('/getOrderedPost').get(function (req, res) {
-    var sql = 'SELECT * From Post Order BY timeStamp DESC'
+  //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
+    var anony = "anonymous"
+    var sql = "SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN '" + anony + "'"+" ELSE username END AS username From Post Order BY timeStamp DESC"
 
     con.query(sql, function (err, result) {
         if (err) {
