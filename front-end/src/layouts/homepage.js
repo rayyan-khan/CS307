@@ -65,7 +65,7 @@ class Homepage extends React.Component {
             return (
                 <Center bg={"#151516"} pb={'100vh'}>
                     <Center fontSize={'4xl'} color={'white'} pt={'40vh'}>
-                        <Spinner color='#AD343E' size='xl' />
+                        <Spinner color='darkturquoise' size='xl' />
                     </Center>
                 </Center>
             );

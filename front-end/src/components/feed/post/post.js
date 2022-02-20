@@ -112,49 +112,46 @@ export default function Post({ post }) {
                 pos={'relative'}
                 style={linkPageBool ? { cursor: 'pointer' } : {}}
             /> */}
+            <Stack align={'center'} direction={'column'} spacing={4}>
+                <Center>
+                    <Heading minW={"30px"} onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        if (sessionStorage.getItem('username') == null) {
+                            let url = window.location.href;
+                            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                        } else {
+                            let url = window.location.href;
+                            window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
+                        }
+                    }} style={{ color: "darkturquoise", cursor: 'pointer' }} fontSize={'2xl'} fontFamily={'body'}>
+                        {post.username}
+                    </Heading>
+                </Center>
+                <Text
+                    textAlign={'center'}
+                    color={"#DEDDDD"}
+                    pt={'10px'}>
+                    {post.postCaption}
+                </Text>
 
-            <Center>
-                <Heading minW={"30px"} onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    if (sessionStorage.getItem('username') == null) {
-                        let url = window.location.href;
-                        window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-                    } else {
-                        let url = window.location.href;
-                        window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
-                    }
-                }} style={{ color: "#AD343E", cursor: 'pointer' }} fontSize={'2xl'} fontFamily={'body'}>
-                    {post.username}
-                </Heading>
-            </Center>
-            <Text
-                textAlign={'center'}
-                color={"#DEDDDD"}
-                px={3}>
-                {post.postCaption}
-            </Text>
 
-
-            <Center>
                 {post.url !== "" ? <Box alignSelf={'center'}
                     px={0}
-                    pt={10}
+                    pt={5}
                     w={"100%"}
                 >
                     <Image src={post.url} />
                 </Box> : <></>}
-            </Center>
 
 
-            {/* {post.bodyURL !== "" ? <LinkPreview
-                margin="30px auto"
-                width="500px"
-                url={post.bodyURL}
-                backgroundColor='white'
-            /> : <></>} */}
-
-
+                {post.bodyURL !== "" ? <LinkPreview
+                    margin="30px auto"
+                    width="500px"
+                    url={post.bodyURL}
+                    backgroundColor='white'
+                /> : <></>}
+            </Stack>
 
 
             <Stack align={'center'} justify={'center'} direction={'row'} mt={6}>
@@ -190,7 +187,7 @@ export default function Post({ post }) {
                     >
                         {post.likesCount}
                     </Text>
-                    {isLiked ? <IconButton onClick={handleLiked} style={{ backgroundColor: "#AD343E", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
+                    {isLiked ? <IconButton onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
                 </Stack>
                 <Stack direction={'column'}>
                     <Text
@@ -201,10 +198,10 @@ export default function Post({ post }) {
                     >
                         {post.dislikeCount}
                     </Text>
-                    {isDisliked ? <IconButton onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "#AD343E", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton style={{ cursor: 'pointer' }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
+                    {isDisliked ? <IconButton onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton style={{ cursor: 'pointer' }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
                 </Stack>
                 <Stack direction={'column'}>
-                    {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px", backgroundColor: "#AD343E", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                    {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
                 </Stack>
             </Stack>
         </Box>

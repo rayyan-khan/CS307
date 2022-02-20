@@ -6,7 +6,7 @@ class CreatePost extends React.Component {
 
   constructor(props) {
     super(props)
-    
+
     this.state = {
       postText: '',
       anonymous: '',
@@ -25,9 +25,9 @@ class CreatePost extends React.Component {
   makeAnonymous = (event) => {
     var checkBox = document.getElementById("checkbox");
     if (checkBox.checked === true) {
-      this.setState({anonymous: 1})
+      this.setState({ anonymous: 1 })
     } else {
-      this.setState({anonymous: 0})
+      this.setState({ anonymous: 0 })
     }
   }
 
@@ -43,11 +43,11 @@ class CreatePost extends React.Component {
       let jsonObj = {}
       jsonObj['anonymous'] = this.state.anonymous;
       jsonObj['caption'] = this.state.postText;
-      axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj)
+      axios.post("https://still-sierra-32456.herokuapp.com/api/posts/postNoImage", jsonObj)
     } else {
-      axios.post("http://localhost:5000/api/posts/postImage", data);
+      axios.post("https://still-sierra-32456.herokuapp.com/api/posts/postImage", data);
     }
-    
+
   }
 
   fileSelecteHandler = (events) => {
@@ -60,27 +60,27 @@ class CreatePost extends React.Component {
   // 
   // 
   render() {
-    
+
     return (
       <div className="App">
         <header className="App-header">
-          <form onSubmit= {this.handleSubmit}> 
+          <form onSubmit={this.handleSubmit}>
             <div>
               <div className="form-group row">
-              <label>Post Text:</label>
-              <textarea className="textA" type = 'text' value= {this.state.postText} 
-               onChange= {this.handlePostTextChange} rows="3" maxLength="150"> </textarea>
-               </div>
-               <div className="form-group row">
-              <label>Upload Image:</label>
-              <input type = 'file' 
-               onChange= {this.fileSelecteHandler} /> 
-               </div>
-               <div className="form-check">
-                  <input type="checkbox" className="form-check-input" id = "checkbox" onClick = {this.makeAnonymous}/>
-                  <label className="form-check-label">Make Anonymous</label>
-                </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
+                <label>Post Text:</label>
+                <textarea className="textA" type='text' value={this.state.postText}
+                  onChange={this.handlePostTextChange} rows="3" maxLength="150"> </textarea>
+              </div>
+              <div className="form-group row">
+                <label>Upload Image:</label>
+                <input type='file'
+                  onChange={this.fileSelecteHandler} />
+              </div>
+              <div className="form-check">
+                <input type="checkbox" className="form-check-input" id="checkbox" onClick={this.makeAnonymous} />
+                <label className="form-check-label">Make Anonymous</label>
+              </div>
+              <button type="submit" className="btn btn-primary">Submit</button>
             </div>
           </form>
         </header>

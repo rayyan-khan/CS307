@@ -21,7 +21,7 @@ class PersonPostPage extends React.Component {
     fetchPosts() {
         console.log("test");
         try {
-            axios.get("http://localhost:5000/api/getSpecificPost/" + this.props.postid)
+            axios.get("https://still-sierra-32456.herokuapp.com/api/getSpecificPost/" + this.props.postid)
                 .then(res => {
                     this.setState({ post: res.data });
                     console.log(res.data);

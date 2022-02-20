@@ -73,11 +73,11 @@ class Navbar extends React.Component {
         <div style={{ width: "16%" }}>
           <MDBContainer>
             <MDBNavbarBrand href='/homepage'>
-              <IconButton style={{ backgroundColor: this.state.currSection === "homepage" ? "#AD343E" : "#ffffff", color: this.state.currSection === "homepage" ? "#ffffff" : "#000000" }} aria-label='Search database' icon={<AiOutlineHome />} />
+              <IconButton style={{ backgroundColor: this.state.currSection === "homepage" ? "darkturquoise" : "#ffffff", color: this.state.currSection === "homepage" ? "#ffffff" : "#000000" }} icon={<AiOutlineHome />} />
             </MDBNavbarBrand>
           </MDBContainer>
         </div>
-        <div className="position-absolute" style={{left: "42%", width: "16%", textAlign: "left"}}>
+        <div className="position-absolute" style={{ left: "42%", width: "16%", textAlign: "left" }}>
           <SearchBar onSubmit={this.submitForm} />
         </div>
       </MDBNavbarNav>
@@ -91,17 +91,17 @@ class Navbar extends React.Component {
               <MDBNavbarNav right>
                 <MDBNavbarItem>
                   <MDBNavbarLink style={{ color: "#ffffff" }} href='/createPost'>
-                    {this.state.currSection === "post" ? <IconButton style={{ color: "white", backgroundColor: "#AD343E" }} aria-label='Create Post' icon={<BsPlusSquareFill />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} aria-label='Search database' icon={<BsPlusSquare />} />}
+                    {this.state.currSection === "createPost" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<BsPlusSquareFill />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} icon={<BsPlusSquare />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink style={{ color: "#ffffff" }} href='/dms'>
-                    {this.state.currSection === "dms" ? <IconButton style={{ color: "white", backgroundColor: "#AD343E" }} aria-label='Direct Message' icon={<AiFillMessage />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} aria-label='Search database' icon={<AiOutlineMessage />} />}
+                    {this.state.currSection === "dms" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<AiFillMessage />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} icon={<AiOutlineMessage />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink style={{ color: "#ffffff" }} href='/profile'>
-                    {this.state.currSection === "profile" ? <IconButton style={{ color: "white", backgroundColor: "#AD343E" }} aria-label='Profile' icon={<RiProfileFill />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} aria-label='Search database' icon={<RiProfileLine />} />}
+                    {this.state.currSection === "profile" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<RiProfileFill />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} icon={<RiProfileLine />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
               </MDBNavbarNav>
@@ -117,10 +117,10 @@ class Navbar extends React.Component {
             <div style={{ top: "100px" }}>
               <MDBNavbarNav right>
                 <Stack direction='row' spacing={4}>
-                  <Button onClick={this.goToSignup} style={{ backgroundColor: this.state.currSection === "signup" ? "#AD343E" : "#ffffff", color: this.state.currSection === "signup" ? "#ffffff" : "#000000", right: "25px" }} variant='solid'>
+                  <Button onClick={this.goToSignup} style={{ backgroundColor: this.state.currSection === "signup" ? "darkturquoise" : "#ffffff", color: this.state.currSection === "signup" ? "#ffffff" : "#000000", right: "25px" }} variant='solid'>
                     Signup
                   </Button>
-                  <Button onClick={this.goToLogin} style={{ backgroundColor: this.state.currSection === "login" ? "#AD343E" : "#ffffff", color: this.state.currSection === "login" ? "#ffffff" : "#000000", right: "25px" }} variant='solid'>
+                  <Button onClick={this.goToLogin} style={{ backgroundColor: this.state.currSection === "login" ? "darkturquoise" : "#ffffff", color: this.state.currSection === "login" ? "#ffffff" : "#000000", right: "25px" }} variant='solid'>
                     Login
                   </Button>
                 </Stack>
