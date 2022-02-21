@@ -170,8 +170,9 @@ class Profile extends React.Component {
                                                                         <Stack direction={'row'}>
                                                                             <Input color='white'
                                                                                 height={'3.25vh'}
-                                                                                width={'5vw'}
-                                                                                fontSize={'2xl'}
+                                                                                width={'8vw'}
+                                                                                   placeholder="First Name"
+                                                                                fontSize={'2l'}
                                                                                 value={this.state.firstName}
                                                                                 onChange={
                                                                                     (e) => {
@@ -180,8 +181,9 @@ class Profile extends React.Component {
                                                                                 } />
                                                                             <Input color='white'
                                                                                 height={'3.25vh'}
-                                                                                width={'5vw'}
-                                                                                fontSize={'2xl'}
+                                                                                width={'8vw'}
+                                                                                   placeholder="Last Name"
+                                                                                fontSize={'2l'}
                                                                                 value={this.state.lastName}
                                                                                 onChange={
                                                                                     (e) => {
@@ -252,7 +254,7 @@ class Profile extends React.Component {
                                                                     <>
                                                                         <Input color='white'
                                                                             // border={'none'}
-                                                                            height={'2.25vh'}
+                                                                            height={'3.25vh'}
                                                                             width={'auto'}
                                                                             value={this.state.bio}
                                                                             onChange={
@@ -296,7 +298,7 @@ class Profile extends React.Component {
                                                                                     try {
                                                                                         axios.put("http://localhost:5000/api/updateProfile", {
                                                                                             firstName: this.state.firstName,
-                                                                                            lastName: this.state.firstName,
+                                                                                            lastName: this.state.lastName,
                                                                                             bio: this.state.bio,
                                                                                         })
                                                                                     } catch (error) {
