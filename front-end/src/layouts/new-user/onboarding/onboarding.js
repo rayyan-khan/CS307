@@ -32,7 +32,7 @@ const Onboarding = () => {
     const [currentFrame, setCurrentFrame] = useState(0);
 
     // TODO: Remove this and get auth header from backend
-    axios.defaults.headers.common['authorization'] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bmFpZGphdmVkQGljbG91ZC5jb20iLCJ1c2VybmFtZSI6Ikp1bmFpZCIsImlhdCI6MTY0NTMyMzU3NSwiZXhwIjoxNjQ1MzM0Mzc1fQ.ElcL0uSViMVYJ6Lip_UTA9MjsuZ8m29Y8yoLyIeFM6A"
+    axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
 
     const handleNameSubmit = (event) => {
         try {

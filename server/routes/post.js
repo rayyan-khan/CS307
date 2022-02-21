@@ -1,6 +1,7 @@
 const express = require('express')
 const postRoutes = express.Router()
 //const s3 = require("../s3Bucket/create-bucket")
+const decodeHeader = require('../utils/decodeHeader')
 
 //Use the below route to create a post and store into the database and S3
 const s3 = require('../s3Bucket/create-bucket')
@@ -20,17 +21,17 @@ postRoutes
     .post(upload.single('image'), async function (req, res) {
         //  var url = s3.uploadFile(req.file);
         //get username
-        // var user
+        var user
         console.log(req.body)
         try {
             //Use decodeHeader to extract user info from header or throw an error
-           // user = await decodeHeader.decodeAuthHeader(req)
+            user = await decodeHeader.decodeAuthHeader(req)
         } catch (err) {
 
             return res.status(400).json(err)
         }
 
-          const { email, username } = user
+        const { email, username } = user
         console.log(username);
         //
         var getId = 'Select Max(postID) as ID From Post;'
@@ -89,17 +90,16 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
     //  var url = s3.uploadFile(req.file);
 
     //get username
-    // var user
-    console.log(req.body)
+    var user
     try {
         //Use decodeHeader to extract user info from header or throw an error
-       // user = await decodeHeader.decodeAuthHeader(req)
+        user = await decodeHeader.decodeAuthHeader(req)
     } catch (err) {
 
         return res.status(400).json(err)
     }
 
-      const { email, username } = user
+    const { email, username } = user
     console.log(username);
     //
 
@@ -187,9 +187,9 @@ postRoutes.route('/getSpecificPost/:postID').get(function (req, res) {
 
 //use the below route to get all the posts in order of time posted
 postRoutes.route('/getOrderedPost').get(function (req, res) {
-  //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
+    //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
     var anony = "anonymous"
-    var sql = "SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN '" + anony + "'"+" ELSE username END AS username From Post Order BY timeStamp DESC"
+    var sql = "SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN '" + anony + "'" + " ELSE username END AS username From Post Order BY timeStamp DESC"
 
     con.query(sql, function (err, result) {
         if (err) {

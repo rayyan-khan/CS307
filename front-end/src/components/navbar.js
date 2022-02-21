@@ -69,11 +69,15 @@ class Navbar extends React.Component {
     console.log(currSection);
     console.log('lets see')
     console.log(sessionStorage.getItem('token'))
+    axios.defaults.headers.common['authorization'] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bmFpZGphdmVkQGljbG91ZC5jb20iLCJ1c2VybmFtZSI6Ikp1bmFpZCIsImlhdCI6MTY0NTQwMTgwMiwiZXhwIjoxNjQ1NDEyNjAyfQ.p9n8z6JGOw89Y95uuSDPeLN5n3REOTtjkbIvvKG51rc";
     try {
-      axios.get("http://localhost:5000/api/test-token/token=" + sessionStorage.getItem('token')).then((res) => {
+      axios.get("http://localhost:5000/api/test-token/").then((res) => {
         console.log(res.data);
         if (res.data === 'true') {
           this.setState({ validToken: true });
+          // Line
+          axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
+          // Line
           console.log('done')
         }
       });
