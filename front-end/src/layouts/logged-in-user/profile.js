@@ -289,7 +289,6 @@ class Profile extends React.Component {
 
 
                                                                                 onClick={() => {
-                                                                                    // TODO: Remove this and get auth header from backend
                                                                                     axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token')
                                                                                     console.log(this.state.firstName)
                                                                                     console.log(this.state.lastName)

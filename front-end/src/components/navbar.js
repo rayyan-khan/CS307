@@ -32,6 +32,7 @@ class Navbar extends React.Component {
       searchQuery: "",
       currSection: "homepage",
       validToken: false,
+      username: "",
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -46,9 +47,6 @@ class Navbar extends React.Component {
     event.preventDefault();
     let searchQuery = this.state.searchQuery;
     console.log(searchQuery);
-    let url = window.location.href;
-    window.location.href = url.substring(0, url.indexOf("/")) + "/search";
-    sessionStorage.setItem("search_query", searchQuery);
   }
 
   goToSignup() {
@@ -81,6 +79,14 @@ class Navbar extends React.Component {
       console.log(e);
     }
 
+
+    if (sessionStorage.getItem('token') != null) {
+      axios.get("http://localhost:5000/api/getUserFromHeader/").then((res) => {
+        console.log(res.data);
+        this.setState({ username: res.data.username });
+      });
+    }
+
   }
 
 
@@ -95,7 +101,7 @@ class Navbar extends React.Component {
           </MDBContainer>
         </div>
         <div className="position-absolute" style={{ left: "42%", width: "16%", textAlign: "left" }}>
-          <SearchBar onSubmit={this.submitForm} />
+          <SearchBar />
         </div>
       </MDBNavbarNav>
 
@@ -117,7 +123,7 @@ class Navbar extends React.Component {
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
-                  <MDBNavbarLink style={{ color: "#ffffff" }} href='/profile'>
+                  <MDBNavbarLink style={{ color: "#ffffff" }} href={'/profile/' + this.state.username}>
                     {this.state.currSection === "profile" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<RiProfileFill />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} icon={<RiProfileLine />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>

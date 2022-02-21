@@ -23,7 +23,7 @@ class Verification extends Component {
 
                 if (token) {
                     axios.defaults.headers.common['authorization'] = token
-
+                    sessionStorage.setItem('token', token)
                     let url = window.location.href
                     window.location.href =
                         url.substring(0, url.indexOf('/')) + '/onboarding'
@@ -33,7 +33,7 @@ class Verification extends Component {
                 if (!response || !response.data) {
                     this.setState({ message: 'Some other error' })
                 } else this.setState({ message: JSON.stringify(response.data) })
-                if(this.state.message.replace(/["']/g, "") === "Account already verified") {
+                if (this.state.message.replace(/["']/g, "") === "Account already verified") {
                     let url = window.location.href
                     window.location.href =
                         url.substring(0, url.indexOf('/')) + '/homepage'
@@ -51,9 +51,9 @@ class Verification extends Component {
     // This following section will display the form that takes the input from the user.
     render() {
         return (
-            <div className="App" style={{backgroundColor: 'black'}}>
-                <header className="App-header"  style = {{transform: "translateY(-10vh)"}}>
-                    <p style={{color:'mediumturquoise'}}>{this.state.message.replace(/["']/g, "")}</p>                  
+            <div className="App" style={{ backgroundColor: 'black' }}>
+                <header className="App-header" style={{ transform: "translateY(-10vh)" }}>
+                    <p style={{ color: 'mediumturquoise' }}>{this.state.message.replace(/["']/g, "")}</p>
 
                 </header>
             </div>

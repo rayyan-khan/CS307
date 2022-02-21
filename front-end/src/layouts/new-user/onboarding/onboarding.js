@@ -32,9 +32,10 @@ const Onboarding = () => {
     const [currentFrame, setCurrentFrame] = useState(0);
 
     // TODO: Remove this and get auth header from backend
-    axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
+
 
     const handleNameSubmit = (event) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
         try {
             axios.put("http://localhost:5000/api/updateProfile", {
                 firstName: firstName,
@@ -60,6 +61,7 @@ const Onboarding = () => {
     }
 
     const handleBioSubmit = (event) => {
+        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
         try {
             axios.put("http://localhost:5000/api/updateProfile", {
                 bio: bio,
