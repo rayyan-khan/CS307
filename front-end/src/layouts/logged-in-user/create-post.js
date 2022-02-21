@@ -69,11 +69,11 @@ class CreatePost extends React.Component {
     data.append('anonymous', this.state.anonymous);
     data.append('caption', this.state.postText);
     let url = window.location.href;
+    axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
     if (this.state.selectedFile === null) {
       let jsonObj = {}
       jsonObj['anonymous'] = this.state.anonymous;
       jsonObj['caption'] = this.state.postText;
-
       axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj).then((response) => {
         let url = window.location.href;
         window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";

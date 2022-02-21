@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken')
 
 module.exports = {
     decodeAuthHeader: req => {
-        var token = req.replace('"', '')
+        console.log(req.headers)
+        var token = req.headers.authorization;
         if (!token) {
             console.log('no header')
             throw 'No header'
