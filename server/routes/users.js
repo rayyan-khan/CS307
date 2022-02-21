@@ -5,6 +5,18 @@ const decodeHeader = require('../utils/decodeHeader')
 //Use the below line in any file to connect to the database
 var con = require('../database/conn')
 
+userRoutes.route('/getUserFromHeader').get(async (req, res) => {
+    var user
+    try {
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        user = undefined
+        res.status(400).send(err)
+    }
+
+    res.status(200).json(user)
+})
+
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var user
     var amUser = false

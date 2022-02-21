@@ -25,7 +25,7 @@ class Profile extends React.Component {
             userExists: true,
             loading: true,
             allPosts: [],
-            editMode: true,
+            editMode: false,
         }
     }
 
@@ -40,7 +40,7 @@ class Profile extends React.Component {
                     console.log(this.state.username)
                     console.log(res.data)
                     const posts = res.data.filter((post) => {
-                        return post.username === this.props.username
+                        return post.username === this.state.username
                     })
                     this.setState({ allPosts: posts })
                 })
@@ -72,20 +72,28 @@ class Profile extends React.Component {
         this.setState({ lastName: e.target.value })
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        console.log('test')
         this.fetchPosts()
 
-        var sessionUsername = sessionStorage.getItem('username')
-        var userViewing = this.props.username
+
+        var sessionUsername
+        await axios.get('http://localhost:5000/api/getUserFromHeader').then((res) => {
+            console.log('lala')
+            sessionUsername = res.data.username
+        })
+
+        var userViewing = await (this.props.username
             ? this.props.username
-            : sessionUsername
+            : sessionUsername)
+        this.setState({ username: userViewing })
         console.log(userViewing)
-        axios
+        await axios
             .get('http://localhost:5000/api/getProfile/' + userViewing)
             .then((res) => {
                 console.log(res.data)
                 this.setState({
-                    username: this.props.username,
+                    username: userViewing,
                     firstName: res.data.firstName,
                     lastName: res.data.lastName,
                     bio: res.data.bio,
@@ -99,7 +107,7 @@ class Profile extends React.Component {
                     // numFollowers: this.formatNum(res.data.numFollowers),
                     viewingSelf:
                         sessionUsername != null &&
-                        sessionUsername.localeCompare(this.props.username) ===
+                        sessionUsername.localeCompare(userViewing) ===
                         0,
                     loading: false,
                 })
@@ -116,29 +124,6 @@ class Profile extends React.Component {
 
     formatNum(num) {
         return Intl.NumberFormat('en', { notation: 'compact' }).format(num)
-    }
-
-    updateProf() {
-        //console.log(this.state)
-        if (this.state.edit === "edit") {
-            this.setState({ edit: "submit" })
-        } else {
-            this.setState({ edit: "edit" })
-            console.log(document.getElementById("bioname").value)
-            console.log(document.getElementById("fname").value)
-            console.log(document.getElementById("lname").value)
-            try {
-                //  axios.defaults.headers.common['authorization'] = '$2b$10$7qO4zbtYsg8gRmNrVMgjtu3jd5QejoNTKGQ4gb24QX/Slymkix65e'
-                axios.put("http://localhost:5000/api/updateProfile", {
-                      firstName: document.getElementById("fnama").value,
-                      lastName: document.getElementById("lname").value,
-                      bio: document.getElementById("bioname").value
-
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 
     render() {
@@ -183,20 +168,26 @@ class Profile extends React.Component {
                                                                 this.state.editMode ? (
                                                                     <>
                                                                         <Stack direction={'row'}>
-                                                                            <Text contentEditable={'true'} fontSize={'2xl'} color={'white'} onChange={
-                                                                                (e) => {
-                                                                                    this.setState({ firstName: e.target.value })
-                                                                                }
-                                                                            }>
-                                                                                {this.state.firstName}
-                                                                            </Text>
-                                                                            <Text contentEditable={'true'} fontSize={'2xl'} color={'white'} onChange={
-                                                                                (e) => {
-                                                                                    this.setState({ lastName: e.target.value })
-                                                                                }
-                                                                            }>
-                                                                                {this.state.lastName}
-                                                                            </Text>
+                                                                            <Input color='white'
+                                                                                height={'3.25vh'}
+                                                                                width={'5vw'}
+                                                                                fontSize={'2xl'}
+                                                                                value={this.state.firstName}
+                                                                                onChange={
+                                                                                    (e) => {
+                                                                                        this.setState({ firstName: e.target.value })
+                                                                                    }
+                                                                                } />
+                                                                            <Input color='white'
+                                                                                height={'3.25vh'}
+                                                                                width={'5vw'}
+                                                                                fontSize={'2xl'}
+                                                                                value={this.state.lastName}
+                                                                                onChange={
+                                                                                    (e) => {
+                                                                                        this.setState({ lastName: e.target.value })
+                                                                                    }
+                                                                                } />
                                                                         </Stack>
                                                                         <Text pl={'.15vw'} fontWeight={'bold'} color={'white'} fontSize={'xs'}>
                                                                             @{this.state.username}
@@ -259,15 +250,18 @@ class Profile extends React.Component {
                                                             {
                                                                 this.state.editMode ? (
                                                                     <>
-                                                                        <Text contentEditable={'true'} color='white' onChange={
-                                                                            (e) => {
-                                                                                this.setState({
-                                                                                    bio: e.target.value
-                                                                                })
-                                                                            }
-                                                                        }>
-                                                                            {this.state.bio}
-                                                                        </Text>
+                                                                        <Input color='white'
+                                                                            // border={'none'}
+                                                                            height={'2.25vh'}
+                                                                            width={'auto'}
+                                                                            value={this.state.bio}
+                                                                            onChange={
+                                                                                (e) => {
+                                                                                    this.setState({
+                                                                                        bio: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            } />
                                                                     </>
                                                                 ) : (
                                                                     <>
@@ -295,11 +289,11 @@ class Profile extends React.Component {
 
 
                                                                                 onClick={() => {
-                                                                                    this.setState({
-                                                                                        editMode: false
-                                                                                    })
                                                                                     // TODO: Remove this and get auth header from backend
-                                                                                    axios.defaults.headers.common['authorization'] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bmFpZGphdmVkQGljbG91ZC5jb20iLCJ1c2VybmFtZSI6Ikp1bmFpZCIsImlhdCI6MTY0NTMyMzU3NSwiZXhwIjoxNjQ1MzM0Mzc1fQ.ElcL0uSViMVYJ6Lip_UTA9MjsuZ8m29Y8yoLyIeFM6A"
+                                                                                    axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token')
+                                                                                    console.log(this.state.firstName)
+                                                                                    console.log(this.state.lastName)
+                                                                                    console.log(this.state.bio)
                                                                                     try {
                                                                                         axios.put("http://localhost:5000/api/updateProfile", {
                                                                                             firstName: this.state.firstName,
@@ -309,6 +303,10 @@ class Profile extends React.Component {
                                                                                     } catch (error) {
                                                                                         console.log(error);
                                                                                     }
+                                                                                    this.setState({
+                                                                                        editMode: false
+                                                                                    })
+
                                                                                 }}
                                                                             >
                                                                                 Save Changes

@@ -26,7 +26,7 @@ export default function LargePost({ post }) {
 
     const handleLiked = (event) => {
         event.stopPropagation();
-        if (sessionStorage.getItem('username') == null) {
+        if (sessionStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
@@ -41,7 +41,7 @@ export default function LargePost({ post }) {
 
     const handleDisliked = (event) => {
         event.stopPropagation();
-        if (sessionStorage.getItem('username') == null) {
+        if (sessionStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
@@ -56,7 +56,7 @@ export default function LargePost({ post }) {
     const [isBookmarked, setIsBookmarked] = React.useState(false);
     const handleBookmarked = (event) => {
         event.stopPropagation();
-        if (sessionStorage.getItem('username') == null) {
+        if (sessionStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
@@ -96,7 +96,7 @@ export default function LargePost({ post }) {
             onClick={(event) => {
                 if (linkPageBool) {
                     event.preventDefault();
-                    if (sessionStorage.getItem('username') == null) {
+                    if (sessionStorage.getItem('token') == null) {
                         let url = window.location.href;
                         window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                     } else {
@@ -120,7 +120,7 @@ export default function LargePost({ post }) {
                     <Heading minW={"30px"} onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
-                        if (sessionStorage.getItem('username') == null) {
+                        if (sessionStorage.getItem('token') == null) {
                             let url = window.location.href;
                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                         } else {
@@ -128,7 +128,7 @@ export default function LargePost({ post }) {
                             window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
                         }
                     }} style={{ color: "darkturquoise", cursor: 'pointer' }} fontSize={'5xl'} fontFamily={'body'}>
-                        {post.username}
+                        {post.anonymous == 1 ? "Anonymous" : post.username}
                     </Heading>
                 </Center>
                 <Text
@@ -166,7 +166,7 @@ export default function LargePost({ post }) {
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
-                        if (sessionStorage.getItem('username') == null) {
+                        if (sessionStorage.getItem('token') == null) {
                             let url = window.location.href;
                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                         } else {

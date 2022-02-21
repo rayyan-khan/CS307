@@ -26,6 +26,7 @@ import Onboarding from './layouts/new-user/onboarding/onboarding'
 import axios from 'axios'
 
 import { Box } from '@chakra-ui/react'
+import { RiContactsBookLine } from 'react-icons/ri'
 
 export default class App extends React.Component {
     render() {
@@ -52,11 +53,19 @@ export default class App extends React.Component {
 
             if (params.username == null) {
                 //Viewing /profile
-                if (sessionStorage.getItem('username') == null) {
+                if (sessionStorage.getItem('token') == null) {
                     //Viewing /profile and not logged in
                     return <Navigate replace to="/homepage" />
                 } else {
                     //Viewing /profile and logged in
+                    axios.get('http://localhost:5000/api/getUserFromHeader').then((res) => {
+                        console.log(res.data)
+                        return (
+                            <Profile
+                                username={res.data.username}
+                            />
+                        )
+                    })
                     return (
                         <Profile
                             username={sessionStorage.getItem('username')}

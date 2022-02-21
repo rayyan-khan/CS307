@@ -14,74 +14,103 @@ import { FaRegBookmark } from "react-icons/fa"
 import React from 'react';
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import axios from 'axios';
+import { RiContactsBookLine } from 'react-icons/ri';
 
 
 export default function Post({ post, label }) {
-    const [isLiked, setIsLiked] = React.useState(false);
-    const [isDisliked, setIsDisliked] = React.useState(false);
+    const [isLiked, setIsLiked] = React.useState(post.isLiked);
+    const [isDisliked, setIsDisliked] = React.useState(post.isDisliked);
     var posts = JSON.parse(localStorage.getItem('allPosts'));
-    var postIndex = posts.length - label;
-    console.log(postIndex)
-    console.log(posts)
+    console.log(label)
+    var postIndex = label;
+
 
 
     const handleLiked = (event) => {
         event.stopPropagation();
-        if (sessionStorage.getItem('username') == null) {
-            event.preventDefault();
-            let url = window.location.href;
-            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-        } else {
-
-            setIsLiked(!isLiked);
+        setIsLiked(!isLiked);
+        if (!isLiked) {
             post.likesCount += 1;
-            console.log(posts[postIndex])
+            posts[postIndex].isLiked = true;
             posts[postIndex].likesCount += 1;
-            console.log(posts[postIndex])
             localStorage.removeItem('allPosts');
             localStorage.setItem('allPosts', JSON.stringify(posts));
             if (isLiked !== isDisliked) {
                 setIsDisliked(false);
                 post.dislikeCount -= 1;
+                posts[postIndex].isDisliked = false;
                 posts[postIndex].dislikeCount -= 1;
                 localStorage.removeItem('allPosts');
                 localStorage.setItem('allPosts', JSON.stringify(posts));
             }
+        } else {
+            post.likesCount -= 1;
+            posts[postIndex].isLiked = false;
+            posts[postIndex].likesCount -= 1;
+            localStorage.removeItem('allPosts');
+            localStorage.setItem('allPosts', JSON.stringify(posts));
         }
-    }
 
-    const handleDisliked = (event) => {
-        event.stopPropagation();
-        if (sessionStorage.getItem('username') == null) {
+
+        if (sessionStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-        } else {
+        }
+    }
 
+
+
+
+    const handleDisliked = (event) => {
+        event.stopPropagation();
+        setIsDisliked(!isDisliked);
+        if (!isDisliked) {
+            posts[postIndex].isDisliked = true;
             post.dislikeCount += 1;
             posts[postIndex].dislikeCount += 1;
             localStorage.removeItem('allPosts');
             localStorage.setItem('allPosts', JSON.stringify(posts));
-            setIsDisliked(!isDisliked);
+
             if (isLiked !== isDisliked) {
                 setIsLiked(false);
                 post.likesCount -= 1;
+                posts[postIndex].isLiked = false;
                 posts[postIndex].likesCount -= 1;
                 localStorage.removeItem('allPosts');
                 localStorage.setItem('allPosts', JSON.stringify(posts));
             }
+        } else {
+            post.dislikeCount -= 1;
+            posts[postIndex].isDisliked = false;
+            posts[postIndex].dislikeCount -= 1;
+            localStorage.removeItem('allPosts');
+            localStorage.setItem('allPosts', JSON.stringify(posts));
         }
-    }
 
-    const [isBookmarked, setIsBookmarked] = React.useState(false);
-    const handleBookmarked = (event) => {
-        event.stopPropagation();
-        if (sessionStorage.getItem('username') == null) {
+        if (sessionStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+        }
+    }
+
+    const [isBookmarked, setIsBookmarked] = React.useState(post.isBookmarked);
+    const handleBookmarked = (event) => {
+        event.stopPropagation();
+        setIsBookmarked(!isBookmarked);
+        if (!isBookmarked) {
+            posts[postIndex].isBookmarked = true;
         } else {
-            setIsBookmarked(!isBookmarked);
+            posts[postIndex].isBookmarked = false;
+        }
+        localStorage.removeItem('allPosts');
+        localStorage.setItem('allPosts', JSON.stringify(posts));
+
+        if (sessionStorage.getItem('token') == null) {
+            event.preventDefault();
+            let url = window.location.href;
+            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
         }
     }
 
@@ -114,7 +143,7 @@ export default function Post({ post, label }) {
             onClick={(event) => {
                 if (linkPageBool) {
                     event.preventDefault();
-                    if (sessionStorage.getItem('username') == null) {
+                    if (sessionStorage.getItem('token') == null) {
                         let url = window.location.href;
                         window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                     } else {
@@ -137,7 +166,7 @@ export default function Post({ post, label }) {
                     <Heading minW={"30px"} onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
-                        if (sessionStorage.getItem('username') == null) {
+                        if (sessionStorage.getItem('token') == null) {
                             let url = window.location.href;
                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                         } else {
@@ -179,7 +208,7 @@ export default function Post({ post, label }) {
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
-                        if (sessionStorage.getItem('username') == null) {
+                        if (sessionStorage.getItem('token') == null) {
                             let url = window.location.href;
                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                         } else {
