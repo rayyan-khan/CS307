@@ -128,7 +128,7 @@ class Profile extends React.Component {
             console.log(document.getElementById("fname").value)
             console.log(document.getElementById("lname").value)
             try {
-                //  axios.defaults.headers.common['authorization'] = '$2b$10$7qO4zbtYsg8gRmNrVMgjtu3jd5QejoNTKGQ4gb24QX/Slymkix65e'
+                  axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token')
                 axios.put("http://localhost:5000/api/updateProfile", {
                       firstName: document.getElementById("fnama").value,
                       lastName: document.getElementById("lname").value,
