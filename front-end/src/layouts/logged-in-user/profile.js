@@ -77,11 +77,13 @@ class Profile extends React.Component {
         this.fetchPosts()
 
 
-        var sessionUsername
-        await axios.get('http://localhost:5000/api/getUserFromHeader').then((res) => {
-            console.log('lala')
-            sessionUsername = res.data.username
-        })
+        if (axios.defaults.headers.common['authorization'] != null) {
+            var sessionUsername
+            await axios.get('http://localhost:5000/api/getUserFromHeader').then((res) => {
+                console.log('lala')
+                sessionUsername = res.data.username
+            })
+        }
 
         var userViewing = await (this.props.username
             ? this.props.username
@@ -171,7 +173,7 @@ class Profile extends React.Component {
                                                                             <Input color='white'
                                                                                 height={'3.25vh'}
                                                                                 width={'8vw'}
-                                                                                   placeholder="First Name"
+                                                                                placeholder="First Name"
                                                                                 fontSize={'2l'}
                                                                                 value={this.state.firstName}
                                                                                 onChange={
@@ -182,7 +184,7 @@ class Profile extends React.Component {
                                                                             <Input color='white'
                                                                                 height={'3.25vh'}
                                                                                 width={'8vw'}
-                                                                                   placeholder="Last Name"
+                                                                                placeholder="Last Name"
                                                                                 fontSize={'2l'}
                                                                                 value={this.state.lastName}
                                                                                 onChange={
