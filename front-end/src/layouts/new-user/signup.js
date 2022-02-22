@@ -49,7 +49,8 @@ class Login extends React.Component {
       passwordCheckError: false,
       axiosError: true,
       registrationError: 'There were problems with your registration.',
-      show: false
+      show: false,
+      displayPopover: false,
     }
   }
 
@@ -74,6 +75,7 @@ class Login extends React.Component {
     // check that username meets whatever the requirements
     // check that passwords match & meet requirements
     console.log("Pressed submit");
+    this.setState({ displayPopover: true });
 
     // check if email is valid format
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -144,7 +146,8 @@ class Login extends React.Component {
       this.state.userError === false &&
       this.state.passwordError === false &&
       this.state.passwordCheckError === false) {
-      this.setState({ registrationError: "waiting..." })
+      this.setState({ registrationError: "waiting...", displayPopover: true });
+
       console.log("Passed to axios");
       const payload = {
         email: this.state.user.Email,
@@ -160,7 +163,10 @@ class Login extends React.Component {
         .catch(({ response }) => {
           console.log("got an error");
           console.log(response.data);
-          this.setState({ registrationError: response.data.errors[0] });
+          if (response.data.errors != undefined) {
+            this.setState({ registrationError: response.data.errors[0] });
+          }
+          this.setState({ registrationError: response.data });
           console.log(this.state.registrationError);
           this.setState({ axiosError: true });
         })
@@ -266,12 +272,14 @@ class Login extends React.Component {
                 <Button colorScheme='black' onClick={this.registerUser} fontSize={25}
                   bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
               </PopoverTrigger>
-              <PopoverContent bg='black' fontWeight='bold' fontSize={18}>
-                <PopoverArrow />
-                <PopoverCloseButton />
-                {!this.state.axiosError ? (<PopoverHeader>Success! You are registered. Check your email for a verification link!</PopoverHeader>)
-                  : (<PopoverHeader> {this.state.registrationError} </PopoverHeader>)}
-              </PopoverContent>
+              <div display={this.state.displayPopover ? 'default' : 'none'}>
+                <PopoverContent color='mediumturquoise' bg='black' fontWeight='bold' fontSize={18}>
+                  <PopoverArrow />
+                  <PopoverCloseButton />
+                  {!this.state.axiosError ? (<PopoverHeader>Success! You are registered. Check your email for a verification link!</PopoverHeader>)
+                    : (<PopoverHeader> {this.state.registrationError} </PopoverHeader>)}
+                </PopoverContent>
+              </div>
             </Popover>
           </header>
         </div>
