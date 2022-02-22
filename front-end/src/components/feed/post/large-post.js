@@ -150,10 +150,10 @@ export default function LargePost({ post }) {
                 </Box>  </Center> : <></>}
 
 
-                {post.bodyURL !== "" ? <LinkPreview
+                {post.hyperlink !== "" ? <LinkPreview
                     margin="30px auto"
                     width="500px"
-                    url={post.bodyURL}
+                    url={post.hyperlink}
                     backgroundColor='white'
                 /> : <></>}
             </Stack>

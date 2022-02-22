@@ -69,7 +69,7 @@ class Homepage extends React.Component {
 
 
     postHandler() {
-        console.log(this.state.numberOfPosts);
+        console.log(this.state.allPosts);
         localStorage.setItem('allPosts', JSON.stringify(this.state.allPosts));
         return this.state.allPosts.slice(0, this.state.numberOfPosts).map((post, key) => {
             return (
