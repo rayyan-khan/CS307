@@ -113,25 +113,9 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
         console.log(result[0].ID)
         Is = result[0].ID
         Is += 1 //store the ID
+        function checkEmpty(str) {if (str === '') {return 'null'} else {return con.escape(str)}}
         var sql =
-            "INSERT INTO Post Values ('" +
-            Is +
-            "', '" +
-            Is +
-            "', '" +
-            username +
-            "', '" +
-            "12', '14" +
-            "', '" +
-            req.body.caption +
-            "', NOW(),'12" +
-            "', '" +
-            req.body.anonymous +
-            "', '" +
-            'undefined' +
-            "', '" +
-            req.body.hyperlink +
-            "')"
+            `INSERT INTO Post Values (${Is}, ${Is}, ${con.escape(username)}, 12, 14, ${checkEmpty(req.body.caption)}, NOW(), 12, ${checkEmpty(req.body.anonymous)}, null, ${checkEmpty(req.body.hyperlink)})`
         //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
         con.query(sql, function (err, results) {
             if (err) throw err
