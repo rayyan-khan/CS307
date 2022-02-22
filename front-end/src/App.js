@@ -53,7 +53,7 @@ export default class App extends React.Component {
 
             if (params.username == null) {
                 //Viewing /profile
-                if (sessionStorage.getItem('token') == null) {
+                if (localStorage.getItem('token') == null) {
                     //Viewing /profile and not logged in
                     return <Navigate replace to="/homepage" />
                 } else {
@@ -68,7 +68,7 @@ export default class App extends React.Component {
                     })
                     return (
                         <Profile
-                            username={sessionStorage.getItem('username')}
+                            username={localStorage.getItem('username')}
                         />
                     )
                 }
@@ -79,7 +79,7 @@ export default class App extends React.Component {
         }
 
         const PrivateRoute = ({ loadComponent }) => {
-            axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
             axios.post("http://localhost:5000/api/test-token").then((res) => {
                 if (res.data === 'false') {
                     let url = window.location.href;
@@ -91,8 +91,9 @@ export default class App extends React.Component {
 
 
         const SignUpToHomepageRoute = ({ loadComponent }) => {
-            axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
-            axios.post("http://localhost:5000/api/test-token").then((res) => {
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+            axios.get("http://localhost:5000/api/test-token").then((res) => {
+                console.log(res.data)
                 if (res.data === 'true') {
                     let url = window.location.href;
                     window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
@@ -118,7 +119,13 @@ export default class App extends React.Component {
 
                                 }
                             />
-                            <Route path="/login" element={<Login />} />
+                            <Route path="/login"
+
+                                element={
+                                    <SignUpToHomepageRoute loadComponent={<Login />} />
+
+                                }
+                            />
                             <Route path="/homepage" element={<Homepage />} />
                             <Route
                                 path="/createPost"

@@ -54,7 +54,9 @@ class Login extends React.Component {
     }
   }
 
+  componentDidMount() {
 
+  }
 
   changeHandler = e => {
     const name = e.target.name;

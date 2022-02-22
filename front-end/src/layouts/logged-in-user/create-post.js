@@ -43,7 +43,7 @@ class CreatePost extends React.Component {
   }
 
   componentWillMount() {
-    axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
   }
 
   handlePostTextChange = (event) => {
@@ -86,7 +86,7 @@ class CreatePost extends React.Component {
     data.append('anonymous', this.state.anonymous);
     data.append('caption', this.state.postText);
     data.append('hyperlink', this.state.hyperlink);
-    data.append('token', sessionStorage.getItem('token'))
+    data.append('token', localStorage.getItem('token'))
 
     let url = window.location.href;
     if (this.state.selectedFile === null) {
@@ -116,13 +116,13 @@ class CreatePost extends React.Component {
 
   isValidHttpUrl(string) {
     let url;
-    
+
     try {
       url = new URL(string);
     } catch (_) {
-      return false;  
+      return false;
     }
-  
+
     return url.protocol === "http:" || url.protocol === "https:";
   }
 

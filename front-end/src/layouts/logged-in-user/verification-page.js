@@ -23,7 +23,7 @@ class Verification extends Component {
 
                 if (token) {
                     axios.defaults.headers.common['authorization'] = token
-                    sessionStorage.setItem('token', token)
+                    localStorage.setItem('token', token)
                     let url = window.location.href
                     window.location.href =
                         url.substring(0, url.indexOf('/')) + '/onboarding'

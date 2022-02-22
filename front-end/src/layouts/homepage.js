@@ -41,7 +41,7 @@ class Homepage extends React.Component {
             axios.get("http://localhost:5000/api/getOrderedPost")
                 .then(res => {
                     const posts = res.data
-                    if (sessionStorage.getItem('token') != null && localStorage.getItem('allPosts') != null && posts.length == JSON.parse(localStorage.getItem('allPosts')).length) {
+                    if (localStorage.getItem('token') != null && localStorage.getItem('allPosts') != null && posts.length == JSON.parse(localStorage.getItem('allPosts')).length) {
                         console.log('using local storage');
                         this.setState({ allPosts: JSON.parse(localStorage.getItem('allPosts')) });
                         this.setState({ loading: 1 });

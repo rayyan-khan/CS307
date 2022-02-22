@@ -66,8 +66,8 @@ class Navbar extends React.Component {
     this.setState({ currSection: currSection });
     console.log(currSection);
     console.log('lets see')
-    console.log(sessionStorage.getItem('token'))
-    axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
+    console.log(localStorage.getItem('token'))
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     try {
       axios.get("http://localhost:5000/api/test-token/").then((res) => {
         console.log(res.data);
@@ -80,7 +80,7 @@ class Navbar extends React.Component {
     }
 
 
-    if (sessionStorage.getItem('token') != null) {
+    if (localStorage.getItem('token') != null) {
       axios.get("http://localhost:5000/api/getUserFromHeader/").then((res) => {
         console.log(res.data);
         this.setState({ username: res.data.username });

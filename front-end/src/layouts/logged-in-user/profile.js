@@ -293,7 +293,7 @@ class Profile extends React.Component {
 
 
                                                                                 onClick={() => {
-                                                                                    axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token')
+                                                                                    axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
                                                                                     console.log(this.state.firstName)
                                                                                     console.log(this.state.lastName)
                                                                                     console.log(this.state.bio)

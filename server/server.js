@@ -17,7 +17,6 @@ app.use(cors());
 //routes middleware
 app.use('/api', require('./routes/users'))
 app.use('/api', require('./routes/auth'))
-app.use('/api', require('./routes/dummy'))
 app.use('/api', require('./routes/post'))
 
 //Serve static assets if in production. DON'T DELETE

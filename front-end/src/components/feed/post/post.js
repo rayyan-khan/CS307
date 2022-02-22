@@ -52,7 +52,7 @@ export default function Post({ post, label }) {
         }
 
 
-        if (sessionStorage.getItem('token') == null) {
+        if (localStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
@@ -88,7 +88,7 @@ export default function Post({ post, label }) {
             localStorage.setItem('allPosts', JSON.stringify(posts));
         }
 
-        if (sessionStorage.getItem('token') == null) {
+        if (localStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
@@ -107,7 +107,7 @@ export default function Post({ post, label }) {
         localStorage.removeItem('allPosts');
         localStorage.setItem('allPosts', JSON.stringify(posts));
 
-        if (sessionStorage.getItem('token') == null) {
+        if (localStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
@@ -143,7 +143,7 @@ export default function Post({ post, label }) {
             onClick={(event) => {
                 if (linkPageBool) {
                     event.preventDefault();
-                    if (sessionStorage.getItem('token') == null) {
+                    if (localStorage.getItem('token') == null) {
                         let url = window.location.href;
                         window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                     } else {
@@ -166,7 +166,7 @@ export default function Post({ post, label }) {
                     <Heading minW={"30px"} onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
-                        if (sessionStorage.getItem('token') == null) {
+                        if (localStorage.getItem('token') == null) {
                             let url = window.location.href;
                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                         } else {
@@ -208,7 +208,7 @@ export default function Post({ post, label }) {
                     onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
-                        if (sessionStorage.getItem('token') == null) {
+                        if (localStorage.getItem('token') == null) {
                             let url = window.location.href;
                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                         } else {

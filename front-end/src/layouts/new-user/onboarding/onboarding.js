@@ -35,7 +35,7 @@ const Onboarding = () => {
 
 
     const handleNameSubmit = (event) => {
-        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         try {
             axios.put("http://localhost:5000/api/updateProfile", {
                 firstName: firstName,
@@ -61,7 +61,7 @@ const Onboarding = () => {
     }
 
     const handleBioSubmit = (event) => {
-        axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         try {
             axios.put("http://localhost:5000/api/updateProfile", {
                 bio: bio,
@@ -74,7 +74,7 @@ const Onboarding = () => {
 
     const handleTagsSubmit = (event) => {
         // TODO: Sent axios PUT request to update tags
-        sessionStorage.setItem('username', 'Guest');
+        localStorage.setItem('username', 'Guest');
         let url = window.location.href;
         window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
 

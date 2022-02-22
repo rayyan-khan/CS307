@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt')
 const decodeHeader = require('../utils/decodeHeader')
 
 
-authRoutes.route("/test-token/").get(async function (req, res) {
+authRoutes.route("/test-token").get(async function (req, res) {
     var user;
     try {
         //Use decodeHeader to extract user info from header or throw an error
