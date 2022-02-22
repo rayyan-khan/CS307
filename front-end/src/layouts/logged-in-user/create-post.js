@@ -36,14 +36,25 @@ class CreatePost extends React.Component {
       anonymous: 0,
       selectedFile: null,
       postError: false,
-      hyperlink: ''
+      hyperlink: '',
+      hyperlinkError: false
 
     }
+  }
+
+  componentWillMount() {
+    axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
   }
 
   handlePostTextChange = (event) => {
     this.setState({
       postText: event.target.value
+    })
+  }
+
+  handleHyperlinkChange = (event) => {
+    this.setState({
+      hyperlink: event.target.value
     })
   }
 
@@ -59,8 +70,14 @@ class CreatePost extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
 
+
     if (this.state.postText.trim() === '') {
       this.setState({ postError: true })
+      return;
+    }
+
+    if (this.state.hyperlink.trim() != '' && !this.isValidHttpUrl(this.state.hyperlink)) {
+      this.setState({ hyperlinkError: true })
       return;
     }
 
@@ -68,12 +85,15 @@ class CreatePost extends React.Component {
     data.append('image', this.state.selectedFile);
     data.append('anonymous', this.state.anonymous);
     data.append('caption', this.state.postText);
+    data.append('hyperlink', this.state.hyperlink);
+    data.append('token', sessionStorage.getItem('token'))
+
     let url = window.location.href;
-    axios.defaults.headers.common['authorization'] = sessionStorage.getItem('token');
     if (this.state.selectedFile === null) {
       let jsonObj = {}
       jsonObj['anonymous'] = this.state.anonymous;
       jsonObj['caption'] = this.state.postText;
+      jsonObj['hyperlink'] = this.state.hyperlink;
       axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj).then((response) => {
         let url = window.location.href;
         window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
@@ -93,6 +113,18 @@ class CreatePost extends React.Component {
     })
   }
 
+
+  isValidHttpUrl(string) {
+    let url;
+    
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;  
+    }
+  
+    return url.protocol === "http:" || url.protocol === "https:";
+  }
 
   // 
   // 
@@ -120,6 +152,24 @@ class CreatePost extends React.Component {
                 />
                 {!this.state.postError ? (<FormHelperText> </FormHelperText>)
                   : (<FormErrorMessage>Please enter a non-empty post Caption.</FormErrorMessage>)}
+
+              </FormControl>
+
+              <FormControl isInvalid={this.state.hyperlinkError}>
+                <h2 style={{ color: "white" }}>Hyperlink </h2>
+                <Input
+                  size="lg"
+                  focusBorderColor='teal.200'
+                  errorBorderColor='red.300'
+                  placeholder='Enter Hyperlink Here'
+                  type="text"
+                  name="hyperlink"
+                  value={this.state.hyperlink}
+                  onChange={this.handleHyperlinkChange}
+                  style={{ color: 'darkturquoise' }}
+                />
+                {!this.state.hyperlinkError ? (<FormHelperText> </FormHelperText>)
+                  : (<FormErrorMessage>Please enter a valid hyperlink or leave it blank.</FormErrorMessage>)}
 
               </FormControl>
 
