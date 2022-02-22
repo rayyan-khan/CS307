@@ -53,25 +53,10 @@ postRoutes
 
                 //url = "https://cs307.s3.amazonaws.com/" + req.file.path.substring(8)
                 console.log(url)
+                function checkEmpty(str) {if (str === '') {return 'null'} else {return con.escape(str)}}
                 var sql =
-                    "INSERT INTO Post Values ('" +
-                    Is +
-                    "', '" +
-                    Is +
-                    "', '" +
-                    username +
-                    "', '" +
-                    "12', '14" +
-                    "', '" +
-                    req.body.caption +
-                    "', NOW(),'12" +
-                    "', '" +
-                    req.body.anonymous +
-                    "', '" +
-                    url +
-                    "', '" +
-                    req.body.hyperlink +
-                    "')"
+                    `INSERT INTO Post Values (${Is}, ${Is}, ${con.escape(username)}, 12, 14, ${checkEmpty(req.body.caption)}, NOW(), 12, ${checkEmpty(req.body.anonymous)}, ${checkEmpty(url)}, ${checkEmpty(req.body.hyperlink)})`
+
                 //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
                 con.query(sql, function (err, results) {
                     if (err) throw err
