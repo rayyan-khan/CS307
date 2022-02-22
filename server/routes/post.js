@@ -148,7 +148,7 @@ var con = require('../database/conn')
 postRoutes.route('/getOrderedPost').get(function (req, res) {
     //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
     var anony = "Anonymous"
-    var sql = "SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN '" + anony + "'" + " ELSE username END AS username From Post Order BY timeStamp DESC"
+    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN ${anony} ELSE username END AS username From Post Order BY timeStamp DESC`
 
     con.query(sql, function (err, result) {
         if (err) {
