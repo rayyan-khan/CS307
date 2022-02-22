@@ -4,9 +4,7 @@ import {
   FormErrorMessage,
   FormHelperText,
   Input,
-  InputGroup,
   InputRightElement,
-  Badge,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -16,8 +14,7 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   Button,
-  PopoverAnchor,
-  transform
+  VisuallyHidden
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
@@ -266,7 +263,7 @@ class Login extends React.Component {
                 <Button colorScheme='black' onClick={this.registerUser} fontSize={25}
                   bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
               </PopoverTrigger>
-              <PopoverContent bg='black' fontWeight='bold' fontSize={18}>
+              <PopoverContent bg='black' fontWeight='bold' fontSize={18} style={{ color: 'mediumturquoise' }}>
                 <PopoverArrow />
                 <PopoverCloseButton />
                 {!this.state.axiosError ? (<PopoverHeader>Success! You are registered. Check your email for a verification link!</PopoverHeader>)
