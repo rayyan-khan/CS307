@@ -1,9 +1,11 @@
 import { Center, requiredChakraThemeKeys, Stack, Spinner, Box } from '@chakra-ui/react';
-import React, { Suspense } from 'react'
+import React, { useRef } from 'react'
 
 import Post from '../components/feed/post/post';
 
 const axios = require('axios');
+
+
 
 class Homepage extends React.Component {
     constructor() {
@@ -11,6 +13,7 @@ class Homepage extends React.Component {
         this.state = {
             allPosts: [],
             loading: 0,
+            numberOfPosts: 5,
         }
     }
 
@@ -18,6 +21,15 @@ class Homepage extends React.Component {
         console.log('rendering');
         this.fetchPosts();
     }
+
+    onScroll = (e) => {
+        console.log(e.target.clientHeight)
+        const bottom = e.target.scrollHeight - e.target.scrollTop - 10 <= e.target.clientHeight;
+        console.log(bottom);
+        if (bottom) {
+            this.setState({ numberOfPosts: this.state.numberOfPosts + 2 });
+        }
+    };
 
     fetchPosts() {
         // if (localStorage.getItem('allPosts') != null) {
@@ -46,8 +58,8 @@ class Homepage extends React.Component {
                     }
                 })
                 .catch(function (error) {
-                    console.log(error);
-                    this.setState({ loading: -1 })
+                    // console.log(error);
+                    // this.setState({ loading: -1 })
                 })
         } catch (error) {
             console.log(error);
@@ -57,9 +69,9 @@ class Homepage extends React.Component {
 
 
     postHandler() {
-        console.log(this.state.allPosts);
+        console.log(this.state.numberOfPosts);
         localStorage.setItem('allPosts', JSON.stringify(this.state.allPosts));
-        return this.state.allPosts.map((post, key) => {
+        return this.state.allPosts.slice(0, this.state.numberOfPosts).map((post, key) => {
             return (
                 <Center pb={5}>
                     <Post
@@ -94,7 +106,7 @@ class Homepage extends React.Component {
         } else if (this.state.loading == 1) {
             return (
                 <Box h={'100vh'} backgroundColor={'#151516'}>
-                    <div style={{ backgroundColor: "#151516", overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
+                    <div onScroll={this.onScroll} style={{ backgroundColor: "#151516", overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
                         <Center bg={"#151516"} pb={20}>
                             <Stack>
                                 {this.postHandler()}
