@@ -131,8 +131,11 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
 // })
 
 //
+//Use the below line in any file to connect to the database
+var con = require('../database/conn')
 postRoutes.route('/getSpecificPost/:postID').post(function (req, res) {
-    var sql = `SELECT * From Post WHERE postId = ${con.escape(req.params.postID)}`
+    var anony = "Anonymous"
+    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, anonymous, url, hyperlink,CASE WHEN anonymous=1 THEN ${anony} ELSE username END From Post WHERE postId = ${con.escape(req.params.postID)}`
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
@@ -141,8 +144,18 @@ postRoutes.route('/getSpecificPost/:postID').post(function (req, res) {
     })
 })
 
-//Use the below line in any file to connect to the database
-var con = require('../database/conn')
+//use the below route to get information on a specific post
+postRoutes.route('/getSpecificPost/:postID').get(function (req, res) {
+    var anony = "Anonymous"
+    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, anonymous, url, hyperlink,CASE WHEN anonymous=1 THEN ${anony} ELSE username END From Post WHERE postId = ${con.escape(req.params.postID)}`
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
 
 //use the below route to get all the posts in order of time posted
 postRoutes.route('/getOrderedPost').get(function (req, res) {
