@@ -70,12 +70,14 @@ class Login extends React.Component {
   }
 
 
+
   registerUser = () => {
+    var error = false;
     // check that email is a real email format (___@___.___)
     // check that username meets whatever the requirements
     // check that passwords match & meet requirements
     console.log("Pressed submit");
-    this.setState({ displayPopover: true });
+    this.setState({ displayPopover: false, axiosError: true });
 
     // check if email is valid format
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -88,6 +90,7 @@ class Login extends React.Component {
       // invalid email, show error
       console.log("Invalid Email");
       this.setState({ emailError: true })
+      error = true;
     }
 
     // check that username meets requirements
@@ -102,6 +105,7 @@ class Login extends React.Component {
     else {
       // set username error to true
       this.setState({ userError: true })
+      error = true;
 
       // log reason(s) why its erroring to the console
       let checkUserChar = /^[A-Za-z0-9_.]*$/;
@@ -123,6 +127,7 @@ class Login extends React.Component {
     else {
       console.log("Password does not meet requirements");
       this.setState({ passwordError: true })
+      error = true;
     }
 
     // check if passwords match
@@ -134,6 +139,7 @@ class Login extends React.Component {
       // have pop up show passwords do not match
       console.log("Passwords do not match");
       this.setState({ passwordCheckError: true });
+      error = true;
     }
 
     console.log(this.state.user);
@@ -142,10 +148,8 @@ class Login extends React.Component {
     // pass to axios if there are no errors
 
     console.log(this.state.axiosError);
-    if (this.state.emailError === false &&
-      this.state.userError === false &&
-      this.state.passwordError === false &&
-      this.state.passwordCheckError === false) {
+    console.log(this.state)
+    if (!error) {
       this.setState({ registrationError: "waiting...", displayPopover: true });
 
       console.log("Passed to axios");
@@ -273,6 +277,7 @@ class Login extends React.Component {
                   bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
               </PopoverTrigger>
               <div display={this.state.displayPopover ? 'default' : 'none'}>
+                {console.log(this.state.registrationError)}
                 <PopoverContent color='mediumturquoise' bg='black' fontWeight='bold' fontSize={18}>
                   <PopoverArrow />
                   <PopoverCloseButton />
