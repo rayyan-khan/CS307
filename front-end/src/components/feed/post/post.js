@@ -169,12 +169,14 @@ export default function Post({ post, label }) {
                         if (localStorage.getItem('token') == null) {
                             let url = window.location.href;
                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                        } else if (post.username == "Anonymous") {
+                            // do nothing
                         } else {
                             let url = window.location.href;
                             window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
                         }
-                    }} style={{ color: "darkturquoise", cursor: 'pointer' }} fontSize={'2xl'} fontFamily={'body'}>
-                        {post.username}
+                    }} style={{ color: "darkturquoise", cursor: post.username == "Anonymous" ? 'default' : 'pointer' }} fontSize={'2xl'} fontFamily={'body'}>
+                        {post.username == "Anonymous" ? "Anonymous" : post.username}
                     </Heading>
                 </Center>
                 <Text
@@ -184,22 +186,24 @@ export default function Post({ post, label }) {
                     {post.postCaption}
                 </Text>
 
+                <Center>
+                    {post.url !== "undefined" ? <Box alignSelf={'center'}
+                        px={0}
+                        pt={5}
+                        w={"100%"}
+                    >
+                        <Image src={post.url} />
+                    </Box> : <></>}
+                </Center>
 
-                {post.url !== "undefined" ? <Box alignSelf={'center'}
-                    px={0}
-                    pt={5}
-                    w={"100%"}
-                >
-                    <Image src={post.url} />
-                </Box> : <></>}
-
-
-                {post.hyperlink !== "" ? <LinkPreview
-                    margin="30px auto"
-                    width="500px"
-                    url={post.hyperlink}
-                    backgroundColor='white'
-                /> : <></>}
+                <Center>
+                    {post.hyperlink !== "" ? <LinkPreview
+                        margin="30px auto"
+                        width="500px"
+                        url={post.hyperlink}
+                        backgroundColor='white'
+                    /> : <></>}
+                </Center>
             </Stack>
 
 

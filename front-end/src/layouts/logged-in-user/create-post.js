@@ -74,11 +74,15 @@ class CreatePost extends React.Component {
     if (this.state.postText.trim() === '') {
       this.setState({ postError: true })
       return;
+    } else {
+      this.setState({ postError: false })
     }
 
     if (this.state.hyperlink.trim() != '' && !this.isValidHttpUrl(this.state.hyperlink)) {
       this.setState({ hyperlinkError: true })
       return;
+    } else {
+      this.setState({ hyperlinkError: false })
     }
 
     const data = new FormData();
@@ -175,7 +179,7 @@ class CreatePost extends React.Component {
 
               <FormControl>
                 <h2 style={{ color: "white" }}>Upload Image</h2>
-                <Input style={{ color: "white" }} type='file'
+                <Input paddingTop={'4px'} style={{ color: "white" }} type='file'
                   accept="image/*"
                   onChange={this.fileSelecteHandler} />
               </FormControl>

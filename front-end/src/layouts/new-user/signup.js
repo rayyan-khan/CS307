@@ -171,8 +171,9 @@ class Login extends React.Component {
           console.log(response.data);
           if (response.data.errors != undefined) {
             this.setState({ registrationError: response.data.errors[0] });
+          } else {
+            this.setState({ registrationError: response.data });
           }
-          this.setState({ registrationError: response.data });
           console.log(this.state.registrationError);
           this.setState({ axiosError: true });
         })

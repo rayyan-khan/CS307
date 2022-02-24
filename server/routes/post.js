@@ -53,7 +53,7 @@ postRoutes
 
                 //url = "https://cs307.s3.amazonaws.com/" + req.file.path.substring(8)
                 console.log(url)
-                function checkEmpty(str) {if (str === '') {return 'null'} else {return con.escape(str)}}
+                function checkEmpty(str) { if (str === '') { return 'null' } else { return con.escape(str) } }
                 var sql =
                     `INSERT INTO Post Values (${Is}, ${Is}, ${con.escape(username)}, 12, 14, ${checkEmpty(req.body.caption)}, NOW(), 12, ${checkEmpty(req.body.anonymous)}, ${checkEmpty(url)}, ${checkEmpty(req.body.hyperlink)})`
 
@@ -98,7 +98,7 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
         console.log(result[0].ID)
         Is = result[0].ID
         Is += 1 //store the ID
-        function checkEmpty(str) {if (str === '') {return 'null'} else {return con.escape(str)}}
+        function checkEmpty(str) { if (str === '') { return 'null' } else { return con.escape(str) } }
         var sql =
             `INSERT INTO Post Values (${Is}, ${Is}, ${con.escape(username)}, 12, 14, ${checkEmpty(req.body.caption)}, NOW(), 12, ${checkEmpty(req.body.anonymous)}, null, ${checkEmpty(req.body.hyperlink)})`
         //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
@@ -147,7 +147,7 @@ postRoutes.route('/getSpecificPost/:postID').post(function (req, res) {
 //use the below route to get information on a specific post
 postRoutes.route('/getSpecificPost/:postID').get(function (req, res) {
     var anony = "Anonymous"
-    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, anonymous, url, hyperlink,CASE WHEN anonymous=1 THEN ${anony} ELSE username END From Post WHERE postId = ${con.escape(req.params.postID)}`
+    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, anonymous, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post WHERE postId = ${con.escape(req.params.postID)}`
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
@@ -161,7 +161,7 @@ postRoutes.route('/getSpecificPost/:postID').get(function (req, res) {
 postRoutes.route('/getOrderedPost').get(function (req, res) {
     //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
     var anony = "Anonymous"
-    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN ${anony} ELSE username END AS username From Post Order BY timeStamp DESC`
+    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post Order BY timeStamp DESC`
 
     con.query(sql, function (err, result) {
         if (err) {
