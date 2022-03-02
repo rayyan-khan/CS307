@@ -325,4 +325,26 @@ authRoutes.route('/login').post(async (req, res) => {
     }
 })
 
+authRoutes.route('/passwordRecoveryLink').put(async (req, res) => {
+    const { email } = req.body
+
+    if (!email) return res.status(400).json('Missing email field')
+
+    //confirm account exists and is verified
+    const accountExists = await query.accountExists(email).catch((err) => {
+        console.log(err)
+        return res
+            .status(500)
+            .json('Internal error attempting to confirm account exists')
+    })
+
+    if (accountExists !== 'Account exists') {
+        return res.status(400).json(accountExists)
+    }
+
+    nodemailer.sendPasswordRecoveryEmail(email)
+
+    return res.json('Email sent')
+})
+
 module.exports = authRoutes
