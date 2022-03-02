@@ -86,9 +86,7 @@ class Profile extends React.Component {
                 .then((res) => {
                     const postInteractions = res.data.filter(
                         (postInteraction) => {
-                            return (
-                                postInteraction.username === this.state.username
-                            )
+                            return true
                         }
                     )
                     this.setState({ postInteractions: postInteractions })

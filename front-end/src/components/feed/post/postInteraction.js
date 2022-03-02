@@ -20,13 +20,61 @@ import { GrAnalytics } from 'react-icons/gr'
 
 const Interaction = ({ post }) => {
     let { liked, disliked, comment } = post
+
     if (liked) {
-        return <div>liked</div>
+        return (
+            <Stack mt={2} direction={'row'} spacing={4}>
+                <Stack direction={'column'}>
+                    <IconButton
+                        style={{
+                            backgroundColor: 'darkturquoise',
+                            color: 'white',
+                        }}
+                        icon={<AiOutlineLike />}
+                    />
+                </Stack>
+            </Stack>
+        )
     } else if (disliked) {
-        return <div>disliked</div>
+        return (
+            <Stack mt={2} direction={'row'} spacing={4}>
+                <Stack direction={'column'}>
+                    <IconButton
+                        style={{
+                            backgroundColor: 'darkturquoise',
+                            color: 'white',
+                        }}
+                        icon={<AiOutlineDislike />}
+                    />
+                </Stack>
+            </Stack>
+        )
     } else if (comment) {
         return <div>{comment}</div>
     }
+
+    return (
+        <div>
+            <Stack mt={2} direction={'row'} spacing={4}>
+                <Stack direction={'column'}>
+                    <IconButton
+                        style={{
+                            backgroundColor: 'darkturquoise',
+                            color: 'white',
+                        }}
+                        icon={<AiOutlineLike />}
+                    />
+                </Stack>
+                {/* <IconButton
+                    style={{
+                        backgroundColor: 'var(--secondary-color)',
+                        color: 'black',
+                    }}
+                    icon={<AiOutlineLike />}
+                /> */}
+            </Stack>
+        </div>
+    )
 }
 
 export default function PostInteraction({ post, label }) {
