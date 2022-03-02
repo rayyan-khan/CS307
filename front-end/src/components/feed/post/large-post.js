@@ -7,13 +7,20 @@ import {
     Stack,
     IconButton,
     Image,
+    Input,
+    InputGroup,
+    InputLeftElement,
+    InputRightElement,
+    InputLeftAddon,
+    Icon,
+
 } from '@chakra-ui/react';
 
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
 import { FaRegBookmark } from "react-icons/fa"
 import React from 'react';
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
-
+import "./post.css"
 
 export default function LargePost({ post }) {
     console.log(post);
@@ -21,8 +28,6 @@ export default function LargePost({ post }) {
     // toggle state 
     const [isLiked, setIsLiked] = React.useState(false);
     const [isDisliked, setIsDisliked] = React.useState(false);
-
-
 
     const handleLiked = (event) => {
         event.stopPropagation();
@@ -82,31 +87,19 @@ export default function LargePost({ post }) {
         }
     }
     return (
-        <Box
-            minW={'820px'}
-            maxW={'820px'}
-            minH={'400px'}
-            w={'full'}
-            bg={"#151516"}
-            boxShadow={'2xl'}
-            rounded={'lg'}
-            p={6}
-            textAlign={'center'}
-            style={linkPageBool ? { cursor: 'pointer' } : {}}
-            onClick={(event) => {
-                if (linkPageBool) {
-                    event.preventDefault();
-                    if (localStorage.getItem('token') == null) {
-                        let url = window.location.href;
-                        window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-                    } else {
-                        let url = window.location.href;
-                        window.location.href = url.substring(0, url.indexOf("/")) + "/personalPostPage/" + post.postID;
-                    }
-                }
-            }}
-        >
-            {/* <Avatar
+        <Stack direction={'row'}>
+            <Box
+                minW={'820px'}
+                maxW={'820px'}
+                minH={'400px'}
+                className={'color-switch'}
+                w={'full'}
+                boxShadow={'2xl'}
+                rounded={'lg'}
+                p={6}
+                textAlign={'center'}
+            >
+                {/* <Avatar
                 size={'xl'}
                 src={post.profilePicture}
                 alt={'Avatar Alt'}
@@ -115,105 +108,106 @@ export default function LargePost({ post }) {
                 style={linkPageBool ? { cursor: 'pointer' } : {}}
             /> */}
 
-            <Stack align={'center'} direction={'column'} spacing={4}>
-                <Center>
-                    <Heading minW={"30px"} onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        if (localStorage.getItem('token') == null) {
-                            let url = window.location.href;
-                            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-                        } else if (post.anonymous == 1) {
+                <Stack align={'center'} direction={'column'} spacing={4}>
+                    <Center>
+                        <Heading minW={"30px"} onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            if (localStorage.getItem('token') == null) {
+                                let url = window.location.href;
+                                window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                            } else if (post.anonymous == 1) {
 
-                        } else {
-                            let url = window.location.href;
-                            window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
-                        }
-                    }} style={{ color: "darkturquoise", cursor: 'pointer' }} fontSize={'5xl'} fontFamily={'body'}>
-                        {post.anonymous == 1 ? "Anonymous" : post.username}
-                    </Heading>
-                </Center>
-                <Text
-                    textAlign={'center'}
-                    color={"#DEDDDD"}
-                    pt={3}
-                    fontSize={'2xl'}
-                >
-                    {post.postCaption}
-                </Text>
-
-
-
-                {post.url !== "undefined" ? <Center> <Box
-                    pt={5}
-                    w={"100%"}
-                >
-                    <Image src={post.url} />
-                </Box>  </Center> : <></>}
-
-
-                {post.hyperlink !== "" ? <LinkPreview
-                    margin="30px auto"
-                    width="500px"
-                    url={post.hyperlink}
-                    backgroundColor='white'
-                /> : <></>}
-            </Stack>
-
-
-
-
-            <Stack align={'center'} justify={'center'} direction={'row'} mt={"13%"}>
-                <Box
-                    onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        if (localStorage.getItem('token') == null) {
-                            let url = window.location.href;
-                            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-                        } else {
-                            let url = window.location.href;
-                            window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
-                        }
-                    }}
-                    style={{ cursor: 'pointer' }}
-                    px={5}
-                    py={2}
-                    bg={"#F2AF29"}
-                    color={'#151516'}
-                    rounded={'full'}
-                    fontSize={'2xl'}
-                    fontWeight={'300'}>
-                    {"#" + post.tagID}
-                </Box>
-            </Stack>
-            <Stack mt={2} direction={'row'} spacing={4}>
-                <Stack direction={'column'}>
+                            } else {
+                                let url = window.location.href;
+                                window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
+                            }
+                        }} style={{ color: "darkturquoise", cursor: 'pointer' }} fontSize={'5xl'} fontFamily={'body'}>
+                            {post.anonymous == 1 ? "Anonymous" : post.username}
+                        </Heading>
+                    </Center>
                     <Text
                         textAlign={'center'}
-                        color={"#DEDDDD"}
-                        fontSize={'xl'}
-                        fontFamily={'body'}
+                        color={"var(--text-color)"}
+                        pt={3}
+                        fontSize={'2xl'}
                     >
-                        {post.likesCount}
+                        {post.postCaption}
                     </Text>
-                    {isLiked ? <IconButton size={'lg'} onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton size={'lg'} onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
-                </Stack>
-                <Stack direction={'column'}>
-                    <Text
-                        textAlign={'center'}
-                        color={"#DEDDDD"}
-                        fontSize={'xl'}
-                        fontFamily={'body'}
+
+
+
+                    {post.url !== "undefined" ? <Center> <Box
+                        pt={5}
+                        w={"100%"}
                     >
-                        {post.dislikeCount}
-                    </Text>
-                    {isDisliked ? <IconButton size={'lg'} onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton size={'lg'} style={{ cursor: 'pointer' }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
+                        <Image src={post.url} />
+                    </Box>  </Center> : <></>}
+
+
+                    {post.hyperlink !== "" ? <LinkPreview
+                        margin="30px auto"
+                        width="500px"
+                        url={post.hyperlink}
+                        backgroundColor='white'
+                    /> : <></>}
                 </Stack>
-                <Stack direction={'column'}>
-                    {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+
+
+
+
+                <Stack align={'center'} justify={'center'} direction={'row'} mt={"13%"}>
+                    <Box
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            if (localStorage.getItem('token') == null) {
+                                let url = window.location.href;
+                                window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                            } else {
+                                let url = window.location.href;
+                                window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
+                            }
+                        }}
+                        style={{ cursor: 'pointer' }}
+                        px={5}
+                        py={2}
+                        bg={"#F2AF29"}
+                        color={'--mainColor'}
+                        rounded={'full'}
+                        fontSize={'2xl'}
+                        fontWeight={'300'}>
+                        {"#" + post.tagID}
+                    </Box>
                 </Stack>
-            </Stack>
-        </Box>
+                <Stack mt={2} direction={'row'} spacing={4}>
+                    <Stack direction={'column'}>
+                        <Text
+                            textAlign={'center'}
+                            color={"var(--text-color)"}
+                            fontSize={'xl'}
+                            fontFamily={'body'}
+                        >
+                            {post.likesCount}
+                        </Text>
+                        {isLiked ? <IconButton size={'lg'} onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton style={{ backgroundColor: "var(--secondary-color)", color: "black" }} size={'lg'} onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
+                    </Stack>
+                    <Stack direction={'column'}>
+                        <Text
+                            textAlign={'center'}
+                            color={"var(--text-color)"}
+                            fontSize={'xl'}
+                            fontFamily={'body'}
+                        >
+                            {post.dislikeCount}
+                        </Text>
+                        {isDisliked ? <IconButton size={'lg'} onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton size={'lg'} style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
+                    </Stack>
+                    <Stack direction={'column'}>
+                        {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "600px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                    </Stack>
+                </Stack>
+            </Box>
+        </Stack >
     );
 }

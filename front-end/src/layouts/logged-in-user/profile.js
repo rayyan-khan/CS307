@@ -8,6 +8,7 @@ import {
     FormControl,
     FormLabel,
 } from '@chakra-ui/react'
+import "../layouts.css";
 
 class Profile extends React.Component {
     constructor(props) {
@@ -131,7 +132,7 @@ class Profile extends React.Component {
     render() {
         return (
             <div
-                className="profile-page"
+                className="color-switch"
                 style={{
                     overflowX: 'hidden',
                     overflowY: 'scroll',
@@ -150,7 +151,7 @@ class Profile extends React.Component {
                                         <Stack
                                             p={'20px'}
                                             bottom={'100px'}
-                                            bg={"#151516"}
+                                            className="color-switch"
                                             boxShadow={'2xl'}
                                             rounded={'lg'}
                                             direction={'row'}>
@@ -170,7 +171,7 @@ class Profile extends React.Component {
                                                                 this.state.editMode ? (
                                                                     <>
                                                                         <Stack direction={'row'}>
-                                                                            <Input color='white'
+                                                                            <Input color='var(--text-color)'
                                                                                 height={'3.25vh'}
                                                                                 width={'8vw'}
                                                                                 placeholder="First Name"
@@ -181,7 +182,7 @@ class Profile extends React.Component {
                                                                                         this.setState({ firstName: e.target.value })
                                                                                     }
                                                                                 } />
-                                                                            <Input color='white'
+                                                                            <Input color='var(--text-color)'
                                                                                 height={'3.25vh'}
                                                                                 width={'8vw'}
                                                                                 placeholder="Last Name"
@@ -193,16 +194,16 @@ class Profile extends React.Component {
                                                                                     }
                                                                                 } />
                                                                         </Stack>
-                                                                        <Text pl={'.15vw'} fontWeight={'bold'} color={'white'} fontSize={'xs'}>
+                                                                        <Text pl={'.15vw'} fontWeight={'bold'} color={'var(--text-color)'} fontSize={'xs'}>
                                                                             @{this.state.username}
                                                                         </Text>
                                                                     </>
                                                                 ) : (
                                                                     <>
-                                                                        <Text fontSize={'2xl'} color={'white'}>
+                                                                        <Text fontSize={'2xl'} color={'var(--text-color)'}>
                                                                             {this.state.firstName} {this.state.lastName}
                                                                         </Text>
-                                                                        <Text pl={'.15vw'} fontWeight={'bold'} color={'white'} fontSize={'xs'}>
+                                                                        <Text pl={'.15vw'} fontWeight={'bold'} color={'var(--text-color)'} fontSize={'xs'}>
                                                                             @{this.state.username}
                                                                         </Text>
                                                                     </>
@@ -213,48 +214,48 @@ class Profile extends React.Component {
                                                     </Stack>
                                                     <Stack pt={'1vh'} direction={'row'}>
                                                         <Stack direction={'row'}>
-                                                            <Text fontWeight={'bold'} color={'white'}>
+                                                            <Text fontWeight={'bold'} color={'var(--text-color)'}>
                                                                 {
                                                                     this.state
                                                                         .numTagsFollowing
                                                                 }
                                                             </Text>
-                                                            <Text color='white'>
+                                                            <Text color='var(--text-color)'>
                                                                 {' '} Tags
                                                             </Text>
                                                         </Stack>
                                                         <Stack direction={'row'}>
-                                                            <Text fontWeight={'bold'} color={'white'}>
+                                                            <Text fontWeight={'bold'} color={'var(--text-color)'}>
                                                                 {
                                                                     this.state
                                                                         .numFollowers
                                                                 }
                                                             </Text>
-                                                            <Text color='white'>
+                                                            <Text color='var(--text-color)'>
                                                                 {' '} Followers
                                                             </Text>
                                                         </Stack>
                                                         <Stack direction={'row'}>
-                                                            <Text fontWeight={'bold'} color={'white'}>
+                                                            <Text fontWeight={'bold'} color={'var(--text-color)'}>
                                                                 {
                                                                     this.state
                                                                         .numFollowing
                                                                 }
                                                             </Text>
-                                                            <Text color='white'>
+                                                            <Text color='var(--text-color)'>
                                                                 {' '} Following
                                                             </Text>
                                                         </Stack>
                                                     </Stack>
                                                     <Box pt={'1vh'}>
                                                         <Stack direction={'row'}>
-                                                            <Text fontWeight={'bold'} color={'white'}>
+                                                            <Text fontWeight={'bold'} color={'var(--text-color)'}>
                                                                 Bio:
                                                             </Text>
                                                             {
                                                                 this.state.editMode ? (
                                                                     <>
-                                                                        <Input color='white'
+                                                                        <Input color='var(--text-color)'
                                                                             // border={'none'}
                                                                             height={'3.25vh'}
                                                                             width={'auto'}
@@ -269,7 +270,7 @@ class Profile extends React.Component {
                                                                     </>
                                                                 ) : (
                                                                     <>
-                                                                        <Text color='white'>
+                                                                        <Text color='var(--text-color)'>
                                                                             {this.state.bio}
                                                                         </Text>
                                                                     </>
@@ -288,10 +289,6 @@ class Profile extends React.Component {
                                                                             <Button
                                                                                 backgroundColor={'#5581D7'}
                                                                                 color={'white'}
-
-
-
-
                                                                                 onClick={() => {
                                                                                     axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
                                                                                     console.log(this.state.firstName)

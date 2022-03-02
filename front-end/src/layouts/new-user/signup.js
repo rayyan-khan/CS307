@@ -17,13 +17,14 @@ import {
   PopoverCloseButton,
   Button,
   PopoverAnchor,
-  transform
+  transform,
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
 import logo from '../../logo.png';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useAnimationFrame } from 'framer-motion';
+import '../layouts.css';
 
 // need to figure out how to display specific registration errors \
 // putting {this.state.registrationError} on line 245 (as text for popover header)
@@ -146,7 +147,7 @@ class Login extends React.Component {
 
     console.log(this.state.user);
 
-    // AXIOS STUFF
+    // AXIOS color-switch
     // pass to axios if there are no errors
 
     console.log(this.state.axiosError);
@@ -186,9 +187,10 @@ class Login extends React.Component {
     this.setState({ show: !this.state.show });
   }
 
+
   render() {
     return (
-      <div style={{ backgroundColor: "#151516" }}>
+      <div className='color-switch'>
         <div className="App">
           <header className="App-header" style={{ transform: "translateY(-8vh)" }}>
             <h2 style={{ color: 'mediumturquoise' }}>Signup</h2>
@@ -206,7 +208,8 @@ class Login extends React.Component {
                   name="Email"
                   value={this.state.user.Email}
                   onChange={this.changeHandler}
-                  style={{ color: 'darkturquoise' }} />
+                  style={{ color: 'darkturquoise' }}
+                  />
                 {!this.state.emailError ? (<FormHelperText> Enter a valid email. </FormHelperText>)
                   : (<FormErrorMessage>The email you entered is invalid.</FormErrorMessage>)}
               </FormControl>

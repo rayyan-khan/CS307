@@ -54,6 +54,8 @@ class SearchBar extends Component {
         return (
             <Fragment>
                 <Select
+                    className="basic-single"
+                    classNamePrefix="select"
                     isClearable
                     isSearchable
                     name="color"
@@ -66,7 +68,24 @@ class SearchBar extends Component {
                     formatOptionLabel={FormatOptionLabel}
                     onChange={this.onChange}
                     onInputChange={this.onInputChange}
-                    placeholder="Search for a user"
+                    placeholder="Search"
+                    styles={{
+                        control: base => ({
+                            ...base,
+                            height: 35,
+                            minHeight: 35
+                        }),
+                        dropdownIndicator: (styles) => ({
+                            ...styles,
+                            paddingTop: 7,
+                            paddingBottom: 7,
+                        }),
+                        clearIndicator: (styles) => ({
+                            ...styles,
+                            paddingTop: 7,
+                            paddingBottom: 7,
+                        }),
+                    }}
                 />
             </Fragment>
         )

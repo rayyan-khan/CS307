@@ -1,9 +1,26 @@
+.color-switch {
+  background-color: black;
+}
+:root {
+  --text-color: black;
+  --chakra-colors-gray-100: black;
+}
+@media screen and (prefers-color-scheme: dark) {
+  .color-switch {
+    background-color: black;
+  }
+  :root {
+    --text-color: white;
+    --chakra-colors-gray-100: white;  
+  } 
+}
+
 .App {
   overflow: hidden;
   position: relative;
   height: "100vh";
   width: "100vw";
-  background-color: "#151516";
+  background-color: "--mainColor";
 }
 ::-webkit-scrollbar {
   width: 0;  /* Remove scrollbar space */
@@ -26,14 +43,14 @@
 }
 
 .App-header {
-  background-color: #151516;
+  background-color: --mainColor;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: "#151516";
+  color: "--mainColor";
 }
 .textA {
   color: black;
@@ -41,14 +58,4 @@
 
 .App-link {
   color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
 }

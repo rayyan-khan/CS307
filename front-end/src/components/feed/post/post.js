@@ -15,9 +15,12 @@ import React from 'react';
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import axios from 'axios';
 import { RiContactsBookLine } from 'react-icons/ri';
+import "./post.css";
+import { GrAnalytics } from 'react-icons/gr';
 
 
 export default function Post({ post, label }) {
+
     const [isLiked, setIsLiked] = React.useState(post.isLiked);
     const [isDisliked, setIsDisliked] = React.useState(post.isDisliked);
     var posts = JSON.parse(localStorage.getItem('allPosts'));
@@ -134,7 +137,8 @@ export default function Post({ post, label }) {
             minW={'620px'}
             maxW={'620px'}
             w={'full'}
-            bg={"#151516"}
+            // bg={"#202124"}
+            // border={'1px solid white'}
             boxShadow={'2xl'}
             rounded={'lg'}
             p={6}
@@ -181,8 +185,10 @@ export default function Post({ post, label }) {
                 </Center>
                 <Text
                     textAlign={'center'}
-                    color={"#DEDDDD"}
-                    pt={'10px'}>
+                    pt={'10px'}
+                    className={'color-switch'}
+                    color={'gray.100'}
+                    >
                     {post.postCaption}
                 </Text>
 
@@ -198,7 +204,7 @@ export default function Post({ post, label }) {
 
                 <Center>
                     {post.hyperlink !== "" ? <LinkPreview
-                        margin="30px auto"
+                        // margin="30px 0px"
                         width="500px"
                         url={post.hyperlink}
                         backgroundColor='white'
@@ -224,7 +230,7 @@ export default function Post({ post, label }) {
                     px={2}
                     py={1}
                     bg={"#F2AF29"}
-                    color={'#151516'}
+                    color={'--mainColor'}
                     rounded={'full'}
                     fontWeight={'300'}>
                     {"#" + post.tagID}
@@ -237,10 +243,12 @@ export default function Post({ post, label }) {
                         color={"#DEDDDD"}
                         fontSize={'sm'}
                         fontFamily={'body'}
+                        className={'color-switch'}
+                        color={'gray.100'}
                     >
                         {post.likesCount}
                     </Text>
-                    {isLiked ? <IconButton onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<AiOutlineLike />} /> : <IconButton onClick={handleLiked} icon={<AiOutlineLike />} />}
+                    {isLiked ? <IconButton onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<AiOutlineLike />} /> : <IconButton style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleLiked} icon={<AiOutlineLike />} />}
                 </Stack>
                 <Stack direction={'column'}>
                     <Text
@@ -248,13 +256,15 @@ export default function Post({ post, label }) {
                         color={"#DEDDDD"}
                         fontSize={'sm'}
                         fontFamily={'body'}
+                        className={'color-switch'}
+                        color={'gray.100'}
                     >
                         {post.dislikeCount}
                     </Text>
-                    {isDisliked ? <IconButton onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} icon={<AiOutlineDislike />} /> : <IconButton style={{ cursor: 'pointer' }} onClick={handleDisliked} icon={<AiOutlineDislike />} />}
+                    {isDisliked ? <IconButton onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} icon={<AiOutlineDislike />} /> : <IconButton style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleDisliked} icon={<AiOutlineDislike />} />}
                 </Stack>
                 <Stack direction={'column'}>
-                    {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px", backgroundColor: "darkturquoise", color: "white" }} icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px" }} icon={<FaRegBookmark />} />}
+                    {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px", backgroundColor: "darkturquoise", color: "white" }} icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "423px" }} icon={<FaRegBookmark />} />}
                 </Stack>
             </Stack>
         </Box>

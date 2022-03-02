@@ -18,7 +18,7 @@ import { GrNext } from "react-icons/gr"
 import ImageUpload from 'image-upload-react'
 import 'image-upload-react/dist/index.css'
 import posts from '../../../components/feed/posts';
-
+import "../../layouts.css";
 
 
 class Tags extends React.Component {
@@ -36,7 +36,7 @@ class Tags extends React.Component {
 
     render() {
         return (
-            <Button width={'5vw'} fontSize={'0.65vw'} onClick={this.handleClick} p={5} textColor={this.state.isClicked ? 'white' : 'black'} bg={this.state.isClicked ? 'darkturquoise' : 'white'}>{this.props.tagName}</Button>
+            <Button width={'5vw'} fontSize={'0.65vw'} onClick={this.handleClick} p={5} textColor={this.state.isClicked ? 'white' : 'black'} bg={this.state.isClicked ? 'darkturquoise' : 'var(--secondary-color)'}>{this.props.tagName}</Button>
         );
     }
 }

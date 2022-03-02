@@ -10,8 +10,7 @@ userRoutes.route('/getUserFromHeader').get(async (req, res) => {
     try {
         user = await decodeHeader.decodeAuthHeader(req)
     } catch (err) {
-        user = undefined
-        res.status(400).send(err)
+        return res.status(400).send(err)
     }
 
     res.status(200).json(user)

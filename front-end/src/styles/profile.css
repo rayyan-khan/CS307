@@ -58,7 +58,7 @@
 }
 
 .profile-page {
-    background-color: #151516;
+    background-color: --mainColor;
 }
 
 .profile-page-container .btn {

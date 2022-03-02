@@ -1,11 +1,10 @@
 import { Center, requiredChakraThemeKeys, Stack, Spinner, Box } from '@chakra-ui/react';
 import React, { useRef } from 'react'
 
-import Post from '../components/feed/post/post';
+import Post from '../../components/feed/post/post';
+import './homepage.css';
 
 const axios = require('axios');
-
-
 
 class Homepage extends React.Component {
     constructor() {
@@ -89,7 +88,7 @@ class Homepage extends React.Component {
     render() {
         if (this.state.loading == -1) {
             return (
-                <Center bg={"#151516"} pb={'100vh'}>
+                <Center className='color-switch' pb={'100vh'}>
                     <Center fontSize={'4xl'} color={'white'} pt={'40vh'}>
                         Failed to get posts. Please check your internet and try again
                     </Center>
@@ -97,7 +96,7 @@ class Homepage extends React.Component {
             );
         } else if (this.state.loading == 0) {
             return (
-                <Center bg={"#151516"} pb={'100vh'}>
+                <Center className='color-switch' pb={'100vh'}>
                     <Center fontSize={'4xl'} color={'white'} pt={'40vh'}>
                         <Spinner color='darkturquoise' size='xl' />
                     </Center>
@@ -105,10 +104,10 @@ class Homepage extends React.Component {
             );
         } else if (this.state.loading == 1) {
             return (
-                <Box h={'100vh'} backgroundColor={'#151516'}>
-                    <div onScroll={this.onScroll} style={{ backgroundColor: "#151516", overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
-                        <Center bg={"#151516"} pb={20}>
-                            <Stack>
+                <Box h={'100vh'} className='color-switch'>
+                    <div onScroll={this.onScroll} style={{ backgroundColor: "--mainColor", overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
+                        <Center bg={"--mainColor"} pb={20}>
+                            <Stack pt={50}>
                                 {this.postHandler()}
                             </Stack>
                         </Center>

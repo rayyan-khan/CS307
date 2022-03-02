@@ -1,0 +1,23 @@
+:root {
+  --main-color: white;
+  --secondary-color: #ebf0f5;
+  --tertiary-color: #ebf0f5;
+  --text-color: black;
+}
+
+.color-switch {
+  background-color: white;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .color-switch {
+    background-color: #151516;
+  }
+
+  :root {
+    --main-color: #151516;
+    --secondary-color: white;
+    --tertiary-color: "black";
+    --text-color: white;
+  }
+}

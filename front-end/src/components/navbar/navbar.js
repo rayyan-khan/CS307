@@ -1,4 +1,4 @@
-import "../../node_modules/mdb-react-ui-kit/dist/css/mdb.min.css";
+import "../../../node_modules/mdb-react-ui-kit/dist/css/mdb.min.css";
 
 import React from 'react';
 import {
@@ -13,7 +13,8 @@ import {
 import {
   Button,
   IconButton,
-  Stack
+  Stack,
+  Box,
 } from '@chakra-ui/react';
 
 import axios from 'axios';
@@ -22,8 +23,8 @@ import axios from 'axios';
 import { BsPlusSquare, BsPlusSquareFill } from 'react-icons/bs'
 import { AiFillMessage, AiOutlineMessage, AiOutlineHome } from 'react-icons/ai'
 import { RiProfileLine, RiProfileFill } from 'react-icons/ri'
-import SearchBar from './searchBar'
-
+import SearchBar from '../searchBar';
+import "./navbar.css";
 
 class Navbar extends React.Component {
   constructor(props) {
@@ -60,7 +61,7 @@ class Navbar extends React.Component {
   }
 
 
-  componentWillMount() {
+  async componentWillMount() {
     let url = window.location.href;
     let currSection = url.substring(url.lastIndexOf("/") + 1);
     this.setState({ currSection: currSection });
@@ -69,15 +70,21 @@ class Navbar extends React.Component {
     console.log(localStorage.getItem('token'))
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
     try {
-      axios.get("http://localhost:5000/api/test-token/").then((res) => {
+      await axios.get("http://localhost:5000/api/test-token/").then((res) => {
         console.log(res.data);
         if (res.data === 'true') {
           this.setState({ validToken: true });
+          return;
         }
       });
+      if (!this.state.validToken) {
+        localStorage.removeItem('token');
+      }
     } catch (e) {
       console.log(e);
+      localStorage.removeItem('token');
     }
+
 
 
     if (localStorage.getItem('token') != null) {
@@ -92,15 +99,15 @@ class Navbar extends React.Component {
 
   render() {
     let barFront =
-      <MDBNavbarNav right>
+      <MDBNavbarNav>
         <div style={{ width: "16%" }}>
           <MDBContainer>
             <MDBNavbarBrand href='/homepage'>
-              <IconButton style={{ backgroundColor: this.state.currSection === "homepage" ? "darkturquoise" : "#ffffff", color: this.state.currSection === "homepage" ? "#ffffff" : "#000000" }} icon={<AiOutlineHome />} />
+              <IconButton style={{ backgroundColor: this.state.currSection === "homepage" ? "darkturquoise" : "var(--secondary-color)", color: this.state.currSection === "homepage" ? "#ffffff" : "#000000" }} icon={<AiOutlineHome />} />
             </MDBNavbarBrand>
           </MDBContainer>
         </div>
-        <div className="position-absolute" style={{ left: "42%", width: "16%", textAlign: "left" }}>
+        <div className="position-absolute" style={{ top: "15px", left: "40%", width: "20%", textAlign: "left" }}>
           <SearchBar />
         </div>
       </MDBNavbarNav>
@@ -108,23 +115,23 @@ class Navbar extends React.Component {
     if (this.state.validToken) {
       return (
         <div style={{ height: "65px" }}>
-          <MDBNavbar style={{ height: "100%", backgroundColor: "#151516" }} expand='lg'>
+          <MDBNavbar className="color-switch" style={{ height: "100%" }} expand='sm'>
             {barFront}
             <div>
-              <MDBNavbarNav right>
+              <MDBNavbarNav>
                 <MDBNavbarItem>
                   <MDBNavbarLink style={{ color: "#ffffff" }} href='/createPost'>
-                    {this.state.currSection === "createPost" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<BsPlusSquareFill />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} icon={<BsPlusSquare />} />}
+                    {this.state.currSection === "createPost" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<BsPlusSquareFill />} /> : <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<BsPlusSquare />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink style={{ color: "#ffffff" }} href='/dms'>
-                    {this.state.currSection === "dms" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<AiFillMessage />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} icon={<AiOutlineMessage />} />}
+                    {this.state.currSection === "dms" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<AiFillMessage />} /> : <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<AiOutlineMessage />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
                   <MDBNavbarLink style={{ color: "#ffffff" }} href={'/profile/' + this.state.username}>
-                    {this.state.currSection === "profile" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<RiProfileFill />} /> : <IconButton style={{ color: "black", backgroundColor: "white" }} icon={<RiProfileLine />} />}
+                    {this.state.currSection === "profile" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<RiProfileFill />} /> : <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<RiProfileLine />} />}
                   </MDBNavbarLink>
                 </MDBNavbarItem>
               </MDBNavbarNav>
@@ -134,16 +141,16 @@ class Navbar extends React.Component {
       )
     } else {
       return (
-        <div style={{ height: "65px" }}>
-          <MDBNavbar style={{ height: "100%", backgroundColor: "#151516" }} expand='lg'>
+        <div className="color-switch" style={{ height: "65px" }}>
+          <MDBNavbar  style={{ height: "100%" }} expand='lg'>
             {barFront}
             <div style={{ top: "100px" }}>
               <MDBNavbarNav right>
                 <Stack direction='row' spacing={4}>
-                  <Button onClick={this.goToSignup} style={{ backgroundColor: this.state.currSection === "signup" ? "darkturquoise" : "#ffffff", color: this.state.currSection === "signup" ? "#ffffff" : "#000000", right: "25px" }} variant='solid'>
+                  <Button onClick={this.goToSignup} style={{ backgroundColor: this.state.currSection === "signup" ? "darkturquoise" : "var(--secondary-color)", color: this.state.currSection === "signup" ? "#ffffff" : "#000000", right: "25px" }} variant='solid'>
                     Signup
                   </Button>
-                  <Button onClick={this.goToLogin} style={{ backgroundColor: this.state.currSection === "login" ? "darkturquoise" : "#ffffff", color: this.state.currSection === "login" ? "#ffffff" : "#000000", right: "25px" }} variant='solid'>
+                  <Button onClick={this.goToLogin} style={{ backgroundColor: this.state.currSection === "login" ? "darkturquoise" : "var(--secondary-color)", color: this.state.currSection === "login" ? "#ffffff" : "#000000", right: "25px" }} variant='solid'>
                     Login
                   </Button>
                 </Stack>
