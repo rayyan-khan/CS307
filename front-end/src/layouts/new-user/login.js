@@ -11,13 +11,18 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   PopoverHeader,
-  PopoverContent
+  PopoverContent,
+  Box,
+  Center,
+  Text,
+  InputGroup,
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
 import logo from '../../logo.png';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useAnimationFrame } from 'framer-motion';
+import '../layouts.css';
 
 const axios = require('axios');
 
@@ -91,67 +96,72 @@ class Login extends React.Component {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header" style={{ transform: "translateY(-8vh)" }}>
+      <div className="color-switch">
+        <Center>
+          <Box paddingTop={'35vh'} width={'20vw'} height={'90vh'}>
+            <Center>
+              <Text fontSize={'4xl'} style={{ color: 'mediumturquoise' }}>Login</Text>
+            </Center>
+            <p></p>
+            <form>
 
-          <h2 style={{ color: 'mediumturquoise' }}>Login</h2>
-          <p></p>
-          <form>
+              {/* username entry part of form */}
+              <FormControl isInvalid={this.state.userError}>
+                <FormLabel htmlFor='username'> </FormLabel>
+                <Input
+                  focusBorderColor='teal.200'
+                  errorBorderColor='red.300'
+                  placeholder='Username'
+                  type="text"
+                  name="Username"
+                  value={this.state.user.Username}
+                  onChange={this.changeHandler}
+                  style={{ color: 'darkturquoise' }} />
+                {!this.state.userError ? (<FormHelperText>  </FormHelperText>)
+                  : (<FormErrorMessage>The username you entered is invalid.</FormErrorMessage>)}
+              </FormControl>
 
-            {/* username entry part of form */}
-            <FormControl isInvalid={this.state.userError}>
-              <FormLabel htmlFor='username'> </FormLabel>
-              <Input
-                focusBorderColor='teal.200'
-                errorBorderColor='red.300'
-                placeholder='Username'
-                type="text"
-                name="Username"
-                value={this.state.user.Username}
-                onChange={this.changeHandler}
-                style={{ color: 'darkturquoise' }} />
-              {!this.state.userError ? (<FormHelperText>  </FormHelperText>)
-                : (<FormErrorMessage>The username you entered is invalid.</FormErrorMessage>)}
-            </FormControl>
+              {/* password entry part of form */}
+              <FormControl isInvalid={this.state.passwordError}>
+                <FormLabel htmlFor='password'> </FormLabel>
+                <InputGroup>
+                  <Input
+                    pr='4.5rem'
+                    type={this.state.show ? 'text' : 'password'}
+                    placeholder='Enter password'
+                    style={{ color: 'darkturquoise' }}
+                    name="Password"
+                    value={this.state.user.Password}
+                    onChange={this.changeHandler}
+                  />
+                  <InputRightElement width='4.5rem'>
+                    <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}>
+                      {this.state.show ? 'Hide' : 'Show'}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+                {!this.state.passwordError ? (<FormHelperText> </FormHelperText>)
+                  : (<FormErrorMessage>Your password was incorrect</FormErrorMessage>)}
+              </FormControl>
 
-            {/* password entry part of form */}
-            <FormControl isInvalid={this.state.passwordError}>
-              <FormLabel htmlFor='password'> </FormLabel>
-              <Input
-                pr='4.5rem'
-                type={this.state.show ? 'text' : 'password'}
-                placeholder='Enter password'
-                style={{ color: 'darkturquoise' }}
-                name="Password"
-                value={this.state.user.Password}
-                onChange={this.changeHandler}
-              />
-              <InputRightElement width='4.5rem'>
-                <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}
-                  style={{ transform: "translateY(1vh)" }}>
-                  {this.state.show ? 'Hide' : 'Show'}
-                </Button>
-              </InputRightElement>
-              {!this.state.passwordError ? (<FormHelperText> </FormHelperText>)
-                : (<FormErrorMessage>Your password was incorrect</FormErrorMessage>)}
-            </FormControl>
-
-          </form>
-          <Popover>
-            <PopoverTrigger>
-              <Button colorScheme='black' onClick={this.loginUser} fontSize={25}
-                bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
-            </PopoverTrigger>
-            <PopoverContent bg='black' fontWeight='bold' fontSize={16} style={{ color: 'mediumturquoise' }}>
-              <PopoverArrow />
-              <PopoverCloseButton />
-              {!this.state.axiosError ? (<PopoverHeader>Logging in...</PopoverHeader>)
-                : (<PopoverHeader> {this.state.loginError} </PopoverHeader>)}
-            </PopoverContent>
-          </Popover>
-
-        </header>
-      </div>
+            </form>
+            <Center paddingTop={'2vh'}>
+              <Popover>
+                <PopoverTrigger>
+                  <Button colorScheme='black' onClick={this.loginUser} fontSize={25}
+                    bg='mediumturquoise'>Submit</Button>
+                </PopoverTrigger>
+                <PopoverContent bg='black' fontWeight='bold' fontSize={16} style={{ color: 'mediumturquoise' }}>
+                  <PopoverArrow />
+                  <PopoverCloseButton />
+                  {!this.state.axiosError ? (<PopoverHeader>Logging in...</PopoverHeader>)
+                    : (<PopoverHeader> {this.state.loginError} </PopoverHeader>)}
+                </PopoverContent>
+              </Popover>
+            </Center>
+          </Box>
+        </Center>
+      </div >
     );
   }
 }

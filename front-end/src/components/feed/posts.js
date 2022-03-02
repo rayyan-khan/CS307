@@ -3,7 +3,7 @@ let posts = {
         {
             "username": "Junaid",
             "profilePicture": "https://picsum.photos/200/300?random=1",
-            "postCaption": "Check out this awesome new video I saw on YouTube! Its about 3D printed rockets and stuff. I'm so excited to see what it will be like!",
+            "postCaption": "Check out this awesome new video I saw on YouTube! Its about 3D printed rockets and color-switch. I'm so excited to see what it will be like!",
             "bodyImage": "",
             "tagID": "Purdue Circle",
             "postID": "34",

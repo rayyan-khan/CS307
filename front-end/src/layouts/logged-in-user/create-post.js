@@ -19,10 +19,12 @@ import {
   PopoverAnchor,
   transform,
   Textarea,
-  Checkbox
+  Checkbox,
+  Box
 } from '@chakra-ui/react'
 
 import React from 'react'
+import '../layouts.css';
 const axios = require('axios');
 
 
@@ -135,12 +137,12 @@ class CreatePost extends React.Component {
   render() {
 
     return (
-      <div className="App">
+      <div className="color-switch">
         <header className="App-header">
           <form>
             <div>
               <FormControl isInvalid={this.state.postError}>
-                <h2 style={{ color: "white" }}>Post Caption </h2>
+                <h2 style={{ color: "var(--text-color)" }}>Post Caption </h2>
                 <Textarea
                   size="lg"
                   focusBorderColor='teal.200'
@@ -160,7 +162,7 @@ class CreatePost extends React.Component {
               </FormControl>
 
               <FormControl isInvalid={this.state.hyperlinkError}>
-                <h2 style={{ color: "white" }}>Hyperlink </h2>
+                <h2 style={{ color: "var(--text-color)" }}>Hyperlink </h2>
                 <Input
                   size="lg"
                   focusBorderColor='teal.200'
@@ -178,7 +180,7 @@ class CreatePost extends React.Component {
               </FormControl>
 
               <FormControl>
-                <h2 style={{ color: "white" }}>Upload Image</h2>
+                <h2 style={{ color: "var(--text-color)" }}>Upload Image</h2>
                 <Input paddingTop={'4px'} style={{ color: "white" }} type='file'
                   accept="image/*"
                   onChange={this.fileSelecteHandler} />
@@ -186,7 +188,7 @@ class CreatePost extends React.Component {
 
               <div className="form-check">
                 <input type="checkbox" className="form-check-input" id="checkbox" onClick={this.makeAnonymous} />
-                <label style={{ color: "white" }} className="form-check-label">Make Anonymous</label>
+                <label style={{ color: "var(--text-color)" }} className="form-check-label">Make Anonymous</label>
               </div>
 
               <Popover>

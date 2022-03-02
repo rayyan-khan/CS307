@@ -1,3 +1,4 @@
+import { Text } from '@chakra-ui/react';
 import React from 'react'
 
 import logo from '../logo.png';
@@ -8,9 +9,9 @@ class ScreenTooSmall extends React.Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Your screen is too small to smoothly run our application. Please try making it bigger.
-          </p>
+          <Text color={'white'}>
+            Your screen is only {window.innerWidth} pixels wide. To smoothly run our application, we require atleast 575 pixels. Please try making it biggeror try a different device
+          </Text>
           <a
             className="App-link"
             href="https://reactjs.org"

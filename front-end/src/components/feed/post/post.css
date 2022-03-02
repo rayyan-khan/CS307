@@ -1,3 +1,15 @@
+.color-switch {
+    background-color: white;
+    --chakra-colors-gray-100: black;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    .color-switch {
+        background-color: #151516;
+        --chakra-colors-gray-100: white;
+    }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

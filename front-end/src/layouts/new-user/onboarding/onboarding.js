@@ -7,6 +7,7 @@ import {
     Input,
     FormControl,
     FormLabel,
+    color,
 } from '@chakra-ui/react';
 import AutoTextArea from '../../../components/autoTextArea.tsx';
 import Tags from './tags';
@@ -16,6 +17,7 @@ import React, { useEffect, useState } from 'react'
 import { GrNext } from "react-icons/gr"
 import ImageUpload from 'image-upload-react'
 import 'image-upload-react/dist/index.css'
+import "../../layouts.css";
 
 import axios from 'axios';
 
@@ -29,7 +31,7 @@ const Onboarding = () => {
 
     const [bio, setBio] = useState('');
 
-    const [currentFrame, setCurrentFrame] = useState(0);
+    const [currentFrame, setCurrentFrame] = useState(3);
 
     // TODO: Remove this and get auth header from backend
 
@@ -147,7 +149,7 @@ const Onboarding = () => {
 
     if (currentFrame === 0) {
         return (
-            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
+            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"--mainColor"}>
                 <Box
                     position={'relative'}
                     maxW={"820px"}
@@ -158,19 +160,19 @@ const Onboarding = () => {
                     textAlign={'center'}>
                     <Stack>
                         <Center>
-                            <Text fontSize='xl' color={'white'}>Hello there, welcome to Purdue Circle!</Text>
+                            <Text fontSize='xl' color={'var(--text-color)'}>Hello there, welcome to Purdue Circle!</Text>
                         </Center>
                         <Center>
-                            <Text fontSize='lg' color={'white'}>Let's get to know you a little bit more</Text>
+                            <Text fontSize='lg' color={'var(--text-color)'}>Let's get to know you a little bit more</Text>
                         </Center>
                         <Center pt={5}>
-                            <Text fontSize='md' color={'white'}>What's your full name?</Text>
+                            <Text fontSize='md' color={'var(--text-color)'}>What's your full name?</Text>
                         </Center>
                         <Center>
                             <Stack>
                                 <FormControl>
-                                    <FormLabel color={'white'} htmlFor='email'>First Name</FormLabel>
-                                    <Input focusBorderColor='darkturquoise' value={firstName} color={'white'} id='email' type='name' onChange={(e) => {
+                                    <FormLabel color={'var(--text-color)'} htmlFor='email'>First Name</FormLabel>
+                                    <Input focusBorderColor='darkturquoise' value={firstName} color={'var(--text-color)'} id='email' type='name' onChange={(e) => {
                                         if (!(e.currentTarget.value.length > 30)) {
                                             setFirstName(e.currentTarget.value)
                                         }
@@ -182,8 +184,8 @@ const Onboarding = () => {
                                     }} />
                                 </FormControl>
                                 <FormControl>
-                                    <FormLabel color={'white'} htmlFor='email'>Last Name</FormLabel>
-                                    <Input focusBorderColor='darkturquoise' value={lastName} color={'white'} id='email' type='name' onChange={(e) => {
+                                    <FormLabel color={'var(--text-color)'} htmlFor='email'>Last Name</FormLabel>
+                                    <Input focusBorderColor='darkturquoise' value={lastName} color={'var(--text-color)'} id='email' type='name' onChange={(e) => {
                                         if (!(e.currentTarget.value.length > 30)) {
                                             setLastName(e.currentTarget.value)
                                         }
@@ -198,7 +200,7 @@ const Onboarding = () => {
                         </Center>
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button width={'5vw'} isDisabled={nameNextDisabled} onClick={handleNameSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>
+                                <Button backgroundColor={'var(--secondary-color)'} width={'4vw'} isDisabled={nameNextDisabled} onClick={handleNameSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>
                                     Next
                                 </Button>
                             </Center>
@@ -210,7 +212,7 @@ const Onboarding = () => {
     }
     if (currentFrame === 1) {
         return (
-            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
+            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"--mainColor"}>
                 <Box
                     position={'relative'}
                     maxW={"820px"}
@@ -222,21 +224,21 @@ const Onboarding = () => {
                     textAlign={'center'}>
                     <Stack>
                         <Center>
-                            <Text fontSize='xl' color={'white'}>{"Nice to meet you " + firstName}</Text>
+                            <Text fontSize='xl' color={'var(--text-color)'}>{"Nice to meet you " + firstName}</Text>
                         </Center>
                         <Center pt={5}>
-                            <Text fontSize='xl' color={'white'}>Please upload an image to set as your profile picture.</Text>
+                            <Text fontSize='xl' color={'var(--text-color)'}>Please upload an image to set as your profile picture.</Text>
                         </Center>
                         <Center>
-                            <Box boxShadow={'xl'}>
+                            <Box>
                                 <ImageUpload
                                     handleImageSelect={handleImageSelect}
                                     imageSrc={imageSrc}
                                     setImageSrc={setImageSrc}
                                     style={{
-                                        width: "34vw",
-                                        height: "24.3vw",
-                                        background: '#151516'
+                                        width: "25.5vw",
+                                        height: "18.225vw",
+                                        background: 'var(--tertiary-color)',
                                     }}
                                 />
                             </Box>
@@ -244,7 +246,7 @@ const Onboarding = () => {
 
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button width={'5vw'} isDisabled={imageNextDisabled} onClick={handleImageSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                                <Button backgroundColor={'var(--secondary-color)'} width={'4vw'} isDisabled={imageNextDisabled} onClick={handleImageSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
@@ -253,7 +255,7 @@ const Onboarding = () => {
         );
     } else if (currentFrame === 2) {
         return (
-            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
+            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"--mainColor"}>
                 <Box
                     position={'relative'}
                     maxW={"820px"}
@@ -265,10 +267,10 @@ const Onboarding = () => {
                     textAlign={'center'}>
                     <Stack>
                         <Center>
-                            <Text fontSize='xl' color={'white'}>Great! Now let's get your bio setup.</Text>
+                            <Text fontSize='xl' color={'var(--text-color)'}>Great! Now let's get your bio setup.</Text>
                         </Center>
                         <Center>
-                            <Text fontSize='sm' color={'white'}>Don't worry, you can always change it later.</Text>
+                            <Text fontSize='sm' color={'var(--text-color)'}>Don't worry, you can always change it later.</Text>
                         </Center>
                         <Center>
                             <Box pt={5} boxShadow={'xl'}>
@@ -282,7 +284,7 @@ const Onboarding = () => {
 
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button width={'5vw'} onClick={handleBioSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                                <Button backgroundColor={'var(--secondary-color)'} width={'4vw'} onClick={handleBioSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
@@ -292,7 +294,7 @@ const Onboarding = () => {
 
     } else if (currentFrame === 3) {
         return (
-            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"#151516"}>
+            <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"--mainColor"}>
                 <Box
                     position={'relative'}
                     maxW={"820px"}
@@ -304,7 +306,7 @@ const Onboarding = () => {
                     textAlign={'center'}>
                     <Stack>
                         <Center>
-                            <Text fontSize='xl' color={'white'}>Last Step! Would you like to follow any of these tags?</Text>
+                            <Text fontSize='xl' color={'var(--text-color)'}>Last Step! Would you like to follow any of these tags?</Text>
                         </Center>
                         <Center pt={10}>
                             <Stack direction={'column'} p={3}>
@@ -342,7 +344,7 @@ const Onboarding = () => {
 
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button width={'5vw'} isDisabled={imageNextDisabled} onClick={handleTagsSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                                <Button backgroundColor={'var(--secondary-color)'} width={'4vw'} onClick={handleTagsSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>

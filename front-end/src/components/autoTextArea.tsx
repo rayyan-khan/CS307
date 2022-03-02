@@ -5,6 +5,7 @@ import React, {
 	useRef,
 	TextareaHTMLAttributes,
 } from "react";
+import "./navbar/navbar.css";
 
 const AutoTextArea = (props: TextareaHTMLAttributes<HTMLTextAreaElement>) => {
 	const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -30,29 +31,36 @@ const AutoTextArea = (props: TextareaHTMLAttributes<HTMLTextAreaElement>) => {
 	return (
 		<div
 			style={{
-				minHeight: parentHeight,
-				backgroundColor: '#151516',
+				borderColor: 'var(--text-color)',
+				borderWidth: '1px',
+				borderRadius: '10px',
 			}}
 		>
-			<textarea
-				{...props}
-				ref={textAreaRef}
-				rows={3}
-				color={'#151516'}
+			<div
 				style={{
-					height: textAreaHeight,
-					backgroundColor: '#151516',
-					textAlign: 'center',
-					color: 'white',
-					borderColor: 'white',
-					borderWidth: '1px',
+					padding: '3px',
+					minHeight: parentHeight,
+					backgroundColor: 'var(--main-color)',
 					borderRadius: '10px',
-					minWidth: '15vw',
-					paddingTop: '10px',
-					paddingBottom: '10px',
 				}}
-				onChange={onChangeHandler}
-			/>
+			>
+				<textarea
+					{...props}
+					ref={textAreaRef}
+					rows={3}
+					color={'var(--text-color)'}
+					style={{
+						height: textAreaHeight,
+						backgroundColor: 'var(--main-color)',
+						textAlign: 'center',
+						color: 'var(--text-color)',
+						minWidth: '15vw',
+						paddingTop: '10px',
+						paddingBottom: '10px',
+					}}
+					onChange={onChangeHandler}
+				/>
+		</div>
 		</div>
 	);
 };
