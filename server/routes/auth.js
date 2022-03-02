@@ -7,9 +7,8 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const decodeHeader = require('../utils/decodeHeader')
 
-
-authRoutes.route("/test-token").get(async function (req, res) {
-    var user;
+authRoutes.route('/test-token').get(async function (req, res) {
+    var user
     try {
         //Use decodeHeader to extract user info from header or throw an error
         user = await decodeHeader.decodeAuthHeader(req)
@@ -18,7 +17,7 @@ authRoutes.route("/test-token").get(async function (req, res) {
     }
 
     res.json('true')
-});
+})
 
 authRoutes.route('/register').post(async (req, res) => {
     const { email, username, password } = req.body
@@ -323,6 +322,108 @@ authRoutes.route('/login').post(async (req, res) => {
             )
         })
     }
+})
+
+authRoutes.route('/passwordRecoveryLink').put(async (req, res) => {
+    const { email } = req.body
+
+    if (!email) return res.status(400).json('Missing email field')
+
+    //confirm account exists and is verified
+    const accountExists = await query.accountExists(email).catch((err) => {
+        console.log(err)
+        return res
+            .status(500)
+            .json('Internal error attempting to confirm account exists')
+    })
+
+    if (accountExists !== 'Account exists') {
+        return res.status(400).json(accountExists)
+    }
+
+    nodemailer.sendPasswordRecoveryEmail(email)
+
+    return res.json('Email sent')
+})
+
+authRoutes.route('/recoverPassword').put(async (req, res) => {
+    let recoverToken = req.headers.recover_token
+    let { newPassword } = req.body
+
+    if (!recoverToken) {
+        return res.status(400).json('Missing recoverToken header')
+    }
+
+    if (!newPassword) {
+        return res.status(400).json('Missing newPassword field')
+    }
+
+    jwt.verify(recoverToken, process.env.TOKEN_SECRET, async (err, decoded) => {
+        //deal with possible errors
+        if (err) {
+            if (err.message) {
+                if (err.message === 'invalid signature')
+                    return res.status(400).json('Invalid signature')
+
+                if (err.message === 'jwt expired') {
+                    return res.status(400).json('token expired')
+                }
+
+                return res.status(400).json('bad token')
+            }
+
+            return res.status(400).json('Error verifying recoverToken')
+        }
+
+        const { email, purpose } = decoded
+
+        if (!email) return res.status(400).json('Invalid token')
+
+        if (!purpose || purpose !== 'password recovery')
+            return res.status(400).json('Invalid token')
+
+        //confirm account still exists
+        const accountExists = await query.accountExists(email).catch((err) => {
+            console.log(err)
+            return res
+                .status(500)
+                .json('Internal error attempting to confirm account exists')
+        })
+
+        if (accountExists !== 'Account exists') {
+            return res.status(400).json(accountExists)
+        }
+
+        bcrypt.genSalt(10, async (err, salt) => {
+            if (err) {
+                console.log(err)
+                return res.status(500).json('Internal error generating salt')
+            }
+
+            bcrypt.hash(newPassword, salt, async (err, hash) => {
+                if (err) {
+                    console.log(err)
+                    return res
+                        .status(500)
+                        .json('Internal error hashing password')
+                }
+
+                //update with new password
+                const updatePassword = await query
+                    .updatePassword(email, hash)
+                    .catch((err) => {
+                        console.log(err)
+                        return res
+                            .status(500)
+                            .json(
+                                'Internal error attempting to update password'
+                            )
+                    })
+
+                return res.status(200).json('Password changed')
+            })
+        })
+    })
 })
 
 module.exports = authRoutes
