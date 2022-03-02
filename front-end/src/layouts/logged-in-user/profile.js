@@ -4,11 +4,17 @@ import '../../styles/profile.css'
 import Post from '../../components/feed/post/post'
 import posts from '../../components/feed/posts'
 import {
-    Box, Button, Center, Image, Stack, Text, Input,
+    Box,
+    Button,
+    Center,
+    Image,
+    Stack,
+    Text,
+    Input,
     FormControl,
     FormLabel,
 } from '@chakra-ui/react'
-import "../layouts.css";
+import '../layouts.css'
 
 class Profile extends React.Component {
     constructor(props) {
@@ -27,16 +33,14 @@ class Profile extends React.Component {
             loading: true,
             allPosts: [],
             editMode: false,
+            showPosts: true,
         }
     }
 
     fetchPosts() {
-
         try {
             axios
-                .get(
-                    'http://localhost:5000/api/getOrderedPost'
-                )
+                .get('http://localhost:5000/api/getOrderedPost')
                 .then((res) => {
                     console.log(this.state.username)
                     console.log(res.data)
@@ -68,7 +72,6 @@ class Profile extends React.Component {
         this.setState({ firstName: e.target.value })
     }
 
-
     lastNameHandler(e) {
         this.setState({ lastName: e.target.value })
     }
@@ -77,13 +80,14 @@ class Profile extends React.Component {
         console.log('test')
         this.fetchPosts()
 
-
         if (axios.defaults.headers.common['authorization'] != null) {
             var sessionUsername
-            await axios.get('http://localhost:5000/api/getUserFromHeader').then((res) => {
-                console.log('lala')
-                sessionUsername = res.data.username
-            })
+            await axios
+                .get('http://localhost:5000/api/getUserFromHeader')
+                .then((res) => {
+                    console.log('lala')
+                    sessionUsername = res.data.username
+                })
         }
 
         var userViewing = await (this.props.username
@@ -110,8 +114,7 @@ class Profile extends React.Component {
                     // numFollowers: this.formatNum(res.data.numFollowers),
                     viewingSelf:
                         sessionUsername != null &&
-                        sessionUsername.localeCompare(userViewing) ===
-                        0,
+                        sessionUsername.localeCompare(userViewing) === 0,
                     loading: false,
                 })
             })
@@ -127,6 +130,79 @@ class Profile extends React.Component {
 
     formatNum(num) {
         return Intl.NumberFormat('en', { notation: 'compact' }).format(num)
+    }
+
+    toPosts = () => {
+        this.setState({ showPosts: true })
+    }
+
+    toInteractions = () => {
+        this.setState({ showPosts: false })
+    }
+
+    Userline = () => {
+        return (
+            <div>
+                <Stack pt={'7.5vh'} pb={'2.5vh'}>
+                    <Center>
+                        <div style={{ display: 'flex' }}>
+                            <div
+                                className={`toggle-title ${
+                                    this.state.showPosts ? 'select-title' : ''
+                                }`}
+                                onClick={this.toPosts}
+                            >
+                                <Box>
+                                    <Text
+                                        color={'darkturquoise'}
+                                        fontSize={'4xl'}
+                                    >
+                                        Posts
+                                    </Text>
+                                </Box>
+                            </div>
+                            <div
+                                className={`toggle-title ${
+                                    this.state.showPosts ? '' : 'select-title'
+                                }`}
+                                onClick={this.toInteractions}
+                            >
+                                <Box>
+                                    <Text
+                                        color={'darkturquoise'}
+                                        fontSize={'4xl'}
+                                    >
+                                        Interactions
+                                    </Text>
+                                </Box>
+                            </div>
+                        </div>
+                    </Center>
+                </Stack>
+
+                <div className="slide-container">
+                    <Box
+                        className={`slide ${
+                            this.state.showPosts ? 'right-hide' : 'show'
+                        }`}
+                        style={{ paddingBottom: '80px' }}
+                    >
+                        <div style={{ textAlign: 'center' }}>
+                            Future user interaction content goes here
+                        </div>
+                    </Box>
+
+                    <Box
+                        style={{ paddingBottom: '80px' }}
+                        className={`slide posts-container ${
+                            this.state.showPosts ? 'show' : 'left-hide'
+                        }`}
+                    >
+                        {this.postHandler()}
+                    </Box>
+                </div>
+            </div>
+        )
     }
 
     render() {
@@ -154,204 +230,411 @@ class Profile extends React.Component {
                                             className="color-switch"
                                             boxShadow={'2xl'}
                                             rounded={'lg'}
-                                            direction={'row'}>
+                                            direction={'row'}
+                                        >
                                             <Center>
                                                 <Box>
                                                     <Image
                                                         borderRadius={'full'}
                                                         src="https://picsum.photos/800/1500"
-                                                        boxSize='10vw'
+                                                        boxSize="10vw"
                                                     />
                                                 </Box>
                                                 <Box pl={'1vw'}>
-                                                    <Stack direction={'column'} >
-
+                                                    <Stack direction={'column'}>
                                                         <Box>
-                                                            {
-                                                                this.state.editMode ? (
-                                                                    <>
-                                                                        <Stack direction={'row'}>
-                                                                            <Input color='var(--text-color)'
-                                                                                height={'3.25vh'}
-                                                                                width={'8vw'}
-                                                                                placeholder="First Name"
-                                                                                fontSize={'2l'}
-                                                                                value={this.state.firstName}
-                                                                                onChange={
-                                                                                    (e) => {
-                                                                                        this.setState({ firstName: e.target.value })
+                                                            {this.state
+                                                                .editMode ? (
+                                                                <>
+                                                                    <Stack
+                                                                        direction={
+                                                                            'row'
+                                                                        }
+                                                                    >
+                                                                        <Input
+                                                                            color="var(--text-color)"
+                                                                            height={
+                                                                                '3.25vh'
+                                                                            }
+                                                                            width={
+                                                                                '8vw'
+                                                                            }
+                                                                            placeholder="First Name"
+                                                                            fontSize={
+                                                                                '2l'
+                                                                            }
+                                                                            value={
+                                                                                this
+                                                                                    .state
+                                                                                    .firstName
+                                                                            }
+                                                                            onChange={(
+                                                                                e
+                                                                            ) => {
+                                                                                this.setState(
+                                                                                    {
+                                                                                        firstName:
+                                                                                            e
+                                                                                                .target
+                                                                                                .value,
                                                                                     }
-                                                                                } />
-                                                                            <Input color='var(--text-color)'
-                                                                                height={'3.25vh'}
-                                                                                width={'8vw'}
-                                                                                placeholder="Last Name"
-                                                                                fontSize={'2l'}
-                                                                                value={this.state.lastName}
-                                                                                onChange={
-                                                                                    (e) => {
-                                                                                        this.setState({ lastName: e.target.value })
+                                                                                )
+                                                                            }}
+                                                                        />
+                                                                        <Input
+                                                                            color="var(--text-color)"
+                                                                            height={
+                                                                                '3.25vh'
+                                                                            }
+                                                                            width={
+                                                                                '8vw'
+                                                                            }
+                                                                            placeholder="Last Name"
+                                                                            fontSize={
+                                                                                '2l'
+                                                                            }
+                                                                            value={
+                                                                                this
+                                                                                    .state
+                                                                                    .lastName
+                                                                            }
+                                                                            onChange={(
+                                                                                e
+                                                                            ) => {
+                                                                                this.setState(
+                                                                                    {
+                                                                                        lastName:
+                                                                                            e
+                                                                                                .target
+                                                                                                .value,
                                                                                     }
-                                                                                } />
-                                                                        </Stack>
-                                                                        <Text pl={'.15vw'} fontWeight={'bold'} color={'var(--text-color)'} fontSize={'xs'}>
-                                                                            @{this.state.username}
-                                                                        </Text>
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <Text fontSize={'2xl'} color={'var(--text-color)'}>
-                                                                            {this.state.firstName} {this.state.lastName}
-                                                                        </Text>
-                                                                        <Text pl={'.15vw'} fontWeight={'bold'} color={'var(--text-color)'} fontSize={'xs'}>
-                                                                            @{this.state.username}
-                                                                        </Text>
-                                                                    </>
-                                                                )
-
-                                                            }
+                                                                                )
+                                                                            }}
+                                                                        />
+                                                                    </Stack>
+                                                                    <Text
+                                                                        pl={
+                                                                            '.15vw'
+                                                                        }
+                                                                        fontWeight={
+                                                                            'bold'
+                                                                        }
+                                                                        color={
+                                                                            'var(--text-color)'
+                                                                        }
+                                                                        fontSize={
+                                                                            'xs'
+                                                                        }
+                                                                    >
+                                                                        @
+                                                                        {
+                                                                            this
+                                                                                .state
+                                                                                .username
+                                                                        }
+                                                                    </Text>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Text
+                                                                        fontSize={
+                                                                            '2xl'
+                                                                        }
+                                                                        color={
+                                                                            'var(--text-color)'
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            this
+                                                                                .state
+                                                                                .firstName
+                                                                        }{' '}
+                                                                        {
+                                                                            this
+                                                                                .state
+                                                                                .lastName
+                                                                        }
+                                                                    </Text>
+                                                                    <Text
+                                                                        pl={
+                                                                            '.15vw'
+                                                                        }
+                                                                        fontWeight={
+                                                                            'bold'
+                                                                        }
+                                                                        color={
+                                                                            'var(--text-color)'
+                                                                        }
+                                                                        fontSize={
+                                                                            'xs'
+                                                                        }
+                                                                    >
+                                                                        @
+                                                                        {
+                                                                            this
+                                                                                .state
+                                                                                .username
+                                                                        }
+                                                                    </Text>
+                                                                </>
+                                                            )}
                                                         </Box>
                                                     </Stack>
-                                                    <Stack pt={'1vh'} direction={'row'}>
-                                                        <Stack direction={'row'}>
-                                                            <Text fontWeight={'bold'} color={'var(--text-color)'}>
+                                                    <Stack
+                                                        pt={'1vh'}
+                                                        direction={'row'}
+                                                    >
+                                                        <Stack
+                                                            direction={'row'}
+                                                        >
+                                                            <Text
+                                                                fontWeight={
+                                                                    'bold'
+                                                                }
+                                                                color={
+                                                                    'var(--text-color)'
+                                                                }
+                                                            >
                                                                 {
                                                                     this.state
                                                                         .numTagsFollowing
                                                                 }
                                                             </Text>
-                                                            <Text color='var(--text-color)'>
-                                                                {' '} Tags
+                                                            <Text color="var(--text-color)">
+                                                                {' '}
+                                                                Tags
                                                             </Text>
                                                         </Stack>
-                                                        <Stack direction={'row'}>
-                                                            <Text fontWeight={'bold'} color={'var(--text-color)'}>
+                                                        <Stack
+                                                            direction={'row'}
+                                                        >
+                                                            <Text
+                                                                fontWeight={
+                                                                    'bold'
+                                                                }
+                                                                color={
+                                                                    'var(--text-color)'
+                                                                }
+                                                            >
                                                                 {
                                                                     this.state
                                                                         .numFollowers
                                                                 }
                                                             </Text>
-                                                            <Text color='var(--text-color)'>
-                                                                {' '} Followers
+                                                            <Text color="var(--text-color)">
+                                                                {' '}
+                                                                Followers
                                                             </Text>
                                                         </Stack>
-                                                        <Stack direction={'row'}>
-                                                            <Text fontWeight={'bold'} color={'var(--text-color)'}>
+                                                        <Stack
+                                                            direction={'row'}
+                                                        >
+                                                            <Text
+                                                                fontWeight={
+                                                                    'bold'
+                                                                }
+                                                                color={
+                                                                    'var(--text-color)'
+                                                                }
+                                                            >
                                                                 {
                                                                     this.state
                                                                         .numFollowing
                                                                 }
                                                             </Text>
-                                                            <Text color='var(--text-color)'>
-                                                                {' '} Following
+                                                            <Text color="var(--text-color)">
+                                                                {' '}
+                                                                Following
                                                             </Text>
                                                         </Stack>
                                                     </Stack>
                                                     <Box pt={'1vh'}>
-                                                        <Stack direction={'row'}>
-                                                            <Text fontWeight={'bold'} color={'var(--text-color)'}>
+                                                        <Stack
+                                                            direction={'row'}
+                                                        >
+                                                            <Text
+                                                                fontWeight={
+                                                                    'bold'
+                                                                }
+                                                                color={
+                                                                    'var(--text-color)'
+                                                                }
+                                                            >
                                                                 Bio:
                                                             </Text>
-                                                            {
-                                                                this.state.editMode ? (
-                                                                    <>
-                                                                        <Input color='var(--text-color)'
-                                                                            // border={'none'}
-                                                                            height={'3.25vh'}
-                                                                            width={'auto'}
-                                                                            value={this.state.bio}
-                                                                            onChange={
-                                                                                (e) => {
-                                                                                    this.setState({
-                                                                                        bio: e.target.value
-                                                                                    })
+                                                            {this.state
+                                                                .editMode ? (
+                                                                <>
+                                                                    <Input
+                                                                        color="var(--text-color)"
+                                                                        // border={'none'}
+                                                                        height={
+                                                                            '3.25vh'
+                                                                        }
+                                                                        width={
+                                                                            'auto'
+                                                                        }
+                                                                        value={
+                                                                            this
+                                                                                .state
+                                                                                .bio
+                                                                        }
+                                                                        onChange={(
+                                                                            e
+                                                                        ) => {
+                                                                            this.setState(
+                                                                                {
+                                                                                    bio: e
+                                                                                        .target
+                                                                                        .value,
                                                                                 }
-                                                                            } />
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <Text color='var(--text-color)'>
-                                                                            {this.state.bio}
-                                                                        </Text>
-                                                                    </>
-                                                                )
-
-                                                            }
+                                                                            )
+                                                                        }}
+                                                                    />
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Text color="var(--text-color)">
+                                                                        {
+                                                                            this
+                                                                                .state
+                                                                                .bio
+                                                                        }
+                                                                    </Text>
+                                                                </>
+                                                            )}
                                                         </Stack>
                                                     </Box>
                                                     <Box pr={'5px'} pt={'1vh'}>
-                                                        {this.state.viewingSelf ? (
+                                                        {this.state
+                                                            .viewingSelf ? (
                                                             <Box>
-
-                                                                {
-                                                                    this.state.editMode ? (
-                                                                        <>
-                                                                            <Button
-                                                                                backgroundColor={'#5581D7'}
-                                                                                color={'white'}
-                                                                                onClick={() => {
-                                                                                    axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
-                                                                                    console.log(this.state.firstName)
-                                                                                    console.log(this.state.lastName)
-                                                                                    console.log(this.state.bio)
-                                                                                    try {
-                                                                                        axios.put("http://localhost:5000/api/updateProfile", {
-                                                                                            firstName: this.state.firstName,
-                                                                                            lastName: this.state.lastName,
-                                                                                            bio: this.state.bio,
-                                                                                        })
-                                                                                    } catch (error) {
-                                                                                        console.log(error);
+                                                                {this.state
+                                                                    .editMode ? (
+                                                                    <>
+                                                                        <Button
+                                                                            backgroundColor={
+                                                                                '#5581D7'
+                                                                            }
+                                                                            color={
+                                                                                'white'
+                                                                            }
+                                                                            onClick={() => {
+                                                                                axios.defaults.headers.common[
+                                                                                    'authorization'
+                                                                                ] =
+                                                                                    localStorage.getItem(
+                                                                                        'token'
+                                                                                    )
+                                                                                console.log(
+                                                                                    this
+                                                                                        .state
+                                                                                        .firstName
+                                                                                )
+                                                                                console.log(
+                                                                                    this
+                                                                                        .state
+                                                                                        .lastName
+                                                                                )
+                                                                                console.log(
+                                                                                    this
+                                                                                        .state
+                                                                                        .bio
+                                                                                )
+                                                                                try {
+                                                                                    axios.put(
+                                                                                        'http://localhost:5000/api/updateProfile',
+                                                                                        {
+                                                                                            firstName:
+                                                                                                this
+                                                                                                    .state
+                                                                                                    .firstName,
+                                                                                            lastName:
+                                                                                                this
+                                                                                                    .state
+                                                                                                    .lastName,
+                                                                                            bio: this
+                                                                                                .state
+                                                                                                .bio,
+                                                                                        }
+                                                                                    )
+                                                                                } catch (error) {
+                                                                                    console.log(
+                                                                                        error
+                                                                                    )
+                                                                                }
+                                                                                this.setState(
+                                                                                    {
+                                                                                        editMode: false,
                                                                                     }
-                                                                                    this.setState({
-                                                                                        editMode: false
-                                                                                    })
-
-                                                                                }}
-                                                                            >
-                                                                                Save Changes
-                                                                            </Button>
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            <Button
-                                                                                backgroundColor={'#5581D7'}
-                                                                                color={'white'}
-                                                                                onClick={() => {
-                                                                                    this.setState({
-                                                                                        editMode: true
-                                                                                    })
-                                                                                }}
-                                                                            >
-                                                                                Edit Profile
-                                                                            </Button>
-                                                                        </>
-                                                                    )
-
-                                                                }
+                                                                                )
+                                                                            }}
+                                                                        >
+                                                                            Save
+                                                                            Changes
+                                                                        </Button>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Button
+                                                                            backgroundColor={
+                                                                                '#5581D7'
+                                                                            }
+                                                                            color={
+                                                                                'white'
+                                                                            }
+                                                                            onClick={() => {
+                                                                                this.setState(
+                                                                                    {
+                                                                                        editMode: true,
+                                                                                    }
+                                                                                )
+                                                                            }}
+                                                                        >
+                                                                            Edit
+                                                                            Profile
+                                                                        </Button>
+                                                                    </>
+                                                                )}
                                                             </Box>
                                                         ) : (
-                                                            <Stack direction={'row'}>
+                                                            <Stack
+                                                                direction={
+                                                                    'row'
+                                                                }
+                                                            >
                                                                 <Box>
                                                                     <Button
-                                                                        backgroundColor={'#5581D7'}
-                                                                        color={'white'}
+                                                                        backgroundColor={
+                                                                            '#5581D7'
+                                                                        }
+                                                                        color={
+                                                                            'white'
+                                                                        }
                                                                     >
                                                                         Follow/Unfollow
                                                                     </Button>
                                                                 </Box>
                                                                 <Box>
                                                                     <Button
-                                                                        backgroundColor={'#1D2023'}
-                                                                        color={'white'}
+                                                                        backgroundColor={
+                                                                            '#1D2023'
+                                                                        }
+                                                                        color={
+                                                                            'white'
+                                                                        }
                                                                     >
                                                                         DM
                                                                     </Button>
                                                                 </Box>
                                                                 <Box>
                                                                     <Button
-                                                                        backgroundColor={'#CD2E3E'}
-                                                                        color={'white'}
+                                                                        backgroundColor={
+                                                                            '#CD2E3E'
+                                                                        }
+                                                                        color={
+                                                                            'white'
+                                                                        }
                                                                     >
                                                                         Block
                                                                     </Button>
@@ -362,23 +645,10 @@ class Profile extends React.Component {
                                                 </Box>
                                             </Center>
                                         </Stack>
-
-                                        <Stack pt={'7.5vh'} pb={'2.5vh'}>
-                                            <Center>
-                                                <Box>
-                                                    <Text color={'darkturquoise'} fontSize={'4xl'}>
-                                                        Posts
-                                                    </Text>
-                                                </Box>
-                                            </Center>
-                                        </Stack>
                                     </Box>
                                 </Center>
-                                <Box style={{ paddingBottom: '80px' }} className="posts-container">
-                                    {this.postHandler()}
-                                </Box>
+                                <this.Userline />
                             </>
-
                         ) : (
                             <div className="container justify-content-center profile-page-container">
                                 <div className="row justify-content-center">
@@ -401,12 +671,10 @@ class Profile extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                        )
-                        }
+                        )}
                     </div>
-                )
-                }
-            </div >
+                )}
+            </div>
         )
     }
 }
