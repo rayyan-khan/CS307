@@ -28,12 +28,17 @@ export default function Settings({ user, label }) {
 
     const [settingScreen, setSettingScreen] = useState('profile')
 
-
+    const [firstName, setFirstName] = useState(user.firstName)
+    const [lastName, setLastName] = useState(user.lastName)
+    const [email, setEmail] = useState(user.email)
+    const [password, setPassword] = useState('')
 
 
 
 
     const [editName, setEditName] = useState(false);
+
+
     const [editEmail, setEditEmail] = useState(false);
     const [closeBoxMessage, setCloseBoxMessage] = useState('Close');
 
@@ -79,7 +84,7 @@ export default function Settings({ user, label }) {
                             </Box>
                             <Box pb={'1vh'} pl={'.5vw'}>
                                 <Text fontSize={'.8vw'} fontWeight={'bold'} color={"var(--text-color)"}>
-                                    {user.firstName} {user.lastName}
+                                    {firstName} {lastName}
                                 </Text>
                                 <Text pl={'1'} fontSize={'.4vw'} color={"var(--text-color)"}>
                                     @{user.username}
@@ -90,59 +95,80 @@ export default function Settings({ user, label }) {
 
                     <Center>
                         <Stack p={'2vh'} direction={'column'}>
-                            <Box borderRadius={'10'} background={'var(--settings-background-color)'} width={'16vw'} pt={'.3vw'}>
-                                <Box p={'.75vw'}>
+                            <Box borderRadius={'10'} background={'var(--settings-background-color)'} width={'auto'} pt={'.3vw'}>
+                                <Box p={'.75vw'} pr={'2vw'}>
                                     <Stack direction={'column'}>
-                                        <Box>
+                                        <Box pr={'2.3vw'}>
                                             <Text fontWeight={'semibold'} fontSize={'.7vw'} color={"var(--settings-head-color)"}>
                                                 Display Name
                                             </Text>
                                             <Stack direction={'row'}>
-                                                <Flex>
-                                                    <div
-                                                        style={{
-                                                            flex: "0 0 50%",
-                                                            display: "flex",
-                                                            justifyContent: "flex-start",
+                                                <Center>
+                                                    <Flex>
+                                                        <div
+                                                            style={{
+                                                                flex: "0 0 50%",
+                                                                display: "flex",
+                                                                justifyContent: "flex-start",
 
-                                                        }}
-                                                    >
-                                                        {editName ?
-                                                            <Box width={'9vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                                <Input height={'3.25vh'} fontSize={'.55vw'} color={"var(--text-color)"}
-                                                                    value={user.firstName + ' ' + user.lastName}
+                                                            }}
+                                                        >
+                                                            {editName ?
+                                                                <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
+                                                                    <Input height={'3.25vh'} fontSize={'.60vw'} color={"var(--text-color)"}
+                                                                        value={firstName + ' ' + (lastName ? lastName : '')}
+                                                                        onChange={(e) => {
+                                                                            setFirstName(e.target.value.split(' ')[0])
+                                                                            setLastName(e.target.value.split(' ')[1])
+                                                                        }}
+                                                                    >
+                                                                    </Input>
+                                                                </Box>
+                                                                :
+                                                                <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
+                                                                    <Text fontSize={'.60vw'} color={"var(--text-color)"}>
+                                                                        {firstName + ' ' + lastName}
+                                                                    </Text>
+                                                                </Box>
+                                                            }
+                                                        </div>
+                                                        <div
+                                                            style={{
+                                                                flex: "0 0 45%",
+                                                                display: "flex",
+                                                                justifyContent: "flex-end",
+
+                                                            }}
+                                                        >
+                                                            <Box >
+                                                                <Button width={'auto'} height={'auto'} bg={'white'}
+                                                                    onClick={() => {
+                                                                        if (firstName && lastName && (firstName !== user.firstName || lastName !== user.lastName)) {
+                                                                            axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
+                                                                            console.log(firstName)
+                                                                            user.firstName = firstName
+                                                                            user.lastName = lastName
+                                                                            try {
+                                                                                axios.put("http://localhost:5000/api/updateProfile", {
+                                                                                    firstName: firstName,
+                                                                                    lastName: lastName,
+                                                                                })
+                                                                                console.log('updated')
+                                                                            } catch (error) {
+                                                                                console.log(error);
+                                                                            }
+                                                                        }
+                                                                        setEditName(!editName);
+                                                                    }}
                                                                 >
-                                                                </Input>
+                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
+                                                                        {editName ? 'Save' : 'Edit'}
+                                                                    </Text>
+                                                                </Button>
                                                             </Box>
-                                                            :
-                                                            <Box width={'9vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                                <Text fontSize={'.55vw'} color={"var(--text-color)"}>
-                                                                    {user.firstName + ' ' + user.lastName}
-                                                                </Text>
-                                                            </Box>
-                                                        }
-                                                    </div>
-                                                    <div
-                                                        style={{
-                                                            flex: "0 0 50%",
-                                                            display: "flex",
-                                                            justifyContent: "flex-end",
-
-                                                        }}
-                                                    >
-                                                        <Box style={{ marginLeft: 'auto' }}>
-                                                            <Button width={'2vw'} height={'2vh'} bg={'white'}
-                                                                onClick={() => {
-                                                                    setEditName(!editName);
-                                                                }}
-                                                            >
-                                                                <Text fontSize={'.55vw'}>
-                                                                    {editName ? 'Save' : 'Edit'}
-                                                                </Text>
-                                                            </Button>
-                                                        </Box>
-                                                    </div>
-                                                </Flex>
+                                                        </div>
+                                                    </Flex>
+                                                </Center>
                                             </Stack>
                                         </Box>
                                         <Box>
@@ -160,31 +186,30 @@ export default function Settings({ user, label }) {
                                                         }}
                                                     >
                                                         {editEmail ?
-                                                            <Box width={'9vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                                <Input height={'3.25vh'} fontSize={'.55vw'} color={"var(--text-color)"}
+                                                            <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
+                                                                <Input height={'3.25vh'} fontSize={'.60vw'} color={"var(--text-color)"}
                                                                     value={user.email}
                                                                 >
                                                                 </Input>
                                                             </Box>
-
                                                             :
-                                                            <Box width={'9vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                                <Text fontSize={'.55vw'} color={"var(--text-color)"}>
+                                                            <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
+                                                                <Text fontSize={'.60vw'} color={"var(--text-color)"}>
                                                                     {user.email}
                                                                 </Text>
                                                             </Box>
                                                         }
                                                     </div>
-                                                    <div
+                                                    {/* <div
                                                         style={{
-                                                            flex: "0 0 50%",
+                                                            flex: "0 0 45%",
                                                             display: "flex",
                                                             justifyContent: "flex-end",
 
                                                         }}
                                                     >
-                                                        <Box style={{ marginLeft: 'auto' }}>
-                                                            <Button width={'2vw'} height={'2vh'} bg={'white'}
+                                                        <Box >
+                                                            <Button minW={'12'} minH={'4'} width={'2vw'} height={'2vh'} bg={'white'}
                                                                 onClick={() => {
                                                                     setEditEmail(!editEmail);
                                                                 }}
@@ -194,7 +219,7 @@ export default function Settings({ user, label }) {
                                                                 </Text>
                                                             </Button>
                                                         </Box>
-                                                    </div>
+                                                    </div> */}
                                                 </Flex>
                                             </Stack>
                                         </Box>
@@ -212,28 +237,28 @@ export default function Settings({ user, label }) {
 
                                                         }}
                                                     >
-                                                        <Box width={'9vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                            <Text fontSize={'.55vw'} color={"var(--text-color)"}>
+                                                        <Box width={'11.2vw'} pt={'.3vh'} pl={'.1vw'}>
+                                                            <Text fontSize={'.60vw'} color={"var(--text-color)"}>
                                                                 {"**********"}
                                                             </Text>
                                                         </Box>
                                                     </div>
                                                     <div
                                                         style={{
-                                                            flex: "0 0 50%",
+                                                            flex: "0 0 45%",
                                                             display: "flex",
                                                             justifyContent: "flex-end",
 
                                                         }}
                                                     >
-                                                        <Box style={{ marginLeft: 'auto' }}>
-                                                            <Button width={'2.75vw'} height={'2vh'} bg={'white'}
+                                                        <Box >
+                                                            <Button width={'auto'} height={'auto'} bg={'white'}
                                                                 onClick={() => {
                                                                     setEditPassword(!editPassword);
                                                                     setSettingScreen("password");
                                                                 }}
                                                             >
-                                                                <Text fontSize={'.55vw'}>
+                                                                <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
                                                                     Change
                                                                 </Text>
                                                             </Button>
@@ -245,10 +270,10 @@ export default function Settings({ user, label }) {
                                     </Stack>
                                 </Box>
                             </Box>
-                            <Box borderRadius={'10'} background={'var(--settings-background-color)'} width={'16vw'} pt={'.3vw'}>
+                            <Box borderRadius={'10'} background={'var(--settings-background-color)'} width={'auto'} pt={'.3vw'}>
                                 <Box p={'.75vw'}>
                                     <Stack direction={'column'}>
-                                        <Box>
+                                        <Box pr={'2.3vw'}>
                                             <Text fontWeight={'semibold'} fontSize={'.7vw'} color={"var(--settings-head-color)"}>
                                                 Delete Account
                                             </Text>
@@ -262,27 +287,27 @@ export default function Settings({ user, label }) {
 
                                                         }}
                                                     >
-                                                        <Box width={'9vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                            <Text fontSize={'.55vw'} color={"var(--text-color)"}>
-                                                                {"Permanently delete your account"}
+                                                        <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
+                                                            <Text fontSize={'.60vw'} color={"var(--text-color)"}>
+                                                                Permanently delete your account
                                                             </Text>
                                                         </Box>
                                                     </div>
                                                     <div
                                                         style={{
-                                                            flex: "0 0 48%",
+                                                            flex: "0 0 45%",
                                                             display: "flex",
                                                             justifyContent: "flex-end",
 
                                                         }}
                                                     >
-                                                        <Box style={{ marginLeft: 'auto' }}>
-                                                            <Button bg={'red'} width={'3vw'} height={'3vh'}
+                                                        <Box >
+                                                            <Button width={'auto'} height={'auto'} backgroundColor={'red'} color={'white'}
                                                                 onClick={() => {
-                                                                    setSettingScreen("deleteAccount");
+
                                                                 }}
                                                             >
-                                                                <Text color={'white'} fontSize={'.55vw'}>
+                                                                <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
                                                                     Delete
                                                                 </Text>
                                                             </Button>
@@ -294,10 +319,10 @@ export default function Settings({ user, label }) {
                                     </Stack>
                                 </Box>
                             </Box>
-                        </Stack>
-                    </Center>
-                </Stack>
-            </Box>
+                        </Stack >
+                    </Center >
+                </Stack >
+            </Box >
         )
     } else if (settingScreen === 'password') {
         return (
@@ -331,10 +356,10 @@ export default function Settings({ user, label }) {
 
                         <Center>
                             <Stack p={'2vh'} direction={'column'}>
-                                <Box borderRadius={'10'} background={'var(--settings-background-color)'} width={'16vw'} pt={'.3vw'}>
+                                <Box borderRadius={'10'} background={'var(--settings-background-color)'} width={'auto'} pt={'.3vw'}>
                                     <Box p={'.75vw'}>
                                         <Stack direction={'column'}>
-                                            <Box>
+                                            <Box pr={'2.3vw'}>
                                                 <Text fontWeight={'semibold'} fontSize={'.7vw'} color={"var(--settings-head-color)"}>
                                                     Old Password
                                                 </Text>
@@ -376,19 +401,19 @@ export default function Settings({ user, label }) {
                                                         </div>
                                                         <div
                                                             style={{
-                                                                flex: "0 0 50%",
+                                                                flex: "0 0 48%",
                                                                 display: "flex",
                                                                 justifyContent: "flex-end",
 
                                                             }}
                                                         >
-                                                            <Box style={{ marginLeft: 'auto' }}>
-                                                                <Button width={'2vw'} height={'2vh'} bg={'white'}
+                                                            <Box>
+                                                                <Button w={'auto'} h={'auto'} bg={'white'}
                                                                     onClick={() => {
                                                                         setShowPassword(!showPassword);
                                                                     }}
                                                                 >
-                                                                    <Text fontSize={'.55vw'}>
+                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
                                                                         {showPassword ? 'Hide' : 'Show'}
                                                                     </Text>
                                                                 </Button>
@@ -441,19 +466,18 @@ export default function Settings({ user, label }) {
                                                         </div>
                                                         <div
                                                             style={{
-                                                                flex: "0 0 50%",
+                                                                flex: "0 0 48%",
                                                                 display: "flex",
                                                                 justifyContent: "flex-end",
-
                                                             }}
                                                         >
-                                                            <Box style={{ marginLeft: 'auto' }}>
-                                                                <Button width={'2vw'} height={'2vh'} bg={'white'}
+                                                            <Box>
+                                                                <Button w={'auto'} h={'auto'} bg={'white'}
                                                                     onClick={() => {
                                                                         setShowPassword(!showPassword);
                                                                     }}
                                                                 >
-                                                                    <Text fontSize={'.55vw'}>
+                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
                                                                         {showPassword ? 'Hide' : 'Show'}
                                                                     </Text>
                                                                 </Button>
@@ -506,19 +530,19 @@ export default function Settings({ user, label }) {
                                                         </div>
                                                         <div
                                                             style={{
-                                                                flex: "0 0 50%",
+                                                                flex: "0 0 48%",
                                                                 display: "flex",
                                                                 justifyContent: "flex-end",
 
                                                             }}
                                                         >
-                                                            <Box style={{ marginLeft: 'auto' }}>
-                                                                <Button width={'2vw'} height={'2vh'} bg={'white'}
+                                                            <Box>
+                                                                <Button w={'auto'} h={'auto'} bg={'white'}
                                                                     onClick={() => {
                                                                         setShowPassword(!showPassword);
                                                                     }}
                                                                 >
-                                                                    <Text fontSize={'.55vw'}>
+                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
                                                                         {showPassword ? 'Hide' : 'Show'}
                                                                     </Text>
                                                                 </Button>
@@ -535,7 +559,7 @@ export default function Settings({ user, label }) {
                     </Stack>
                 </Box>
                 <Center pb={'2vh'}>
-                    <Button borderRadius={'10'} background={'var(--settings-background-color)'} width={closeBoxMessage == 'Close' ? '4vw' : '8vw'} height={'4vh'}
+                    <Button borderRadius={'10'} background={'white'} width={closeBoxMessage == 'Close' ? '4vw' : '8vw'} height={'4vh'}
                         onClick={() => {
                             if (closeBoxMessage == 'Close') {
                                 console.log('quit');
@@ -567,8 +591,8 @@ export default function Settings({ user, label }) {
                         }
                     >
                         <Center>
-                            <Button color={'white'}>
-                                <Text color={'black'}>
+                            <Button minH={'2'} minW={'6'} width={'3vw'} height={'2.5vh'} bg={'white'}>
+                                <Text fontSize={'.55vw'} color={'black'}>
                                     {closeBoxMessage}
                                 </Text>
                             </Button>
