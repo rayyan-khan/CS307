@@ -25,7 +25,9 @@ import { GrClose } from "react-icons/gr";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import "../../layouts.css";
+import '../../../styles/profile.css'
 import Settings from './settings/settings';
+import { RiContactsBookLine } from 'react-icons/ri';
 
 class Profile extends React.Component {
     constructor(props) {
@@ -52,9 +54,9 @@ class Profile extends React.Component {
         }
     }
 
-    fetchPosts() {
+    async fetchPosts() {
         try {
-            axios
+            await axios
                 .get('http://localhost:5000/api/getOrderedPost')
                 .then((res) => {
                     console.log(this.state.user.username)
@@ -62,7 +64,9 @@ class Profile extends React.Component {
                     const posts = res.data.filter((post) => {
                         return post.username === this.state.user.username
                     })
+                    console.log(posts)
                     this.setState({ allPosts: posts })
+                    return;
                 })
                 .catch(function (error) {
                     console.log(error)
@@ -93,7 +97,6 @@ class Profile extends React.Component {
 
     async componentDidMount() {
         console.log('test')
-        this.fetchPosts()
 
         if (axios.defaults.headers.common['authorization'] != null) {
             var sessionUsername
@@ -135,6 +138,7 @@ class Profile extends React.Component {
                         sessionUsername.localeCompare(userViewing) === 0,
                     loading: false,
                 })
+                return;
             })
             .catch(({ response }) => {
                 if (response.data === "User doesn't exist") {
@@ -144,6 +148,7 @@ class Profile extends React.Component {
                     })
                 }
             })
+        await this.fetchPosts()
     }
 
     formatNum(num) {
@@ -151,10 +156,12 @@ class Profile extends React.Component {
     }
 
     toPosts = () => {
+        console.log('toPosts')
         this.setState({ showPosts: true })
     }
 
     toInteractions = () => {
+        console.log('toInteractions')
         this.setState({ showPosts: false })
     }
 
@@ -179,7 +186,7 @@ class Profile extends React.Component {
                                 </Box>
                             </div>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? '' : 'select-title'
+                                className={`toggle-title ${this.state.showPosts ? 'select-title' : 'select-title'
                                     }`}
                                 onClick={this.toInteractions}
                             >
@@ -302,141 +309,7 @@ class Profile extends React.Component {
                                                                 )
 
                                                             }
-                                                            {this.state
-                                                                .editMode ? (
-                                                                <>
-                                                                    <Stack
-                                                                        direction={
-                                                                            'row'
-                                                                        }
-                                                                    >
-                                                                        <Input
-                                                                            color="var(--text-color)"
-                                                                            height={
-                                                                                '3.25vh'
-                                                                            }
-                                                                            width={
-                                                                                '8vw'
-                                                                            }
-                                                                            placeholder="First Name"
-                                                                            fontSize={
-                                                                                '2l'
-                                                                            }
-                                                                            value={
-                                                                                this
-                                                                                    .state
-                                                                                    .firstName
-                                                                            }
-                                                                            onChange={(
-                                                                                e
-                                                                            ) => {
-                                                                                this.setState(
-                                                                                    {
-                                                                                        firstName:
-                                                                                            e
-                                                                                                .target
-                                                                                                .value,
-                                                                                    }
-                                                                                )
-                                                                            }}
-                                                                        />
-                                                                        <Input
-                                                                            color="var(--text-color)"
-                                                                            height={
-                                                                                '3.25vh'
-                                                                            }
-                                                                            width={
-                                                                                '8vw'
-                                                                            }
-                                                                            placeholder="Last Name"
-                                                                            fontSize={
-                                                                                '2l'
-                                                                            }
-                                                                            value={
-                                                                                this
-                                                                                    .state
-                                                                                    .lastName
-                                                                            }
-                                                                            onChange={(
-                                                                                e
-                                                                            ) => {
-                                                                                this.setState(
-                                                                                    {
-                                                                                        lastName:
-                                                                                            e
-                                                                                                .target
-                                                                                                .value,
-                                                                                    }
-                                                                                )
-                                                                            }}
-                                                                        />
-                                                                    </Stack>
-                                                                    <Text
-                                                                        pl={
-                                                                            '.15vw'
-                                                                        }
-                                                                        fontWeight={
-                                                                            'bold'
-                                                                        }
-                                                                        color={
-                                                                            'var(--text-color)'
-                                                                        }
-                                                                        fontSize={
-                                                                            'xs'
-                                                                        }
-                                                                    >
-                                                                        @
-                                                                        {
-                                                                            this
-                                                                                .state
-                                                                                .username
-                                                                        }
-                                                                    </Text>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <Text
-                                                                        fontSize={
-                                                                            '2xl'
-                                                                        }
-                                                                        color={
-                                                                            'var(--text-color)'
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            this
-                                                                                .state
-                                                                                .firstName
-                                                                        }{' '}
-                                                                        {
-                                                                            this
-                                                                                .state
-                                                                                .lastName
-                                                                        }
-                                                                    </Text>
-                                                                    <Text
-                                                                        pl={
-                                                                            '.15vw'
-                                                                        }
-                                                                        fontWeight={
-                                                                            'bold'
-                                                                        }
-                                                                        color={
-                                                                            'var(--text-color)'
-                                                                        }
-                                                                        fontSize={
-                                                                            'xs'
-                                                                        }
-                                                                    >
-                                                                        @
-                                                                        {
-                                                                            this
-                                                                                .state
-                                                                                .username
-                                                                        }
-                                                                    </Text>
-                                                                </>
-                                                            )}
+
                                                         </Box>
                                                     </Stack>
                                                     <Stack
@@ -546,47 +419,6 @@ class Profile extends React.Component {
                                                                 )
 
                                                             }
-                                                            {this.state
-                                                                .editMode ? (
-                                                                <>
-                                                                    <Input
-                                                                        color="var(--text-color)"
-                                                                        // border={'none'}
-                                                                        height={
-                                                                            '3.25vh'
-                                                                        }
-                                                                        width={
-                                                                            'auto'
-                                                                        }
-                                                                        value={
-                                                                            this
-                                                                                .state
-                                                                                .bio
-                                                                        }
-                                                                        onChange={(
-                                                                            e
-                                                                        ) => {
-                                                                            this.setState(
-                                                                                {
-                                                                                    bio: e
-                                                                                        .target
-                                                                                        .value,
-                                                                                }
-                                                                            )
-                                                                        }}
-                                                                    />
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <Text color="var(--text-color)">
-                                                                        {
-                                                                            this
-                                                                                .state
-                                                                                .bio
-                                                                        }
-                                                                    </Text>
-                                                                </>
-                                                            )}
                                                         </Stack>
                                                     </Box>
                                                     <Box pr={'5px'} pt={'1vh'}>
@@ -666,95 +498,7 @@ class Profile extends React.Component {
                                                                             </Popup>
                                                                         </>
                                                                     )
-
                                                                 }
-                                                                {this.state
-                                                                    .editMode ? (
-                                                                    <>
-                                                                        <Button
-                                                                            backgroundColor={
-                                                                                '#5581D7'
-                                                                            }
-                                                                            color={
-                                                                                'white'
-                                                                            }
-                                                                            onClick={() => {
-                                                                                axios.defaults.headers.common[
-                                                                                    'authorization'
-                                                                                ] =
-                                                                                    localStorage.getItem(
-                                                                                        'token'
-                                                                                    )
-                                                                                console.log(
-                                                                                    this
-                                                                                        .state
-                                                                                        .firstName
-                                                                                )
-                                                                                console.log(
-                                                                                    this
-                                                                                        .state
-                                                                                        .lastName
-                                                                                )
-                                                                                console.log(
-                                                                                    this
-                                                                                        .state
-                                                                                        .bio
-                                                                                )
-                                                                                try {
-                                                                                    axios.put(
-                                                                                        'http://localhost:5000/api/updateProfile',
-                                                                                        {
-                                                                                            firstName:
-                                                                                                this
-                                                                                                    .state
-                                                                                                    .firstName,
-                                                                                            lastName:
-                                                                                                this
-                                                                                                    .state
-                                                                                                    .lastName,
-                                                                                            bio: this
-                                                                                                .state
-                                                                                                .bio,
-                                                                                        }
-                                                                                    )
-                                                                                } catch (error) {
-                                                                                    console.log(
-                                                                                        error
-                                                                                    )
-                                                                                }
-                                                                                this.setState(
-                                                                                    {
-                                                                                        editMode: false,
-                                                                                    }
-                                                                                )
-                                                                            }}
-                                                                        >
-                                                                            Save
-                                                                            Changes
-                                                                        </Button>
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <Button
-                                                                            backgroundColor={
-                                                                                '#5581D7'
-                                                                            }
-                                                                            color={
-                                                                                'white'
-                                                                            }
-                                                                            onClick={() => {
-                                                                                this.setState(
-                                                                                    {
-                                                                                        editMode: true,
-                                                                                    }
-                                                                                )
-                                                                            }}
-                                                                        >
-                                                                            Edit
-                                                                            Profile
-                                                                        </Button>
-                                                                    </>
-                                                                )}
                                                             </Box>
                                                         ) : (
                                                             <Stack
@@ -806,9 +550,6 @@ class Profile extends React.Component {
                                         </Stack>
                                     </Box>
                                 </Center >
-                                <Box style={{ paddingBottom: '80px' }} className="posts-container">
-                                    {this.postHandler()}
-                                </Box>
                                 <this.Userline />
                             </>
                         ) : (
