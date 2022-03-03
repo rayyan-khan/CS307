@@ -1,32 +1,47 @@
 import axios from 'axios'
 import React from 'react'
-import '../../styles/profile.css'
-import Post from '../../components/feed/post/post'
-import posts from '../../components/feed/posts'
+import Post from '../../../components/feed/post/post'
 import {
     Box, Button, Center, Image, Stack, Text, Input,
     FormControl,
     FormLabel,
+    IconButton,
+    Spacer,
+    Flex,
+    grid,
+    Grid,
+    GridItem,
 } from '@chakra-ui/react'
-import "../layouts.css";
+import "../../layouts.css";
+import { IoSettingsOutline } from "react-icons/io5";
+import { GrClose } from "react-icons/gr";
+
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+import "../../layouts.css";
+import Settings from './settings/settings';
 
 class Profile extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = {
-            username: '',
-            bio: '',
-            firstName: '',
-            lastName: '',
-            numTagsFollowing: 0,
-            numFollowing: 0,
-            numFollowers: 0,
+            user: {
+                username: '',
+                bio: '',
+                firstName: '',
+                lastName: '',
+                numTagsFollowing: 0,
+                numFollowing: 0,
+                numFollowers: 0,
+            },
+            allPosts: [],
             viewingSelf: true,
             userExists: true,
             loading: true,
-            allPosts: [],
             editMode: false,
+            open: false,
+            testEdit: false,
         }
     }
 
@@ -38,10 +53,10 @@ class Profile extends React.Component {
                     'http://localhost:5000/api/getOrderedPost'
                 )
                 .then((res) => {
-                    console.log(this.state.username)
+                    console.log(this.state.user.username)
                     console.log(res.data)
                     const posts = res.data.filter((post) => {
-                        return post.username === this.state.username
+                        return post.username === this.state.user.username
                     })
                     this.setState({ allPosts: posts })
                 })
@@ -91,23 +106,26 @@ class Profile extends React.Component {
             : sessionUsername)
         this.setState({ username: userViewing })
         console.log(userViewing)
+        var popoverContent;
         await axios
             .get('http://localhost:5000/api/getProfile/' + userViewing)
             .then((res) => {
                 console.log(res.data)
                 this.setState({
-                    username: userViewing,
-                    firstName: res.data.firstName,
-                    lastName: res.data.lastName,
-                    bio: res.data.bio,
-                    firstName: res.data.firstName ? res.data.firstName : '',
-                    lastName: res.data.lastName ? res.data.lastName : '',
-                    numTagsFollowing: this.formatNum(6900),
-                    numFollowing: this.formatNum(420000),
-                    numFollowers: this.formatNum(44444444),
-                    // numTagsFollowing: this.formatNum(res.data.numTagsFollowing),
-                    // numFollowing: this.formatNum(res.data.numFollowing),
-                    // numFollowers: this.formatNum(res.data.numFollowers),
+                    user: {
+                        username: userViewing,
+                        firstName: res.data.firstName,
+                        lastName: res.data.lastName,
+                        bio: res.data.bio,
+                        firstName: res.data.firstName ? res.data.firstName : '',
+                        lastName: res.data.lastName ? res.data.lastName : '',
+                        numTagsFollowing: this.formatNum(6900),
+                        numFollowing: this.formatNum(420000),
+                        numFollowers: this.formatNum(44444444),
+                        email: res.data.email,
+                    }
+                })
+                this.setState({
                     viewingSelf:
                         sessionUsername != null &&
                         sessionUsername.localeCompare(userViewing) ===
@@ -130,6 +148,8 @@ class Profile extends React.Component {
     }
 
     render() {
+        var popoverContent = <Settings user={this.state.user} />;
+
         return (
             <div
                 className="color-switch"
@@ -176,7 +196,7 @@ class Profile extends React.Component {
                                                                                 width={'8vw'}
                                                                                 placeholder="First Name"
                                                                                 fontSize={'2l'}
-                                                                                value={this.state.firstName}
+                                                                                value={this.state.user.firstName}
                                                                                 onChange={
                                                                                     (e) => {
                                                                                         this.setState({ firstName: e.target.value })
@@ -187,7 +207,7 @@ class Profile extends React.Component {
                                                                                 width={'8vw'}
                                                                                 placeholder="Last Name"
                                                                                 fontSize={'2l'}
-                                                                                value={this.state.lastName}
+                                                                                value={this.state.user.lastName}
                                                                                 onChange={
                                                                                     (e) => {
                                                                                         this.setState({ lastName: e.target.value })
@@ -195,16 +215,16 @@ class Profile extends React.Component {
                                                                                 } />
                                                                         </Stack>
                                                                         <Text pl={'.15vw'} fontWeight={'bold'} color={'var(--text-color)'} fontSize={'xs'}>
-                                                                            @{this.state.username}
+                                                                            @{this.state.user.username}
                                                                         </Text>
                                                                     </>
                                                                 ) : (
                                                                     <>
                                                                         <Text fontSize={'2xl'} color={'var(--text-color)'}>
-                                                                            {this.state.firstName} {this.state.lastName}
+                                                                            {this.state.user.firstName} {this.state.user.lastName}
                                                                         </Text>
                                                                         <Text pl={'.15vw'} fontWeight={'bold'} color={'var(--text-color)'} fontSize={'xs'}>
-                                                                            @{this.state.username}
+                                                                            @{this.state.user.username}
                                                                         </Text>
                                                                     </>
                                                                 )
@@ -217,7 +237,7 @@ class Profile extends React.Component {
                                                             <Text fontWeight={'bold'} color={'var(--text-color)'}>
                                                                 {
                                                                     this.state
-                                                                        .numTagsFollowing
+                                                                        .user.numTagsFollowing
                                                                 }
                                                             </Text>
                                                             <Text color='var(--text-color)'>
@@ -228,7 +248,7 @@ class Profile extends React.Component {
                                                             <Text fontWeight={'bold'} color={'var(--text-color)'}>
                                                                 {
                                                                     this.state
-                                                                        .numFollowers
+                                                                        .user.numFollowers
                                                                 }
                                                             </Text>
                                                             <Text color='var(--text-color)'>
@@ -239,7 +259,7 @@ class Profile extends React.Component {
                                                             <Text fontWeight={'bold'} color={'var(--text-color)'}>
                                                                 {
                                                                     this.state
-                                                                        .numFollowing
+                                                                        .user.numFollowing
                                                                 }
                                                             </Text>
                                                             <Text color='var(--text-color)'>
@@ -259,7 +279,7 @@ class Profile extends React.Component {
                                                                             // border={'none'}
                                                                             height={'3.25vh'}
                                                                             width={'auto'}
-                                                                            value={this.state.bio}
+                                                                            value={this.state.user.bio}
                                                                             onChange={
                                                                                 (e) => {
                                                                                     this.setState({
@@ -271,7 +291,7 @@ class Profile extends React.Component {
                                                                 ) : (
                                                                     <>
                                                                         <Text color='var(--text-color)'>
-                                                                            {this.state.bio}
+                                                                            {this.state.user.bio}
                                                                         </Text>
                                                                     </>
                                                                 )
@@ -291,14 +311,14 @@ class Profile extends React.Component {
                                                                                 color={'white'}
                                                                                 onClick={() => {
                                                                                     axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
-                                                                                    console.log(this.state.firstName)
-                                                                                    console.log(this.state.lastName)
-                                                                                    console.log(this.state.bio)
+                                                                                    console.log(this.state.user.firstName)
+                                                                                    console.log(this.state.user.lastName)
+                                                                                    console.log(this.state.user.bio)
                                                                                     try {
                                                                                         axios.put("http://localhost:5000/api/updateProfile", {
-                                                                                            firstName: this.state.firstName,
-                                                                                            lastName: this.state.lastName,
-                                                                                            bio: this.state.bio,
+                                                                                            firstName: this.state.user.firstName,
+                                                                                            lastName: this.state.user.lastName,
+                                                                                            bio: this.state.user.bio,
                                                                                         })
                                                                                     } catch (error) {
                                                                                         console.log(error);
@@ -325,6 +345,34 @@ class Profile extends React.Component {
                                                                             >
                                                                                 Edit Profile
                                                                             </Button>
+                                                                            <IconButton
+                                                                                left={'3'}
+                                                                                style={{ backgroundColor: "#1D2023", color: "white" }}
+                                                                                aria-label='Like'
+                                                                                onClick={() => {
+                                                                                    this.setState({
+                                                                                        open: true
+                                                                                    })
+                                                                                }
+                                                                                }
+                                                                                icon={<IoSettingsOutline />}
+                                                                            />
+                                                                            <Popup
+                                                                                open={this.state.open}
+                                                                                onClose={() => {
+                                                                                    this.setState({
+                                                                                        open: false,
+                                                                                        testEdit: false,
+                                                                                    })
+                                                                                }}
+                                                                                contentStyle={{
+                                                                                    backgroundColor: 'var(--main-color)',
+                                                                                    borderWidth: '0px',
+                                                                                    borderRadius: '10px',
+                                                                                }}
+                                                                            >
+                                                                                {popoverContent}
+                                                                            </Popup>
                                                                         </>
                                                                     )
 
@@ -373,7 +421,7 @@ class Profile extends React.Component {
                                             </Center>
                                         </Stack>
                                     </Box>
-                                </Center>
+                                </Center >
                                 <Box style={{ paddingBottom: '80px' }} className="posts-container">
                                     {this.postHandler()}
                                 </Box>
