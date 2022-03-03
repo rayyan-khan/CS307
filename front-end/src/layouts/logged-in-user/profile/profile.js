@@ -49,7 +49,6 @@ class Profile extends React.Component {
             loading: true,
             editMode: false,
             open: false,
-            testEdit: false,
             showPosts: true,
         }
     }
@@ -266,50 +265,14 @@ class Profile extends React.Component {
                                                 <Box pl={'1vw'}>
                                                     <Stack direction={'column'}>
                                                         <Box>
-                                                            {
-                                                                this.state.editMode ? (
-                                                                    <>
-                                                                        <Stack direction={'row'}>
-                                                                            <Input color='var(--text-color)'
-                                                                                height={'3.25vh'}
-                                                                                width={'8vw'}
-                                                                                placeholder="First Name"
-                                                                                fontSize={'2l'}
-                                                                                value={this.state.user.firstName}
-                                                                                onChange={
-                                                                                    (e) => {
-                                                                                        this.setState({ firstName: e.target.value })
-                                                                                    }
-                                                                                } />
-                                                                            <Input color='var(--text-color)'
-                                                                                height={'3.25vh'}
-                                                                                width={'8vw'}
-                                                                                placeholder="Last Name"
-                                                                                fontSize={'2l'}
-                                                                                value={this.state.user.lastName}
-                                                                                onChange={
-                                                                                    (e) => {
-                                                                                        this.setState({ lastName: e.target.value })
-                                                                                    }
-                                                                                } />
-                                                                        </Stack>
-                                                                        <Text pl={'.15vw'} fontWeight={'bold'} color={'var(--text-color)'} fontSize={'xs'}>
-                                                                            @{this.state.user.username}
-                                                                        </Text>
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <Text fontSize={'2xl'} color={'var(--text-color)'}>
-                                                                            {this.state.user.firstName} {this.state.user.lastName}
-                                                                        </Text>
-                                                                        <Text pl={'.15vw'} fontWeight={'bold'} color={'var(--text-color)'} fontSize={'xs'}>
-                                                                            @{this.state.user.username}
-                                                                        </Text>
-                                                                    </>
-                                                                )
-
-                                                            }
-
+                                                            <>
+                                                                <Text fontSize={'2xl'} color={'var(--text-color)'}>
+                                                                    {this.state.user.firstName} {this.state.user.lastName}
+                                                                </Text>
+                                                                <Text pl={'.15vw'} fontWeight={'bold'} color={'var(--text-color)'} fontSize={'xs'}>
+                                                                    @{this.state.user.username}
+                                                                </Text>
+                                                            </>
                                                         </Box>
                                                     </Stack>
                                                     <Stack
@@ -466,39 +429,39 @@ class Profile extends React.Component {
                                                                                     })
                                                                                 }}
                                                                             >
-                                                                                Edit Profile
+                                                                                Edit Bio
                                                                             </Button>
-                                                                            <IconButton
-                                                                                left={'3'}
-                                                                                style={{ backgroundColor: "#1D2023", color: "white" }}
-                                                                                aria-label='Like'
-                                                                                onClick={() => {
-                                                                                    this.setState({
-                                                                                        open: true
-                                                                                    })
-                                                                                }
-                                                                                }
-                                                                                icon={<IoSettingsOutline />}
-                                                                            />
-                                                                            <Popup
-                                                                                open={this.state.open}
-                                                                                onClose={() => {
-                                                                                    this.setState({
-                                                                                        open: false,
-                                                                                        testEdit: false,
-                                                                                    })
-                                                                                }}
-                                                                                contentStyle={{
-                                                                                    backgroundColor: 'var(--main-color)',
-                                                                                    borderWidth: '0px',
-                                                                                    borderRadius: '10px',
-                                                                                }}
-                                                                            >
-                                                                                {popoverContent}
-                                                                            </Popup>
                                                                         </>
                                                                     )
                                                                 }
+                                                                <IconButton
+                                                                    left={'3'}
+                                                                    style={{ backgroundColor: "#1D2023", color: "white" }}
+                                                                    aria-label='Like'
+                                                                    onClick={() => {
+                                                                        this.setState({
+                                                                            open: true
+                                                                        })
+                                                                    }
+                                                                    }
+                                                                    icon={<IoSettingsOutline />}
+                                                                />
+                                                                <Popup
+                                                                    open={this.state.open}
+                                                                    onClose={() => {
+                                                                        this.setState({
+                                                                            open: false,
+                                                                        })
+                                                                    }}
+                                                                    contentStyle={{
+                                                                        backgroundColor: 'var(--main-color)',
+                                                                        borderWidth: '0px',
+                                                                        borderRadius: '10px',
+                                                                        width: '30vw'
+                                                                    }}
+                                                                >
+                                                                    {popoverContent}
+                                                                </Popup>
                                                             </Box>
                                                         ) : (
                                                             <Stack
