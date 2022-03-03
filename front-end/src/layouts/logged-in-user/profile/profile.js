@@ -43,6 +43,7 @@ class Profile extends React.Component {
                 numFollowing: 0,
                 numFollowers: 0,
             },
+            editedBio: '',
             allPosts: [],
             viewingSelf: true,
             userExists: true,
@@ -123,6 +124,7 @@ class Profile extends React.Component {
                         firstName: res.data.firstName,
                         lastName: res.data.lastName,
                         bio: res.data.bio,
+                        editedBio: res.data.bio,
                         firstName: res.data.firstName ? res.data.firstName : '',
                         lastName: res.data.lastName ? res.data.lastName : '',
                         numTagsFollowing: this.formatNum(6900),
@@ -364,11 +366,11 @@ class Profile extends React.Component {
                                                                             // border={'none'}
                                                                             height={'3.25vh'}
                                                                             width={'auto'}
-                                                                            value={this.state.user.bio}
+                                                                            value={this.state.editedBio}
                                                                             onChange={
                                                                                 (e) => {
                                                                                     this.setState({
-                                                                                        bio: e.target.value
+                                                                                        editedBio: e.target.value,
                                                                                     })
                                                                                 }
                                                                             } />
@@ -393,17 +395,15 @@ class Profile extends React.Component {
                                                                     this.state.editMode ? (
                                                                         <>
                                                                             <Button
-                                                                                backgroundColor={'#5581D7'}
+                                                                                backgroundColor={'red'}
                                                                                 color={'white'}
                                                                                 onClick={() => {
+                                                                                    console.log('clicked')
                                                                                     axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
-                                                                                    console.log(this.state.user.firstName)
-                                                                                    console.log(this.state.user.lastName)
-                                                                                    console.log(this.state.user.bio)
+                                                                                    this.state.user.bio = this.state.editedBio
+                                                                                    console.log(this.state.user.bio);
                                                                                     try {
                                                                                         axios.put("http://localhost:5000/api/updateProfile", {
-                                                                                            firstName: this.state.user.firstName,
-                                                                                            lastName: this.state.user.lastName,
                                                                                             bio: this.state.user.bio,
                                                                                         })
                                                                                     } catch (error) {
@@ -425,7 +425,8 @@ class Profile extends React.Component {
                                                                                 color={'white'}
                                                                                 onClick={() => {
                                                                                     this.setState({
-                                                                                        editMode: true
+                                                                                        editMode: true,
+                                                                                        editedBio: this.state.user.bio,
                                                                                     })
                                                                                 }}
                                                                             >
@@ -457,7 +458,6 @@ class Profile extends React.Component {
                                                                         backgroundColor: 'var(--main-color)',
                                                                         borderWidth: '0px',
                                                                         borderRadius: '10px',
-                                                                        width: '30vw'
                                                                     }}
                                                                 >
                                                                     {popoverContent}
