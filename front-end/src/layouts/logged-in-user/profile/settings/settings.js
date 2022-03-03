@@ -28,15 +28,19 @@ export default function Settings({ user, label }) {
 
     const [settingScreen, setSettingScreen] = useState('profile')
 
-    const [firstName, setFirstName] = useState(user.firstName)
-    const [lastName, setLastName] = useState(user.lastName)
+
     const [email, setEmail] = useState(user.email)
     const [password, setPassword] = useState('')
 
 
 
 
+    const [firstName, setFirstName] = useState(user.firstName);
+    const [lastName, setLastName] = useState(user.lastName);
     const [editName, setEditName] = useState(false);
+    const [currentName, setCurrentName] = useState(user.firstName + ' ' + user.lastName);
+    const [usernameMessage, setUsernameMessage] = useState('');
+    const [usernameError, setUsernameError] = useState(false);
 
 
     const [editEmail, setEditEmail] = useState(false);
@@ -84,7 +88,7 @@ export default function Settings({ user, label }) {
                             </Box>
                             <Box pb={'1vh'} pl={'.5vw'}>
                                 <Text fontSize={'.8vw'} fontWeight={'bold'} color={"var(--text-color)"}>
-                                    {firstName} {lastName}
+                                    {currentName}
                                 </Text>
                                 <Text pl={'1'} fontSize={'.4vw'} color={"var(--text-color)"}>
                                     @{user.username}
@@ -105,36 +109,47 @@ export default function Settings({ user, label }) {
                                             <Stack direction={'row'}>
                                                 <Center>
                                                     <Flex>
-                                                        <div
+                                                        <Stack
                                                             style={{
                                                                 flex: "0 0 50%",
                                                                 display: "flex",
                                                                 justifyContent: "flex-start",
 
                                                             }}
+                                                            direction={'column'}
                                                         >
                                                             {editName ?
                                                                 <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
                                                                     <Input height={'3.25vh'} fontSize={'.60vw'} color={"var(--text-color)"}
-                                                                        value={firstName + ' ' + (lastName ? lastName : '')}
+                                                                        value={currentName}
                                                                         onChange={(e) => {
-                                                                            setFirstName(e.target.value.split(' ')[0])
-                                                                            setLastName(e.target.value.split(' ')[1])
+                                                                            setCurrentName(e.target.value)
                                                                         }}
                                                                     >
                                                                     </Input>
                                                                 </Box>
                                                                 :
-                                                                <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
+                                                                <Box width={'14vw'} pt={'.3vh'} pl={'.1vw'}>
                                                                     <Text fontSize={'.60vw'} color={"var(--text-color)"}>
-                                                                        {firstName + ' ' + lastName}
+                                                                        {currentName}
                                                                     </Text>
                                                                 </Box>
                                                             }
-                                                        </div>
+                                                            <Box width={'14vw'}>
+                                                                {
+                                                                    (usernameMessage != '') ?
+                                                                        <Text color={usernameError ? 'red' : 'green'} fontSize={'.55vw'}>
+                                                                            {usernameMessage}
+                                                                        </Text>
+                                                                        :
+                                                                        null
+
+                                                                }
+                                                            </Box>
+                                                        </Stack>
                                                         <div
                                                             style={{
-                                                                flex: "0 0 45%",
+                                                                flex: "0 0 40%",
                                                                 display: "flex",
                                                                 justifyContent: "flex-end",
 
@@ -143,22 +158,40 @@ export default function Settings({ user, label }) {
                                                             <Box >
                                                                 <Button width={'auto'} height={'auto'} bg={'white'}
                                                                     onClick={() => {
-                                                                        if (firstName && lastName && (firstName !== user.firstName || lastName !== user.lastName)) {
-                                                                            axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
-                                                                            console.log(firstName)
-                                                                            user.firstName = firstName
-                                                                            user.lastName = lastName
-                                                                            try {
-                                                                                axios.put("http://localhost:5000/api/updateProfile", {
-                                                                                    firstName: firstName,
-                                                                                    lastName: lastName,
-                                                                                })
-                                                                                console.log('updated')
-                                                                            } catch (error) {
-                                                                                console.log(error);
+                                                                        if (editName) {
+                                                                            user.firstName = currentName.split(' ')[0]
+                                                                            user.lastName = currentName.split(' ')[1]
+                                                                            console.log(user);
+                                                                            if (user.firstName != undefined && user.lastName != undefined && user.firstName != '' && user.lastName != '') {
+                                                                                setEditName(false)
+                                                                                axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
+                                                                                console.log(currentName)
+                                                                                console.log(currentName.split(' ')[0]);
+                                                                                console.log(currentName.split(' ')[1]);
+
+                                                                                try {
+                                                                                    axios.put("http://localhost:5000/api/updateProfile", {
+                                                                                        firstName: currentName.split(' ')[0],
+                                                                                        lastName: currentName.split(' ')[1],
+                                                                                    })
+                                                                                        .then(res => {
+                                                                                            console.log(res);
+                                                                                            setEditName(false);
+                                                                                            setUsernameMessage('Name updated successfully');
+                                                                                            setTimeout(() => setUsernameMessage(''), 3000);
+                                                                                            setUsernameError(false);
+                                                                                        })
+                                                                                    console.log('updated')
+                                                                                } catch (error) {
+                                                                                    console.log(error);
+                                                                                }
+                                                                            } else {
+                                                                                setUsernameError(true);
+                                                                                setUsernameMessage('Please enter a valid first and last name');
                                                                             }
+                                                                        } else {
+                                                                            setEditName(true);
                                                                         }
-                                                                        setEditName(!editName);
                                                                     }}
                                                                 >
                                                                     <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
@@ -245,7 +278,7 @@ export default function Settings({ user, label }) {
                                                     </div>
                                                     <div
                                                         style={{
-                                                            flex: "0 0 45%",
+                                                            flex: "0 0 61%",
                                                             display: "flex",
                                                             justifyContent: "flex-end",
 
@@ -295,7 +328,7 @@ export default function Settings({ user, label }) {
                                                     </div>
                                                     <div
                                                         style={{
-                                                            flex: "0 0 45%",
+                                                            flex: "0 0 61%",
                                                             display: "flex",
                                                             justifyContent: "flex-end",
 
