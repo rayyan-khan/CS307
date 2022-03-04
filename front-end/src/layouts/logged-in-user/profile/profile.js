@@ -49,6 +49,8 @@ class Profile extends React.Component {
             viewingSelf: true,
             userExists: true,
             loading: true,
+            allPosts: [],
+            postInteractions: [],
             editMode: false,
             open: false,
             showPosts: true,
@@ -77,6 +79,28 @@ class Profile extends React.Component {
         }
     }
 
+    fetchInteractions() {
+        try {
+            axios
+                .get('http://localhost:5000/api/postInteractions')
+                .then((res) => {
+                    const postInteractions = res.data.filter(
+                        (postInteraction) => {
+                            return (
+                                postInteraction.username === this.state.username
+                            )
+                        }
+                    )
+                    this.setState({ postInteractions: postInteractions })
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     postHandler() {
         console.log(this.state.allPosts)
         return this.state.allPosts.map((post, key) => {
@@ -89,8 +113,8 @@ class Profile extends React.Component {
     }
 
     postInteractionsHandler() {
-        console.log(this.state.allPosts)
-        return this.state.allPosts.map((post, key) => {
+        console.log(this.state.postInteractions)
+        return this.state.postInteractions.map((post, key) => {
             return (
                 <Center pb={5}>
                     <PostInteraction post={post} />
@@ -109,6 +133,8 @@ class Profile extends React.Component {
 
     async componentDidMount() {
         console.log('test')
+        this.fetchPosts()
+        this.fetchInteractions()
 
         if (axios.defaults.headers.common['authorization'] != null) {
             var sessionUsername

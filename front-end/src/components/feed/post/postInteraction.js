@@ -18,7 +18,8 @@ import { RiContactsBookLine } from 'react-icons/ri'
 import './post.css'
 import { GrAnalytics } from 'react-icons/gr'
 
-const Interaction = ({ liked, disliked, comment }) => {
+const Interaction = ({ post }) => {
+    let { liked, disliked, comment } = post
     if (liked) {
         return <div>liked</div>
     } else if (disliked) {
@@ -29,12 +30,6 @@ const Interaction = ({ liked, disliked, comment }) => {
 }
 
 export default function PostInteraction({ post, label }) {
-    let { liked, disliked, comment } = post
-
-    liked = false
-    disliked = false
-    comment = 'this is my comment'
-
     let linkPageBool = true
     if (post.postID == null) {
         if (post[0] != null) {
@@ -87,7 +82,7 @@ export default function PostInteraction({ post, label }) {
                 style={linkPageBool ? { cursor: 'pointer' } : {}}
             /> */}
 
-            <Interaction liked={liked} disliked={disliked} comment={comment} />
+            <Interaction post={post} />
 
             <Stack align={'center'} direction={'column'} spacing={4}>
                 <Center>
