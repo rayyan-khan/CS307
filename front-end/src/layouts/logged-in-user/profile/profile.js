@@ -28,7 +28,7 @@ import '../../layouts.css'
 import '../../../styles/profile.css'
 import Settings from './settings/settings'
 import { RiContactsBookLine } from 'react-icons/ri'
-import PostInteraction from '../../components/feed/post/postInteraction'
+import PostInteraction from '../../../components/feed/post/postInteraction'
 
 class Profile extends React.Component {
     constructor(props) {
@@ -230,9 +230,7 @@ class Profile extends React.Component {
                             </div>
                             <div
                                 className={`toggle-title ${
-                                    this.state.showPosts
-                                        ? 'select-title'
-                                        : 'select-title'
+                                    this.state.showPosts ? '' : 'select-title'
                                 }`}
                                 onClick={this.toInteractions}
                             >
