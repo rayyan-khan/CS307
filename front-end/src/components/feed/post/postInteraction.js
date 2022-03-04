@@ -5,11 +5,16 @@ import {
     Center,
     Text,
     Stack,
+    StackDivider,
     IconButton,
     Image,
 } from '@chakra-ui/react'
 
-import { AiOutlineDislike, AiOutlineLike } from 'react-icons/ai'
+import {
+    AiOutlineDislike,
+    AiOutlineLike,
+    AiOutlineComment,
+} from 'react-icons/ai'
 import { FaRegBookmark } from 'react-icons/fa'
 import React from 'react'
 import { LinkPreview } from '@dhaiwat10/react-link-preview'
@@ -17,8 +22,9 @@ import axios from 'axios'
 import { RiContactsBookLine } from 'react-icons/ri'
 import './post.css'
 import { GrAnalytics } from 'react-icons/gr'
+import { Divider } from '@chakra-ui/react'
 
-const Interaction = ({ post }) => {
+const InteractionIcon = ({ post }) => {
     let { liked, disliked, comment } = post
 
     return (
@@ -49,9 +55,15 @@ const Interaction = ({ post }) => {
                         icon={<AiOutlineDislike />}
                     />
                 ) : (
-                    <div>
-                        First Last <b>@username:</b> {comment}
-                    </div>
+                    <Stack direction={'row'}>
+                        <IconButton
+                            icon={<AiOutlineComment />}
+                            style={{
+                                backgroundColor: 'lightblue',
+                                color: 'white',
+                            }}
+                        />
+                    </Stack>
                 )}
             </Stack>
         </Stack>
@@ -73,10 +85,6 @@ export default function PostInteraction({ post, label }) {
         }
     }
 
-    const handleInteractionClick = (event) => {
-        event.stopPropagation()
-    }
-
     return (
         <Box
             minW={'620px'}
@@ -91,7 +99,6 @@ export default function PostInteraction({ post, label }) {
             style={linkPageBool ? { cursor: 'pointer' } : {}}
             onClick={(event) => {
                 if (linkPageBool) {
-                    console.log('this is where im geing called from')
                     event.preventDefault()
                     if (localStorage.getItem('token') == null) {
                         let url = window.location.href
@@ -107,19 +114,12 @@ export default function PostInteraction({ post, label }) {
                 }
             }}
         >
-            {/* <Avatar
-                size={'xl'}
-                src={post.profilePicture}
-                alt={'Avatar Alt'}
-                mb={4}
-                pos={'relative'}
-                style={linkPageBool ? { cursor: 'pointer' } : {}}
-            /> */}
-
-            <Stack align={'center'} direction={'column'} spacing={4}>
-                <Center>
+            <Stack direction={'column'} spacing={'7'}>
+                <InteractionIcon post={post} />
+                <Stack align={'center'} direction={'row'} spacing={8}>
                     <Heading
                         minW={'30px'}
+                        isTruncated
                         onClick={(event) => {
                             event.preventDefault()
                             event.stopPropagation()
@@ -152,79 +152,72 @@ export default function PostInteraction({ post, label }) {
                             ? 'Anonymous'
                             : post.username}
                     </Heading>
-                </Center>
-                {/*
-                <Text
-                    textAlign={'center'}
-                    pt={'10px'}
-                    className={'color-switch'}
-                    color={'gray.100'}
-                >
-                    {post.postCaption}
-                </Text>
 
-                <Center>
-                    {post.url !== 'undefined' ? (
-                        <Box alignSelf={'center'} px={0} pt={5} w={'100%'}>
-                            <Image src={post.url} />
-                        </Box>
-                    ) : (
-                        <></>
-                    )}
-                </Center>
+                    <Box
+                        onClick={(event) => {
+                            event.preventDefault()
+                            event.stopPropagation()
+                            if (localStorage.getItem('token') == null) {
+                                let url = window.location.href
+                                window.location.href =
+                                    url.substring(0, url.indexOf('/')) +
+                                    '/signup'
+                            } else {
+                                let url = window.location.href
+                                window.location.href =
+                                    url.substring(0, url.indexOf('/')) +
+                                    '/tag/' +
+                                    post.tag
+                            }
+                        }}
+                        style={{ cursor: 'pointer' }}
+                        px={2}
+                        py={1}
+                        bg={'#F2AF29'}
+                        color={'--mainColor'}
+                        rounded={'full'}
+                        fontWeight={'300'}
+                    >
+                        {'#' + post.tagID}
+                    </Box>
 
-                <Center>
-                    {post.hyperlink !== '' ? (
-                        <LinkPreview
-                            width="500px"
-                            url={post.hyperlink}
-                            backgroundColor="white"
-                        />
-                    ) : (
-                        <></>
-                    )}
-                </Center>
-                    */}
-                <Text
-                    textAlign={'center'}
-                    pt={'10px'}
-                    className={'color-switch'}
-                    color={'gray.100'}
-                >
-                    Click to view whole post.
-                </Text>
-            </Stack>
-
-            <Stack align={'center'} justify={'center'} direction={'row'} mt={6}>
-                <Box
-                    onClick={(event) => {
-                        event.preventDefault()
-                        event.stopPropagation()
-                        if (localStorage.getItem('token') == null) {
-                            let url = window.location.href
-                            window.location.href =
-                                url.substring(0, url.indexOf('/')) + '/signup'
-                        } else {
-                            let url = window.location.href
-                            window.location.href =
-                                url.substring(0, url.indexOf('/')) +
-                                '/tag/' +
-                                post.tag
+                    <Text
+                        textAlign={'center'}
+                        pt={'10px'}
+                        className={'color-switch'}
+                        color={'gray.100'}
+                        isTruncated
+                    >
+                        {post.postCaption}
+                    </Text>
+                </Stack>
+                {post.comment ? (
+                    <Stack
+                        divider={
+                            post.comment ? (
+                                <StackDivider
+                                    borderColor="gray.400"
+                                    height={'20px'}
+                                />
+                            ) : (
+                                <div />
+                            )
                         }
-                    }}
-                    style={{ cursor: 'pointer' }}
-                    px={2}
-                    py={1}
-                    bg={'#F2AF29'}
-                    color={'--mainColor'}
-                    rounded={'full'}
-                    fontWeight={'300'}
-                >
-                    {'#' + post.tagID}
-                </Box>
+                    >
+                        <Text
+                            textAlign={'left'}
+                            pt={'10px'}
+                            className={'color-switch'}
+                            color={'gray.100'}
+                            isTruncated
+                        >
+                            {post.comment}
+                        </Text>
+                    </Stack>
+                ) : (
+                    <div></div>
+                )}
             </Stack>
-
-            <Interaction post={post} />
         </Box>
     )
 }
