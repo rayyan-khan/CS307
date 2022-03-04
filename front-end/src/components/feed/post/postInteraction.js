@@ -21,10 +21,18 @@ import { GrAnalytics } from 'react-icons/gr'
 const Interaction = ({ post }) => {
     let { liked, disliked, comment } = post
 
-    if (liked) {
-        return (
-            <Stack mt={2} direction={'row'} spacing={4}>
-                <Stack direction={'column'}>
+    return (
+        <Stack
+            mt={2}
+            direction={'row'}
+            spacing={4}
+            onClick={(event) => {
+                event.preventDefault()
+                event.stopPropagation()
+            }}
+        >
+            <Stack direction={'column'}>
+                {liked ? (
                     <IconButton
                         style={{
                             backgroundColor: 'lightgreen',
@@ -32,13 +40,7 @@ const Interaction = ({ post }) => {
                         }}
                         icon={<AiOutlineLike />}
                     />
-                </Stack>
-            </Stack>
-        )
-    } else if (disliked) {
-        return (
-            <Stack mt={2} direction={'row'} spacing={4}>
-                <Stack direction={'column'}>
+                ) : disliked ? (
                     <IconButton
                         style={{
                             backgroundColor: 'red',
@@ -46,42 +48,13 @@ const Interaction = ({ post }) => {
                         }}
                         icon={<AiOutlineDislike />}
                     />
-                </Stack>
-            </Stack>
-        )
-    } else if (comment) {
-        return (
-            <Stack mt={2} direction={'row'} spacing={4}>
-                <Stack direction={'column'}>
+                ) : (
                     <div>
                         First Last <b>@username:</b> {comment}
                     </div>
-                </Stack>
+                )}
             </Stack>
-        )
-    }
-
-    return (
-        <div>
-            <Stack mt={2} direction={'row'} spacing={4}>
-                <Stack direction={'column'}>
-                    <IconButton
-                        style={{
-                            backgroundColor: 'darkturquoise',
-                            color: 'white',
-                        }}
-                        icon={<AiOutlineLike />}
-                    />
-                </Stack>
-                {/* <IconButton
-                    style={{
-                        backgroundColor: 'var(--secondary-color)',
-                        color: 'black',
-                    }}
-                    icon={<AiOutlineLike />}
-                /> */}
-            </Stack>
-        </div>
+        </Stack>
     )
 }
 
