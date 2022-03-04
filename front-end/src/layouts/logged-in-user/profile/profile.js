@@ -18,16 +18,17 @@ import {
     Grid,
     GridItem,
 } from '@chakra-ui/react'
-import "../../layouts.css";
-import { IoSettingsOutline } from "react-icons/io5";
-import { GrClose } from "react-icons/gr";
+import '../../layouts.css'
+import { IoSettingsOutline } from 'react-icons/io5'
+import { GrClose } from 'react-icons/gr'
 
-import Popup from 'reactjs-popup';
-import 'reactjs-popup/dist/index.css';
-import "../../layouts.css";
+import Popup from 'reactjs-popup'
+import 'reactjs-popup/dist/index.css'
+import '../../layouts.css'
 import '../../../styles/profile.css'
-import Settings from './settings/settings';
-import { RiContactsBookLine } from 'react-icons/ri';
+import Settings from './settings/settings'
+import { RiContactsBookLine } from 'react-icons/ri'
+import PostInteraction from '../../../components/feed/post/postInteraction'
 
 class Profile extends React.Component {
     constructor(props) {
@@ -48,6 +49,8 @@ class Profile extends React.Component {
             viewingSelf: true,
             userExists: true,
             loading: true,
+            allPosts: [],
+            postInteractions: [],
             editMode: false,
             open: false,
             showPosts: true,
@@ -66,7 +69,27 @@ class Profile extends React.Component {
                     })
                     console.log(posts)
                     this.setState({ allPosts: posts })
-                    return;
+                    return
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    fetchInteractions() {
+        try {
+            axios
+                .get('http://localhost:5000/api/postInteractions')
+                .then((res) => {
+                    const postInteractions = res.data.filter(
+                        (postInteraction) => {
+                            return true
+                        }
+                    )
+                    this.setState({ postInteractions: postInteractions })
                 })
                 .catch(function (error) {
                     console.log(error)
@@ -77,11 +100,27 @@ class Profile extends React.Component {
     }
 
     postHandler() {
-        console.log(this.state.allPosts)
+        if (this.state.allPosts.length === 0) {
+            return <Center>No posts to show.</Center>
+        }
+
         return this.state.allPosts.map((post, key) => {
             return (
                 <Center pb={5}>
                     <Post post={post} />
+                </Center>
+            )
+        })
+    }
+
+    postInteractionsHandler() {
+        if (this.state.postInteractions.length === 0) {
+            return <Center>No interactions to show.</Center>
+        }
+        return this.state.postInteractions.map((post, key) => {
+            return (
+                <Center pb={5}>
+                    <PostInteraction post={post} />
                 </Center>
             )
         })
@@ -97,6 +136,8 @@ class Profile extends React.Component {
 
     async componentDidMount() {
         console.log('test')
+        this.fetchPosts()
+        this.fetchInteractions()
 
         if (axios.defaults.headers.common['authorization'] != null) {
             var sessionUsername
@@ -113,7 +154,7 @@ class Profile extends React.Component {
             : sessionUsername)
         this.setState({ username: userViewing })
         console.log(userViewing)
-        var popoverContent;
+        var popoverContent
         await axios
             .get('http://localhost:5000/api/getProfile/' + userViewing)
             .then((res) => {
@@ -131,7 +172,7 @@ class Profile extends React.Component {
                         numFollowing: this.formatNum(420000),
                         numFollowers: this.formatNum(44444444),
                         email: res.data.email,
-                    }
+                    },
                 })
                 this.setState({
                     viewingSelf:
@@ -139,7 +180,7 @@ class Profile extends React.Component {
                         sessionUsername.localeCompare(userViewing) === 0,
                     loading: false,
                 })
-                return;
+                return
             })
             .catch(({ response }) => {
                 if (response.data === "User doesn't exist") {
@@ -173,8 +214,9 @@ class Profile extends React.Component {
                     <Center>
                         <div style={{ display: 'flex' }}>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? 'select-title' : ''
-                                    }`}
+                                className={`toggle-title ${
+                                    this.state.showPosts ? 'select-title' : ''
+                                }`}
                                 onClick={this.toPosts}
                             >
                                 <Box>
@@ -187,8 +229,9 @@ class Profile extends React.Component {
                                 </Box>
                             </div>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? 'select-title' : 'select-title'
-                                    }`}
+                                className={`toggle-title ${
+                                    this.state.showPosts ? '' : 'select-title'
+                                }`}
                                 onClick={this.toInteractions}
                             >
                                 <Box>
@@ -206,19 +249,21 @@ class Profile extends React.Component {
 
                 <div className="slide-container">
                     <Box
-                        className={`slide ${this.state.showPosts ? 'right-hide' : 'show'
-                            }`}
+                        className={`slide ${
+                            this.state.showPosts ? 'right-hide' : 'show'
+                        }`}
                         style={{ paddingBottom: '80px' }}
                     >
                         <div style={{ textAlign: 'center' }}>
-                            Future user interaction content goes here
+                            {this.postInteractionsHandler()}
                         </div>
                     </Box>
 
                     <Box
                         style={{ paddingBottom: '80px' }}
-                        className={`slide posts-container ${this.state.showPosts ? 'show' : 'left-hide'
-                            }`}
+                        className={`slide posts-container ${
+                            this.state.showPosts ? 'show' : 'left-hide'
+                        }`}
                     >
                         {this.postHandler()}
                     </Box>
@@ -228,7 +273,7 @@ class Profile extends React.Component {
     }
 
     render() {
-        var popoverContent = <Settings user={this.state.user} />;
+        var popoverContent = <Settings user={this.state.user} />
 
         return (
             <div
@@ -268,11 +313,46 @@ class Profile extends React.Component {
                                                     <Stack direction={'column'}>
                                                         <Box>
                                                             <>
-                                                                <Text fontSize={'2xl'} color={'var(--text-color)'}>
-                                                                    {this.state.user.firstName} {this.state.user.lastName}
+                                                                <Text
+                                                                    fontSize={
+                                                                        '2xl'
+                                                                    }
+                                                                    color={
+                                                                        'var(--text-color)'
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        this
+                                                                            .state
+                                                                            .user
+                                                                            .firstName
+                                                                    }{' '}
+                                                                    {
+                                                                        this
+                                                                            .state
+                                                                            .user
+                                                                            .lastName
+                                                                    }
                                                                 </Text>
-                                                                <Text pl={'.15vw'} fontWeight={'bold'} color={'var(--text-color)'} fontSize={'xs'}>
-                                                                    @{this.state.user.username}
+                                                                <Text
+                                                                    pl={'.15vw'}
+                                                                    fontWeight={
+                                                                        'bold'
+                                                                    }
+                                                                    color={
+                                                                        'var(--text-color)'
+                                                                    }
+                                                                    fontSize={
+                                                                        'xs'
+                                                                    }
+                                                                >
+                                                                    @
+                                                                    {
+                                                                        this
+                                                                            .state
+                                                                            .user
+                                                                            .username
+                                                                    }
                                                                 </Text>
                                                             </>
                                                         </Box>
@@ -294,7 +374,8 @@ class Profile extends React.Component {
                                                             >
                                                                 {
                                                                     this.state
-                                                                        .user.numTagsFollowing
+                                                                        .user
+                                                                        .numTagsFollowing
                                                                 }
                                                             </Text>
                                                             <Text color="var(--text-color)">
@@ -315,7 +396,8 @@ class Profile extends React.Component {
                                                             >
                                                                 {
                                                                     this.state
-                                                                        .user.numFollowers
+                                                                        .user
+                                                                        .numFollowers
                                                                 }
                                                             </Text>
                                                             <Text color="var(--text-color)">
@@ -336,7 +418,8 @@ class Profile extends React.Component {
                                                             >
                                                                 {
                                                                     this.state
-                                                                        .user.numFollowing
+                                                                        .user
+                                                                        .numFollowing
                                                                 }
                                                             </Text>
                                                             <Text color="var(--text-color)">
@@ -359,108 +442,180 @@ class Profile extends React.Component {
                                                             >
                                                                 Bio:
                                                             </Text>
-                                                            {
-                                                                this.state.editMode ? (
-                                                                    <>
-                                                                        <Input color='var(--text-color)'
-                                                                            // border={'none'}
-                                                                            height={'3.25vh'}
-                                                                            width={'auto'}
-                                                                            value={this.state.editedBio}
-                                                                            onChange={
-                                                                                (e) => {
-                                                                                    this.setState({
-                                                                                        editedBio: e.target.value,
-                                                                                    })
+                                                            {this.state
+                                                                .editMode ? (
+                                                                <>
+                                                                    <Input
+                                                                        color="var(--text-color)"
+                                                                        // border={'none'}
+                                                                        height={
+                                                                            '3.25vh'
+                                                                        }
+                                                                        width={
+                                                                            'auto'
+                                                                        }
+                                                                        value={
+                                                                            this
+                                                                                .state
+                                                                                .editedBio
+                                                                        }
+                                                                        onChange={(
+                                                                            e
+                                                                        ) => {
+                                                                            this.setState(
+                                                                                {
+                                                                                    editedBio:
+                                                                                        e
+                                                                                            .target
+                                                                                            .value,
                                                                                 }
-                                                                            } />
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <Text color='var(--text-color)'>
-                                                                            {this.state.user.bio}
-                                                                        </Text>
-                                                                    </>
-                                                                )
-
-                                                            }
+                                                                            )
+                                                                        }}
+                                                                    />
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Text color="var(--text-color)">
+                                                                        {
+                                                                            this
+                                                                                .state
+                                                                                .user
+                                                                                .bio
+                                                                        }
+                                                                    </Text>
+                                                                </>
+                                                            )}
                                                         </Stack>
                                                     </Box>
                                                     <Box pr={'5px'} pt={'1vh'}>
                                                         {this.state
                                                             .viewingSelf ? (
                                                             <Box>
-
-                                                                {
-                                                                    this.state.editMode ? (
-                                                                        <>
-                                                                            <Button
-                                                                                backgroundColor={'red'}
-                                                                                color={'white'}
-                                                                                onClick={() => {
-                                                                                    console.log('clicked')
-                                                                                    axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
-                                                                                    this.state.user.bio = this.state.editedBio
-                                                                                    console.log(this.state.user.bio);
-                                                                                    try {
-                                                                                        axios.put("http://localhost:5000/api/updateProfile", {
-                                                                                            bio: this.state.user.bio,
-                                                                                        })
-                                                                                    } catch (error) {
-                                                                                        console.log(error);
+                                                                {this.state
+                                                                    .editMode ? (
+                                                                    <>
+                                                                        <Button
+                                                                            backgroundColor={
+                                                                                'red'
+                                                                            }
+                                                                            color={
+                                                                                'white'
+                                                                            }
+                                                                            onClick={() => {
+                                                                                console.log(
+                                                                                    'clicked'
+                                                                                )
+                                                                                axios.defaults.headers.common[
+                                                                                    'authorization'
+                                                                                ] =
+                                                                                    localStorage.getItem(
+                                                                                        'token'
+                                                                                    )
+                                                                                this.state.user.bio =
+                                                                                    this.state.editedBio
+                                                                                console.log(
+                                                                                    this
+                                                                                        .state
+                                                                                        .user
+                                                                                        .bio
+                                                                                )
+                                                                                try {
+                                                                                    axios.put(
+                                                                                        'http://localhost:5000/api/updateProfile',
+                                                                                        {
+                                                                                            bio: this
+                                                                                                .state
+                                                                                                .user
+                                                                                                .bio,
+                                                                                        }
+                                                                                    )
+                                                                                } catch (error) {
+                                                                                    console.log(
+                                                                                        error
+                                                                                    )
+                                                                                }
+                                                                                this.setState(
+                                                                                    {
+                                                                                        editMode: false,
                                                                                     }
-                                                                                    this.setState({
-                                                                                        editMode: false
-                                                                                    })
-
-                                                                                }}
-                                                                            >
-                                                                                Save Changes
-                                                                            </Button>
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            <Button
-                                                                                backgroundColor={'#5581D7'}
-                                                                                color={'white'}
-                                                                                onClick={() => {
-                                                                                    this.setState({
+                                                                                )
+                                                                            }}
+                                                                        >
+                                                                            Save
+                                                                            Changes
+                                                                        </Button>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Button
+                                                                            backgroundColor={
+                                                                                '#5581D7'
+                                                                            }
+                                                                            color={
+                                                                                'white'
+                                                                            }
+                                                                            onClick={() => {
+                                                                                this.setState(
+                                                                                    {
                                                                                         editMode: true,
-                                                                                        editedBio: this.state.user.bio,
-                                                                                    })
-                                                                                }}
-                                                                            >
-                                                                                Edit Bio
-                                                                            </Button>
-                                                                        </>
-                                                                    )
-                                                                }
+                                                                                        editedBio:
+                                                                                            this
+                                                                                                .state
+                                                                                                .user
+                                                                                                .bio,
+                                                                                    }
+                                                                                )
+                                                                            }}
+                                                                        >
+                                                                            Edit
+                                                                            Bio
+                                                                        </Button>
+                                                                    </>
+                                                                )}
                                                                 <IconButton
                                                                     left={'3'}
-                                                                    style={{ backgroundColor: "#1D2023", color: "white" }}
-                                                                    aria-label='Like'
+                                                                    style={{
+                                                                        backgroundColor:
+                                                                            '#1D2023',
+                                                                        color: 'white',
+                                                                    }}
+                                                                    aria-label="Like"
                                                                     onClick={() => {
-                                                                        this.setState({
-                                                                            open: true
-                                                                        })
+                                                                        this.setState(
+                                                                            {
+                                                                                open: true,
+                                                                            }
+                                                                        )
+                                                                    }}
+                                                                    icon={
+                                                                        <IoSettingsOutline />
                                                                     }
-                                                                    }
-                                                                    icon={<IoSettingsOutline />}
                                                                 />
                                                                 <Popup
-                                                                    open={this.state.open}
+                                                                    open={
+                                                                        this
+                                                                            .state
+                                                                            .open
+                                                                    }
                                                                     onClose={() => {
-                                                                        this.setState({
-                                                                            open: false,
-                                                                        })
+                                                                        this.setState(
+                                                                            {
+                                                                                open: false,
+                                                                            }
+                                                                        )
                                                                     }}
                                                                     contentStyle={{
-                                                                        backgroundColor: 'var(--main-color)',
-                                                                        borderWidth: '0px',
-                                                                        borderRadius: '10px',
+                                                                        backgroundColor:
+                                                                            'var(--main-color)',
+                                                                        borderWidth:
+                                                                            '0px',
+                                                                        borderRadius:
+                                                                            '10px',
                                                                     }}
                                                                 >
-                                                                    {popoverContent}
+                                                                    {
+                                                                        popoverContent
+                                                                    }
                                                                 </Popup>
                                                             </Box>
                                                         ) : (
@@ -512,7 +667,7 @@ class Profile extends React.Component {
                                             </Center>
                                         </Stack>
                                     </Box>
-                                </Center >
+                                </Center>
                                 <this.Userline />
                             </>
                         ) : (
