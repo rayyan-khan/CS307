@@ -159,3 +159,7 @@
 .toggle-title.select-title {
     font-weight: 700;
 }
+
+.interaction-post-caption p {
+    padding: 0;
+}

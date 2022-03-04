@@ -15,6 +15,7 @@ import {
     AiOutlineLike,
     AiOutlineComment,
 } from 'react-icons/ai'
+import { ChatIcon, ArrowForwardIcon } from '@chakra-ui/icons'
 import { FaRegBookmark } from 'react-icons/fa'
 import React from 'react'
 import { LinkPreview } from '@dhaiwat10/react-link-preview'
@@ -57,7 +58,7 @@ const InteractionIcon = ({ post }) => {
                 ) : (
                     <Stack direction={'row'}>
                         <IconButton
-                            icon={<AiOutlineComment />}
+                            icon={<ChatIcon />}
                             style={{
                                 backgroundColor: 'lightblue',
                                 color: 'white',
@@ -181,34 +182,41 @@ export default function PostInteraction({ post, label }) {
                         {'#' + post.tagID}
                     </Box>
 
-                    <Text
-                        textAlign={'center'}
-                        pt={'10px'}
-                        className={'color-switch'}
-                        color={'gray.100'}
-                        isTruncated
-                    >
-                        {post.postCaption}
-                    </Text>
+                    <div className="interaction-post-caption">
+                        <Text
+                            textAlign={'center'}
+                            pt={'10px'}
+                            className={'color-switch'}
+                            color={'gray'}
+                            isTruncated
+                        >
+                            {post.postCaption}
+                        </Text>
+                    </div>
                 </Stack>
                 {post.comment ? (
                     <Stack
+                        direction={'column'}
                         divider={
-                            post.comment ? (
-                                <StackDivider
-                                    borderColor="gray.400"
-                                    height={'20px'}
-                                />
-                            ) : (
-                                <div />
-                            )
+                            <Divider
+                                orientation="horizontal"
+                                color={'darkgray'}
+                            />
                         }
                     >
+                        <div />
+                        {/* <IconButton
+                            style={{
+                                backgroundColor: 'white',
+                                color: 'gray',
+                            }}
+                            icon={<ArrowForwardIcon />}
+                        /> */}
                         <Text
                             textAlign={'left'}
                             pt={'10px'}
                             className={'color-switch'}
-                            color={'gray.100'}
+                            color={'darkgray'}
                             isTruncated
                         >
                             {post.comment}
