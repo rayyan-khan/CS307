@@ -27,7 +27,7 @@ const Interaction = ({ post }) => {
                 <Stack direction={'column'}>
                     <IconButton
                         style={{
-                            backgroundColor: 'darkturquoise',
+                            backgroundColor: 'lightgreen',
                             color: 'white',
                         }}
                         icon={<AiOutlineLike />}
@@ -41,7 +41,7 @@ const Interaction = ({ post }) => {
                 <Stack direction={'column'}>
                     <IconButton
                         style={{
-                            backgroundColor: 'darkturquoise',
+                            backgroundColor: 'red',
                             color: 'white',
                         }}
                         icon={<AiOutlineDislike />}
@@ -50,7 +50,15 @@ const Interaction = ({ post }) => {
             </Stack>
         )
     } else if (comment) {
-        return <div>{comment}</div>
+        return (
+            <Stack mt={2} direction={'row'} spacing={4}>
+                <Stack direction={'column'}>
+                    <div>
+                        First Last <b>@username:</b> {comment}
+                    </div>
+                </Stack>
+            </Stack>
+        )
     }
 
     return (
@@ -92,6 +100,10 @@ export default function PostInteraction({ post, label }) {
         }
     }
 
+    const handleInteractionClick = (event) => {
+        event.stopPropagation()
+    }
+
     return (
         <Box
             minW={'620px'}
@@ -106,6 +118,7 @@ export default function PostInteraction({ post, label }) {
             style={linkPageBool ? { cursor: 'pointer' } : {}}
             onClick={(event) => {
                 if (linkPageBool) {
+                    console.log('this is where im geing called from')
                     event.preventDefault()
                     if (localStorage.getItem('token') == null) {
                         let url = window.location.href
@@ -129,8 +142,6 @@ export default function PostInteraction({ post, label }) {
                 pos={'relative'}
                 style={linkPageBool ? { cursor: 'pointer' } : {}}
             /> */}
-
-            <Interaction post={post} />
 
             <Stack align={'center'} direction={'column'} spacing={4}>
                 <Center>
@@ -169,6 +180,7 @@ export default function PostInteraction({ post, label }) {
                             : post.username}
                     </Heading>
                 </Center>
+                {/*
                 <Text
                     textAlign={'center'}
                     pt={'10px'}
@@ -191,7 +203,6 @@ export default function PostInteraction({ post, label }) {
                 <Center>
                     {post.hyperlink !== '' ? (
                         <LinkPreview
-                            // margin="30px 0px"
                             width="500px"
                             url={post.hyperlink}
                             backgroundColor="white"
@@ -200,6 +211,15 @@ export default function PostInteraction({ post, label }) {
                         <></>
                     )}
                 </Center>
+                    */}
+                <Text
+                    textAlign={'center'}
+                    pt={'10px'}
+                    className={'color-switch'}
+                    color={'gray.100'}
+                >
+                    Click to view whole post.
+                </Text>
             </Stack>
 
             <Stack align={'center'} justify={'center'} direction={'row'} mt={6}>
@@ -230,6 +250,8 @@ export default function PostInteraction({ post, label }) {
                     {'#' + post.tagID}
                 </Box>
             </Stack>
+
+            <Interaction post={post} />
         </Box>
     )
 }

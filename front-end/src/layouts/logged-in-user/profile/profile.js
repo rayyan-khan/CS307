@@ -100,7 +100,10 @@ class Profile extends React.Component {
     }
 
     postHandler() {
-        console.log(this.state.allPosts)
+        if (this.state.allPosts.length === 0) {
+            return <Center>No posts to show.</Center>
+        }
+
         return this.state.allPosts.map((post, key) => {
             return (
                 <Center pb={5}>
@@ -111,7 +114,9 @@ class Profile extends React.Component {
     }
 
     postInteractionsHandler() {
-        console.log(this.state.postInteractions)
+        if (this.state.postInteractions.length === 0) {
+            return <Center>No interactions to show.</Center>
+        }
         return this.state.postInteractions.map((post, key) => {
             return (
                 <Center pb={5}>
