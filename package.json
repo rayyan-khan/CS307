@@ -6,6 +6,7 @@
     "start": "concurrently \"npm start --prefix front-end\" \"npm start --prefix server\"",
     "front-end": "npm start --prefix front-end",
     "server": "npm start --prefix server",
+    "test": "cd server && set NODE_ENV=test && npx mocha",
     "i-all": "npm install && npm install --prefix front-end && npm install --prefix server",
     "i-front-end": "npm install --prefix front-end",
     "i-server": "npm install --prefix server"
@@ -14,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^7.0.0"
+    "concurrently": "^7.0.0",
+    "sinon": "^13.0.1"
   }
 }

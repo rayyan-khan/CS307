@@ -150,7 +150,9 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
 
 //
 //Use the below line in any file to connect to the database
-var con = require('../database/conn')
+var getCon = require('../database/conn')
+var con = getCon.getConObject()
+
 postRoutes.route('/getSpecificPost/:postID').post(function (req, res) {
     var anony = 'Anonymous'
     var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, anonymous, url, hyperlink,CASE WHEN anonymous=1 THEN ${anony} ELSE username END From Post WHERE postId = ${con.escape(
