@@ -3,7 +3,8 @@ const userRoutes = express.Router()
 const decodeHeader = require('../utils/decodeHeader')
 
 //Use the below line in any file to connect to the database
-var con = require('../database/conn')
+var getCon = require('../database/conn')
+var con = getCon.getConObject()
 
 userRoutes.route('/getUserFromHeader').get(async (req, res) => {
     var user
