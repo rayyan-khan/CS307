@@ -24,7 +24,6 @@ import Onboarding from './layouts/new-user/onboarding/onboarding'
 import axios from 'axios'
 
 import { Box } from '@chakra-ui/react'
-import { RiContactsBookLine } from 'react-icons/ri'
 
 export default class App extends React.Component {
     render() {

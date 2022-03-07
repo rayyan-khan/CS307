@@ -1,165 +1,167 @@
 .profile-page-container {
-    padding-top: 50px;
-    text-align: left;
+  padding-top: 50px;
+  text-align: left;
 }
 
 .profile-page-container .row {
-    border-radius: 10px;
+  border-radius: 10px;
 }
 
-.profile-page-container .col-3, .profile-page-container .col-7, .profile-page-container .col-10 {
-    background-color: white;
-    padding-top: 40px;
+.profile-page-container .col-3,
+.profile-page-container .col-7,
+.profile-page-container .col-10 {
+  background-color: white;
+  padding-top: 40px;
 }
 
 .profile-page-container .col-3 {
-    border-radius: 10px 0 0 10px;
+  border-radius: 10px 0 0 10px;
 }
 
 .profile-page-container .col-7 {
-    border-radius: 0 10px 10px 0;
+  border-radius: 0 10px 10px 0;
 }
 
 .profile-page-container .col-10 {
-    border-radius: 10px;
+  border-radius: 10px;
 }
 
 .profile-page-container {
-    color: black;
-    font-size: calc(10px + 2vmin);
+  color: black;
+  font-size: calc(10px + 2vmin);
 }
 
 .profile-page-container .numbers {
-    display: flex;
+  display: flex;
 }
 
 .profile-page-container .numbers div {
-    margin-right: 30px;
+  margin-right: 30px;
 }
 
 .profile-page-container .numbers div:last-child {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .profile-page-header {
-    display: flex;
+  display: flex;
 }
 
 .profile-page-header h1 {
-    margin-right: 100px;
+  margin-right: 100px;
 }
 
-.profile-content>div {
-    margin-bottom: 30px;
+.profile-content > div {
+  margin-bottom: 30px;
 }
 
 .profile-content p {
-    margin: 0;
+  margin: 0;
 }
 
 .profile-page {
-    background-color: --mainColor;
+  background-color: --mainColor;
 }
 
 .profile-page-container .btn {
-    text-transform: none;
-    margin-right: 30px;
+  text-transform: none;
+  margin-right: 30px;
 }
 
 .profile-page-container .btn:last-child {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .btn-primary {
-    background-color: #69a1ff;
+  background-color: #69a1ff;
 }
 
 .btn-primary:hover {
-    background-color: #5c8de0;
+  background-color: #5c8de0;
 }
 
 .btn-danger:hover {
-    background-color: #f2002a;
+  background-color: #f2002a;
 }
 
 .btn {
-    font-size: 15px;
+  font-size: 15px;
 }
 
 .profile-page-container .activity-row {
-    margin-top: 50px;
+  margin-top: 50px;
 }
 
 .rect-img-container {
-    position: relative;
-    justify-content: center;
-    display: flex;
+  position: relative;
+  justify-content: center;
+  display: flex;
 }
 
 .rect-img-container::after {
-    content: "";
-    display: block;
-    padding-bottom: 100%;
+  content: "";
+  display: block;
+  padding-bottom: 100%;
 }
 
 .rect-img {
-    position: absolute;
-    width: 80%;
-    height: 80%;
-    object-fit: cover;
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  object-fit: cover;
 }
 
 .slide-container {
-    display: grid;
+  display: grid;
 }
 
 .slide-container .slide {
-    grid-row: 1;
-    grid-column: 1;
-    transition: transform .8s ease, opacity .3s ease;
+  grid-row: 1;
+  grid-column: 1;
+  transition: transform 0.8s ease, opacity 0.3s ease;
 }
 
 .slide-container .show {
-    transform: translateX(0%);
-    -webkit-transform: translateX(0%);
-    opacity: 1;
+  transform: translateX(0%);
+  -webkit-transform: translateX(0%);
+  opacity: 1;
 }
 
 .slide-container .right-hide {
-    transform: translateX(100%);
-    -webkit-transform: translateX(100%);
-    opacity: 0;
+  transform: translateX(100%);
+  -webkit-transform: translateX(100%);
+  opacity: 0;
 }
 
 .slide-container .left-hide {
-    transform: translateX(-100%);
-    -webkit-transform: translateX(-100%);
-    opacity: 0;
+  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
+  opacity: 0;
 }
 
 .toggle-title {
-    margin-left: 30px;
-    margin-right: 30px;
+  margin-left: 30px;
+  margin-right: 30px;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    font-weight: initial;
+  font-weight: initial;
 
-    color: inherit;
-    text-underline-offset: 10px;
-    text-decoration: underline rgba(255, 255, 255, 0);
-    transition: text-decoration-color 300ms;
+  color: inherit;
+  text-underline-offset: 10px;
+  text-decoration: underline rgba(255, 255, 255, 0);
+  transition: text-decoration-color 300ms;
 }
 
 .toggle-title:hover {
-    text-decoration-color: darkturquoise;
-    transition: text-decoration .5s;
+  text-decoration-color: darkturquoise;
+  transition: text-decoration 0.5s;
 }
 
 .toggle-title.select-title {
-    font-weight: 700;
+  font-weight: 700;
 }
 
 .interaction-post-caption p {
-    padding: 0;
+  padding: 0;
 }

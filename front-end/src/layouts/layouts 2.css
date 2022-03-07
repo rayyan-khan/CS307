@@ -3,7 +3,6 @@
   --secondary-color: #ebf0f5;
   --tertiary-color: #ebf0f5;
   --text-color: black;
-  --secondary-text-color: white;
   --settings-background-color: #ebf0f5;
   --settings-head-color: "black";
 }
@@ -22,7 +21,6 @@
     --secondary-color: white;
     --tertiary-color: "black";
     --text-color: white;
-    --secondary-text-color: black;
     --settings-background-color: #212123;
     --settings-head-color: #5b5c62;
   }
