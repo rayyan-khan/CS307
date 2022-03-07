@@ -1,10 +1,13 @@
 
 import {
+    Heading,
+    Avatar,
     Box,
     Center,
     Text,
     Stack,
     Button,
+    IconButton,
     Image,
     Input,
     Flex,
@@ -12,6 +15,14 @@ import {
 import axios from 'axios';
 
 import React, { useEffect, useState } from 'react'
+
+
+
+
+
+
+
+
 
 export default function Settings({ user, label }) {
 
@@ -164,7 +175,7 @@ export default function Settings({ user, label }) {
                                                                                         lastName: currentName.split(' ')[1],
                                                                                     })
                                                                                         .then(res => {
-                                                                                            console.log(res);
+                                                                                             console.log(res);
                                                                                             setEditName(false);
                                                                                             setUsernameMessage('Name updated successfully');
                                                                                             setTimeout(() => setUsernameMessage(''), 3000);
