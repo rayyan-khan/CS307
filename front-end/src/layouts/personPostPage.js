@@ -40,7 +40,7 @@ class PersonPostPage extends React.Component {
 
     render() {
         return (
-            <div style={{ backgroundColor: "red", overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
+            <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", height: "100%" }} >
                 <Center backgroundColor={"var(--main-color)"} pb={200} pt={200}>
                     <Stack>
                         <Center>

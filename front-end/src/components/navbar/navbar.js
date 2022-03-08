@@ -142,7 +142,7 @@ class Navbar extends React.Component {
     } else {
       return (
         <div className="color-switch" style={{ height: "65px" }}>
-          <MDBNavbar  style={{ height: "100%" }} expand='lg'>
+          <MDBNavbar style={{ height: "100%" }} expand='sm'>
             {barFront}
             <div style={{ top: "100px" }}>
               <MDBNavbarNav right>
