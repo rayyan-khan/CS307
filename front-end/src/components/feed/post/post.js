@@ -187,8 +187,8 @@ export default function Post({ post, label }) {
                     textAlign={'center'}
                     pt={'10px'}
                     className={'color-switch'}
-                    color={'gray.100'}
-                    >
+                    color={'var(--text-color)'}
+                >
                     {post.postCaption}
                 </Text>
 
@@ -223,7 +223,7 @@ export default function Post({ post, label }) {
                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                         } else {
                             let url = window.location.href;
-                            window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
+                            window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tagID;
                         }
                     }}
                     style={{ cursor: 'pointer' }}
@@ -244,7 +244,7 @@ export default function Post({ post, label }) {
                         fontSize={'sm'}
                         fontFamily={'body'}
                         className={'color-switch'}
-                        color={'gray.100'}
+                        color={'var(--text-color)'}
                     >
                         {post.likesCount}
                     </Text>
@@ -257,7 +257,7 @@ export default function Post({ post, label }) {
                         fontSize={'sm'}
                         fontFamily={'body'}
                         className={'color-switch'}
-                        color={'gray.100'}
+                        color={'var(--text-color)'}
                     >
                         {post.dislikeCount}
                     </Text>
