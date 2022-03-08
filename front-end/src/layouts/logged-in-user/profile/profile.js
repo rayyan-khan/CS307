@@ -237,25 +237,28 @@ class Profile extends React.Component {
                 </Stack>
 
                 <div className="slide-container">
-                    <Box
+                    <Center
+                        height={'100vh'}
                         className={`slide ${this.state.showPosts ? 'right-hide' : 'show'
                             }`}
-                        style={{ paddingBottom: '80px' }}
                     >
-                        <div style={{ textAlign: 'center' }}>
-                            {this.postInteractionsHandler()}
+                        <div style={{ backgroundColor: "var(--main-color)", overflowX: "hidden", overflowY: "scroll", width: "50vw", height: "100%" }} >
+                            <div style={{ textAlign: 'center' }}>
+                                {this.postInteractionsHandler()}
+                            </div>
                         </div>
-                    </Box>
-
-                    <Box
-                        style={{ paddingBottom: '80px' }}
+                    </Center>
+                    <Center
+                        height={'100vh'}
                         className={`slide posts-container ${this.state.showPosts ? 'show' : 'left-hide'
                             }`}
                     >
-                        {this.postHandler()}
-                    </Box>
+                        <div style={{ backgroundColor: "var(--main-color)", overflowX: "hidden", overflowY: "scroll", width: "50vw", height: "100%" }} >
+                            {this.postHandler()}
+                        </div>
+                    </Center>
                 </div>
-            </div>
+            </div >
         )
     }
 
