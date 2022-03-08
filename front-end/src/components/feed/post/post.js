@@ -25,6 +25,7 @@ export default function Post({ post, label }) {
     const [isLiked, setIsLiked] = React.useState(post.isLiked);
     const [isDisliked, setIsDisliked] = React.useState(post.isDisliked);
     const [comment, setComment] = React.useState("");
+    const [postComment, setPostComment] = React.useState([]);
     var posts = JSON.parse(localStorage.getItem('allPosts'));
     console.log(label)
     var postIndex = label;
@@ -63,6 +64,16 @@ export default function Post({ post, label }) {
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
         }
     }
+
+    const [username, setUsername] = React.useState("");
+    if (localStorage.getItem('token') != null) {
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+        axios.get("http://localhost:5000/api/getUserFromHeader/").then((res) => {
+            console.log(res.data);
+            setUsername(res.data.username);
+        });
+    }
+
 
 
 
@@ -284,6 +295,10 @@ export default function Post({ post, label }) {
                             placeholder='Write a comment'
                             color={'var(--text-color)'}
                             value={comment}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }}
                             onChange={(event) => { setComment(event.target.value) }}
                             onKeyPress={(event) => {
                                 if (event.key === 'Enter') {
@@ -293,12 +308,15 @@ export default function Post({ post, label }) {
                                         let url = window.location.href;
                                         window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                                     } else {
-                                        // setComments([{ text: comment, username: username, minsAgo: "Now" }, ...comments]);
-                                        // setComment("");
+                                        localStorage.setItem('comment', JSON.stringify({ text: comment, username: username, minsAgo: "Now" }));
+                                        setComment("");
+                                        let url = window.location.href;
+                                        window.location.href = url.substring(0, url.indexOf("/")) + "/personalPostPage/" + post.postID;
                                     }
                                 }
                             }}
                             onBlur={(event) => {
+                                event.stopPropagation();
                                 if (localStorage.getItem('token') == null) {
                                     let url = window.location.href;
                                     window.location.href = url.substring(0, url.indexOf("/")) + "/signup";

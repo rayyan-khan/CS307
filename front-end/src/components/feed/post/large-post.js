@@ -13,7 +13,7 @@ import {
 
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
 import { FaRegBookmark } from "react-icons/fa"
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import Comment from './comment';
 import "./post.css"
@@ -90,11 +90,19 @@ export default function LargePost({ post }) {
     const [comment, setComment] = React.useState('');
     console.log(post);
 
+
     // toggle state 
     const [isLiked, setIsLiked] = React.useState(false);
     const [isDisliked, setIsDisliked] = React.useState(false);
     const [username, setUsername] = React.useState('');
     const [comments, setComments] = React.useState(commentsJSON.comments);
+    useEffect(() => {
+
+        var newComment = localStorage.getItem("comment");
+        console.log(newComment);
+        setComments([JSON.parse(newComment), ...comments]);
+    }, []);
+    console.log(comments);
 
     const handleLiked = (event) => {
         event.stopPropagation();
