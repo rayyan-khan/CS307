@@ -43,6 +43,7 @@ class Profile extends React.Component {
                 numTagsFollowing: 0,
                 numFollowing: 0,
                 numFollowers: 0,
+                profilePic: ''
             },
             editedBio: '',
             allPosts: [],
@@ -172,8 +173,10 @@ class Profile extends React.Component {
                         numFollowing: this.formatNum(420000),
                         numFollowers: this.formatNum(44444444),
                         email: res.data.email,
+                        profilePic: res.data.url
                     },
                 })
+
                 this.setState({
                     viewingSelf:
                         sessionUsername != null &&
@@ -305,9 +308,10 @@ class Profile extends React.Component {
                                                 <Box>
                                                     <Image
                                                         borderRadius={'full'}
-                                                        src="https://picsum.photos/800/1500"
+                                                        src={this.state.user.profilePic}
                                                         boxSize="10vw"
                                                     />
+
                                                 </Box>
                                                 <Box pl={'1vw'}>
                                                     <Stack direction={'column'}>
@@ -502,6 +506,7 @@ class Profile extends React.Component {
                                                                                 'white'
                                                                             }
                                                                             onClick={() => {
+                                                                                console.log(this.state.email)
                                                                                 console.log(
                                                                                     'clicked'
                                                                                 )

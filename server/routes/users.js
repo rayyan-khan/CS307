@@ -32,7 +32,7 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
         }
     }
 
-    var sql = `SELECT username, email, bio, private, firstName, lastName from User WHERE username = ${con.escape(
+    var sql = `SELECT username, email, bio, private, firstName, lastName, url from User WHERE username = ${con.escape(
         req.params.username
     )}`
 
@@ -157,5 +157,7 @@ userRoutes.route('/searchUsers/:query').get(async (req, res) => {
         }
     })
 })
+
+
 
 module.exports = userRoutes

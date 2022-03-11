@@ -16,14 +16,6 @@ import axios from 'axios';
 
 import React, { useEffect, useState } from 'react'
 
-
-
-
-
-
-
-
-
 export default function Settings({ user, label }) {
 
     const [settingScreen, setSettingScreen] = useState('profile')
@@ -67,6 +59,8 @@ export default function Settings({ user, label }) {
 
     }, [editPassword])
 
+
+
     console.log(settingScreen === 'profile')
     if (settingScreen === 'profile') {
         return (
@@ -82,9 +76,11 @@ export default function Settings({ user, label }) {
                             <Box>
                                 <Image
                                     borderRadius={'full'}
-                                    src="https://picsum.photos/800/1500"
+                                    src={user.profilePic}
                                     boxSize='4vw'
                                 />
+
+
                             </Box>
                             <Box pb={'1vh'} pl={'.5vw'}>
                                 <Text fontSize={'.8vw'} fontWeight={'bold'} color={"var(--text-color)"}>
@@ -93,6 +89,19 @@ export default function Settings({ user, label }) {
                                 <Text pl={'1'} fontSize={'.4vw'} color={"var(--text-color)"}>
                                     @{user.username}
                                 </Text>
+
+                                <Input  style={{ color: "white" }} type='file'
+                                       accept="image/*"
+                                       boxSize='4vw'
+                                        onChange={(e) => {
+                                            const data = new FormData();
+                                            data.append('image', e.target.files[0]);
+                                            axios.post("http://localhost:5000/api/updateProfileImage", data).then((response) => {
+                                                let url = window.location.href;
+                                                window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+                                            })
+                                        }}
+                                />
                             </Box>
                         </Center>
                     </Box>
