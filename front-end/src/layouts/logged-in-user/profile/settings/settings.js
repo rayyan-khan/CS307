@@ -1,13 +1,10 @@
 
 import {
-    Heading,
-    Avatar,
     Box,
     Center,
     Text,
     Stack,
     Button,
-    IconButton,
     Image,
     Input,
     Flex,

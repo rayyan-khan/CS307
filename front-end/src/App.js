@@ -21,10 +21,10 @@ import ScreenTooSmall from './components/screenTooSmall'
 import CreatePost from './layouts/logged-in-user/create-post'
 import PersonPostPage from './layouts/personPostPage.js'
 import Onboarding from './layouts/new-user/onboarding/onboarding'
+import TagPage from './layouts/logged-in-user/tag-pages/tag-pages'
 import axios from 'axios'
 
 import { Box } from '@chakra-ui/react'
-import { RiContactsBookLine } from 'react-icons/ri'
 
 export default class App extends React.Component {
     render() {
@@ -49,6 +49,11 @@ export default class App extends React.Component {
         const ProfileWrapper = () => {
             const params = useParams()
             return <Profile username={params.username} />
+        }
+
+        const TagWrapper = () => {
+            const params = useParams()
+            return <TagPage tag={params.tagId} />
         }
 
         const PrivateRoute = ({ loadComponent }) => {
@@ -79,54 +84,57 @@ export default class App extends React.Component {
             <Box className={'color-switch'} h={'100vh'}>
                 <div className='App'>
                     <Navbar />
-                    <Router>
-                        <Routes>
-                            <Route
-                                path="/"
-                                element={<Navigate replace to="/homepage" />}
-                            />
-                            <Route path="/signup"
+                    <Box height={'calc(100vh - 65px)'}>
+                        <Router>
+                            <Routes>
+                                <Route
+                                    path="/"
+                                    element={<Navigate replace to="/homepage" />}
+                                />
+                                <Route path="/signup"
 
-                                element={
-                                    <SignUpToHomepageRoute loadComponent={<Signup />} />
+                                    element={
+                                        <SignUpToHomepageRoute loadComponent={<Signup />} />
 
-                                }
-                            />
-                            <Route path="/login"
+                                    }
+                                />
+                                <Route path="/login"
 
-                                element={
-                                    <SignUpToHomepageRoute loadComponent={<Login />} />
+                                    element={
+                                        <SignUpToHomepageRoute loadComponent={<Login />} />
 
-                                }
-                            />
-                            <Route path="/homepage" element={<Homepage />} />
-                            <Route
-                                path="/createPost"
-                                element={
-                                    <PrivateRoute loadComponent={<CreatePost />} />
-                                }
-                            />
-                            <Route path="/profile" element={<ProfileWrapper />} />
-                            <Route
-                                path="/profile/:username"
-                                element={<ProfileWrapper />}
-                            />
-                            <Route path="/dms" element={<DirectMessage />} />
-                            {/* <Route path="/createPost" element={<CreatePost />} /> */}
-                            <Route path="/search" element={<SearchResult />} />
-                            <Route
-                                path="/personalPostPage/:id"
-                                element={<PersonalPostPageWrapper />}
-                            />
-                            <Route
-                                path="/verification/:token"
-                                element={<VerificationWrapper />}
-                            />
-                            <Route path="/onboarding" element={<Onboarding />} />
-                        </Routes>
-                    </Router>
-                </div>
-            </Box>
+                                    }
+                                />
+                                <Route path="/homepage" element={<Homepage />} />
+                                <Route
+                                    path="/createPost"
+                                    element={
+                                        <PrivateRoute loadComponent={<CreatePost />} />
+                                    }
+                                />
+                                <Route path="/profile" element={<ProfileWrapper />} />
+                                <Route
+                                    path="/profile/:username"
+                                    element={<ProfileWrapper />}
+                                />
+                                <Route path="/tag/:tagId" element={<TagWrapper />} />
+                                <Route path="/dms" element={<DirectMessage />} />
+                                {/* <Route path="/createPost" element={<CreatePost />} /> */}
+                                <Route path="/search" element={<SearchResult />} />
+                                <Route
+                                    path="/personalPostPage/:id"
+                                    element={<PersonalPostPageWrapper />}
+                                />
+                                <Route
+                                    path="/verification/:token"
+                                    element={<VerificationWrapper />}
+                                />
+                                <Route path="/onboarding" element={<Onboarding />} />
+                            </Routes>
+                        </Router>
+                    </Box>
+                </div >
+            </Box >
         )
     }
 }

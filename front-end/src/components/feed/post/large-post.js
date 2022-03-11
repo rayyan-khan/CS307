@@ -8,26 +8,101 @@ import {
     IconButton,
     Image,
     Input,
-    InputGroup,
-    InputLeftElement,
-    InputRightElement,
-    InputLeftAddon,
-    Icon,
 
 } from '@chakra-ui/react';
 
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
 import { FaRegBookmark } from "react-icons/fa"
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
+import Comment from './comment';
 import "./post.css"
+import axios from 'axios';
+
+const commentsJSON = {
+    "comments": [
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        },
+        {
+            "username": "Junaid",
+            "text": "This is a comment",
+            "minsAgo": "2 min",
+        }
+    ]
+}
+
+
 
 export default function LargePost({ post }) {
+    const [comment, setComment] = React.useState('');
     console.log(post);
+
 
     // toggle state 
     const [isLiked, setIsLiked] = React.useState(false);
     const [isDisliked, setIsDisliked] = React.useState(false);
+    const [username, setUsername] = React.useState('');
+    const [comments, setComments] = React.useState(commentsJSON.comments);
+    useEffect(() => {
+
+        var newComment = localStorage.getItem("comment");
+        console.log(newComment);
+        setComments([JSON.parse(newComment), ...comments]);
+    }, []);
+    console.log(comments);
 
     const handleLiked = (event) => {
         event.stopPropagation();
@@ -56,6 +131,13 @@ export default function LargePost({ post }) {
                 setIsLiked(false);
             }
         }
+    }
+
+    if (localStorage.getItem('token') != null) {
+        axios.get("http://localhost:5000/api/getUserFromHeader/").then((res) => {
+            console.log(res.data);
+            setUsername(res.data.username);
+        });
     }
 
     const [isBookmarked, setIsBookmarked] = React.useState(false);
@@ -87,11 +169,11 @@ export default function LargePost({ post }) {
         }
     }
     return (
-        <Stack direction={'row'}>
+        <Stack direction={'row'} display={'flex'}>
             <Box
+                flex={1}
                 minW={'820px'}
                 maxW={'820px'}
-                minH={'400px'}
                 className={'color-switch'}
                 w={'full'}
                 boxShadow={'2xl'}
@@ -208,6 +290,115 @@ export default function LargePost({ post }) {
                     </Stack>
                 </Stack>
             </Box>
-        </Stack >
+            <Box
+                flex={1}
+                minW={'550px'}
+                maxW={'550px'}
+                className={'color-switch'}
+                height={'54vh'}
+                boxShadow={'2xl'}
+                rounded={'lg'}
+                p={6}
+                textAlign={'center'}
+            >
+                <div style={{ backgroundColor: "--mainColor", overflowX: "hidden", overflowY: "scroll", width: "100%", height: '65%' }} >
+                    {
+                        comments.map((comment, index) => {
+                            return (
+                                <Box pb={5}>
+                                    <Box
+                                        // backgroundColor={'var(--secondary-color)'}
+                                        width={'30vw'}
+                                        borderBottom={'.5px solid gray'}
+
+                                    >
+                                        <Stack p={'10px'} direction="row">
+                                            <Center>
+                                                <Avatar borderRadius={'full'}
+                                                    src={"https://picsum.photos/800/1500"}
+                                                    boxSize='3vw' />
+                                                <Stack spacing={0} direction={'column'}>
+                                                    <Text align={'left'} pl={'10px'} color={'darkturquoise'} fontSize={'lg'}>
+                                                        {comment.username}
+                                                    </Text>
+                                                    <Text color={'var(--text-color)'} pl={'15px'} align={'left'} fontSize={'md'} width={'19vw'}>
+                                                        {comment.text}
+                                                    </Text>
+                                                </Stack>
+                                                <Box width={'100px'} textAlign={'right'}>
+                                                    <Text color={'var(--text-color)'} right={0}>
+                                                        {comment.minsAgo}
+                                                    </Text>
+                                                </Box>
+                                            </Center>
+                                        </Stack>
+                                    </Box>
+                                </Box>
+                            );
+                        })
+                    }
+                </div>
+                <Box pb={5} pt={10}>
+                    <Box
+                        minW={'500px'}
+                        maxW={'400px'}
+                        minH={'90px'}
+                        bg={"--mainColor"}
+                        boxShadow={'2xl'}
+                        rounded={'lg'}
+                        p={5}
+                        borderColor={'--secondary-color'}
+                        textAlign={'center'}
+                    >
+                        <Stack direction={'row'}>
+                            <Center>
+                                <Avatar
+                                    src='https://picsum.photos/800/1500'
+                                    boxSize='3vw'
+                                />
+                                <Stack direction={'column'} spacing={0}>
+                                    <Text
+                                        color={'darkturquoise'}
+                                        align={'left'}
+                                        pl={'10px'}
+                                    >
+                                        {username}
+                                    </Text>
+                                    <Box p={'10px'}>
+                                        <Input
+                                            width={'160%'}
+                                            placeholder='Write a comment'
+                                            color={'var(--text-color)'}
+                                            value={comment}
+                                            onChange={(event) => { setComment(event.target.value) }}
+                                            onKeyPress={(event) => {
+                                                if (event.key === 'Enter') {
+                                                    event.preventDefault();
+                                                    event.stopPropagation();
+                                                    if (localStorage.getItem('token') == null) {
+                                                        let url = window.location.href;
+                                                        window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                                                    } else {
+                                                        setComments([{ text: comment, username: username, minsAgo: "Now" }, ...comments]);
+                                                        setComment("");
+                                                    }
+                                                }
+                                            }}
+                                            onBlur={(event) => {
+                                                if (localStorage.getItem('token') == null) {
+                                                    let url = window.location.href;
+                                                    window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                                                }
+                                            }}
+                                        />
+                                    </Box>
+
+                                </Stack>
+                            </Center>
+                        </Stack>
+                    </Box>
+                </Box>
+            </Box>
+        </Stack>
     );
 }

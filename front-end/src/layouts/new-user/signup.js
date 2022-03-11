@@ -18,6 +18,10 @@ import {
   Button,
   PopoverAnchor,
   transform,
+  Box,
+  Center,
+  Stack,
+  Text,
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
@@ -87,12 +91,12 @@ class Login extends React.Component {
     if (re.test(this.state.user.Email)) {
       // this is a valid email address
       console.log("Valid Email");
-      this.setState({ emailError: false })
+      this.setState({ emailError: false, displayPopover: false })
     }
     else {
       // invalid email, show error
       console.log("Invalid Email");
-      this.setState({ emailError: true })
+      this.setState({ emailError: true, displayPopover: false })
       error = true;
     }
 
@@ -103,11 +107,11 @@ class Login extends React.Component {
     if (checkUser.test(this.state.user.Username)) {
       // meets requirements
       console.log("Username meets requirements");
-      this.setState({ userError: false })
+      this.setState({ userError: false, displayPopover: false })
     }
     else {
       // set username error to true
-      this.setState({ userError: true })
+      this.setState({ userError: true, displayPopover: false })
       error = true;
 
       // log reason(s) why its erroring to the console
@@ -125,23 +129,23 @@ class Login extends React.Component {
     let checkPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
     if (checkPassword.test(this.state.user.Password)) {
       console.log("Password meets requirements");
-      this.setState({ passwordError: false })
+      this.setState({ passwordError: false, displayPopover: false })
     }
     else {
       console.log("Password does not meet requirements");
-      this.setState({ passwordError: true })
+      this.setState({ passwordError: true, displayPopover: false })
       error = true;
     }
 
     // check if passwords match
     if (this.state.user.Password === this.state.user.PasswordCheck) {
       console.log("Passwords Match");
-      this.setState({ passwordCheckError: false })
+      this.setState({ passwordCheckError: false, displayPopover: false })
     }
     else {
       // have pop up show passwords do not match
       console.log("Passwords do not match");
-      this.setState({ passwordCheckError: true });
+      this.setState({ passwordCheckError: true, displayPopover: false });
       error = true;
     }
 
@@ -151,7 +155,7 @@ class Login extends React.Component {
     // pass to axios if there are no errors
 
     console.log(this.state.axiosError);
-    console.log(this.state)
+    console.log(error)
     if (!error) {
       this.setState({ registrationError: "waiting...", displayPopover: true });
 
@@ -192,109 +196,116 @@ class Login extends React.Component {
     return (
       <div className='color-switch'>
         <div className="App">
-          <header className="App-header" style={{ transform: "translateY(-8vh)" }}>
-            <h2 style={{ color: 'mediumturquoise' }}>Signup</h2>
-            <p></p>
-            <form>
+          <Box p={'10vh'} style={{ transform: "translateY(-8vh)" }}>
+            <Center>
+              <Stack pt={'10vh'} direction={'column'}>
+                <Text textAlign={'center'} fontSize={'3xl'} color={'mediumturquoise'}>Signup</Text>
+                <form>
 
-              {/* email entry part of form */}
-              <FormControl isInvalid={this.state.emailError}>
-                <FormLabel htmlFor='email'> </FormLabel>
-                <Input
-                  focusBorderColor='teal.200'
-                  errorBorderColor='red.300'
-                  placeholder='Email address'
-                  type="text"
-                  name="Email"
-                  value={this.state.user.Email}
-                  onChange={this.changeHandler}
-                  style={{ color: 'darkturquoise' }}
-                  />
-                {!this.state.emailError ? (<FormHelperText> Enter a valid email. </FormHelperText>)
-                  : (<FormErrorMessage>The email you entered is invalid.</FormErrorMessage>)}
-              </FormControl>
+                  {/* email entry part of form */}
+                  <FormControl isInvalid={this.state.emailError}>
+                    <FormLabel htmlFor='email'> </FormLabel>
+                    <Input
+                      focusBorderColor='teal.200'
+                      errorBorderColor='red.300'
+                      placeholder='Email address'
+                      type="text"
+                      name="Email"
+                      value={this.state.user.Email}
+                      onChange={this.changeHandler}
+                      style={{ color: 'darkturquoise' }}
+                    />
+                    {!this.state.emailError ? (<FormHelperText> Enter a valid email. </FormHelperText>)
+                      : (<FormErrorMessage>The email you entered is invalid.</FormErrorMessage>)}
+                  </FormControl>
 
-              {/* username entry part of form */}
-              <FormControl isInvalid={this.state.userError}>
-                <FormLabel htmlFor='username'> </FormLabel>
-                <Input
-                  focusBorderColor='teal.200'
-                  errorBorderColor='red.300'
-                  placeholder='Username'
-                  type="text"
-                  name="Username"
-                  value={this.state.user.Username}
-                  onChange={this.changeHandler}
-                  style={{ color: 'darkturquoise' }} />
-                {!this.state.userError ? (<FormHelperText> Username must be less then 20 characters and consist of letters, numbers, underscore and period. </FormHelperText>)
-                  : (<FormErrorMessage>The username you entered is invalid.</FormErrorMessage>)}
-              </FormControl>
+                  {/* username entry part of form */}
+                  <FormControl isInvalid={this.state.userError}>
+                    <FormLabel htmlFor='username'> </FormLabel>
+                    <Input
+                      focusBorderColor='teal.200'
+                      errorBorderColor='red.300'
+                      placeholder='Username'
+                      type="text"
+                      name="Username"
+                      value={this.state.user.Username}
+                      onChange={this.changeHandler}
+                      style={{ color: 'darkturquoise' }} />
+                    {!this.state.userError ? (<FormHelperText> Username must be less then 20 characters and consist of letters, numbers, underscore and period. </FormHelperText>)
+                      : (<FormErrorMessage>The username you entered is invalid.</FormErrorMessage>)}
+                  </FormControl>
 
-              {/* password entry part of form */}
-              <FormControl isInvalid={this.state.passwordError}>
-                <FormLabel htmlFor='password'> </FormLabel>
-                <Input
-                  focusBorderColor='teal.200'
-                  errorBorderColor='red.300'
-                  placeholder='Password'
-                  type="text"
-                  name="Password"
-                  value={this.state.user.Password}
-                  onChange={this.changeHandler}
-                  style={{ color: 'darkturquoise' }}
-                  type={this.state.show ? 'text' : 'password'} />
-                <InputRightElement width='4.5rem'>
-                  <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}
-                    style={{ transform: "translateY(1vh)" }}>
-                    {this.state.show ? 'Hide' : 'Show'}
-                  </Button>
-                </InputRightElement>
-                {!this.state.passwordError ? (<FormHelperText> Make a good password if you don't want to get hacked. </FormHelperText>)
-                  : (<FormErrorMessage>Enter a valid password (must be at least 8 characters and have at least 1 letter and 1 number).</FormErrorMessage>)}
-              </FormControl>
+                  {/* password entry part of form */}
+                  <FormControl isInvalid={this.state.passwordError}>
+                    <FormLabel htmlFor='password'></FormLabel>
+                    <InputGroup>
+                      <Input
+                        focusBorderColor='teal.200'
+                        errorBorderColor='red.300'
+                        placeholder='Password'
+                        name="Password"
+                        value={this.state.user.Password}
+                        onChange={this.changeHandler}
+                        style={{ color: 'darkturquoise' }}
+                        type={this.state.show ? 'text' : 'password'} />
+                      <InputRightElement width='4.5rem'>
+                        <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}>
+                          {this.state.show ? 'Hide' : 'Show'}
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
+                    {!this.state.passwordError ? (<FormHelperText> Make a good password if you don't want to get hacked. </FormHelperText>)
+                      : (<FormErrorMessage>Enter a valid password (must be at least 8 characters and have at least 1 letter and 1 number).</FormErrorMessage>)}
+                  </FormControl>
 
-              {/* passwordCheck entry part of form */}
-              <FormControl isInvalid={this.state.passwordCheckError}>
-                <FormLabel htmlFor='passwordCheck'> </FormLabel>
-                <Input
-                  focusBorderColor='teal.200'
-                  errorBorderColor='red.300'
-                  placeholder='Retype your password'
-                  type="text"
-                  name="PasswordCheck"
-                  value={this.state.user.PasswordCheck}
-                  onChange={this.changeHandler}
-                  style={{ color: 'darkturquoise' }}
-                  type={this.state.show ? 'text' : 'password'} />
-                <InputRightElement width='4.5rem'>
-                  <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}
-                    style={{ transform: "translateY(1vh)" }}>
-                    {this.state.show ? 'Hide' : 'Show'}
-                  </Button>
-                </InputRightElement>
-                {!this.state.passwordCheckError ? (<FormHelperText>Make sure this password matches the one above. </FormHelperText>)
-                  : (<FormErrorMessage>Your password doesn't match the one above.</FormErrorMessage>)}
-              </FormControl>
+                  {/* passwordCheck entry part of form */}
+                  <FormControl isInvalid={this.state.passwordCheckError}>
+                    <FormLabel htmlFor='passwordCheck'> </FormLabel>
+                    <InputGroup>
+                      <Input
+                        focusBorderColor='teal.200'
+                        errorBorderColor='red.300'
+                        placeholder='Retype your password'
+                        name="PasswordCheck"
+                        value={this.state.user.PasswordCheck}
+                        onChange={this.changeHandler}
+                        style={{ color: 'darkturquoise' }}
+                        type={this.state.show ? 'text' : 'password'}
+                        pr='4.5rem'
+                      />
+                      <InputRightElement width='4.5rem'>
+                        <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.handleClick}>
+                          {this.state.show ? 'Hide' : 'Show'}
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
+                    {!this.state.passwordCheckError ? (<FormHelperText>Make sure this password matches the one above. </FormHelperText>)
+                      : (<FormErrorMessage>Your password doesn't match the one above.</FormErrorMessage>)}
+                  </FormControl>
 
-            </form>
-            <Popover>
-              <PopoverTrigger>
-                <Button colorScheme='black' onClick={this.registerUser} fontSize={25}
-                  bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
-              </PopoverTrigger>
-              <div display={this.state.displayPopover ? 'default' : 'none'}>
-                {console.log(this.state.registrationError)}
-                <PopoverContent color='mediumturquoise' bg='black' fontWeight='bold' fontSize={18}>
-                  <PopoverArrow />
-                  <PopoverCloseButton />
-                  {!this.state.axiosError ? (<PopoverHeader>Success! You are registered. Check your email for a verification link!</PopoverHeader>)
-                    : (<PopoverHeader> {this.state.registrationError} </PopoverHeader>)}
-                </PopoverContent>
-              </div>
-            </Popover>
-          </header>
+                </form>
+                <Popover>
+                  <PopoverTrigger>
+                    <Button colorScheme='black' onClick={this.registerUser} fontSize={25}
+                      bg='mediumturquoise' style={{ transform: "translateY(2vh)" }} >Submit</Button>
+                  </PopoverTrigger>
+                  <Box display={this.state.displayPopover ? 'default' : 'none'}>
+                    {console.log(this.state.displayPopover)}
+                    <PopoverContent color='mediumturquoise' bg='black' fontWeight='bold' fontSize={18}>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <Box>
+                        {!this.state.axiosError ? (<PopoverHeader bg={'var(--main-color)'}>Success! You are registered. Check your email for a verification link!</PopoverHeader>)
+                          : (<PopoverHeader bg={'var(--main-color)'}> {this.state.registrationError} </PopoverHeader>)}
+                      </Box>
+                    </PopoverContent>
+                  </Box>
+                </Popover>
+              </Stack>
+            </Center>
+          </Box>
         </div>
-      </div>
+      </div >
 
     );
   }

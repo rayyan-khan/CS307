@@ -1,4 +1,5 @@
-var con = require('../conn')
+var getCon = require('../conn')
+var con = getCon.getConObject()
 
 const allUnverifiedUsersByEmail = async (email) => {
     return await con.awaitQuery(

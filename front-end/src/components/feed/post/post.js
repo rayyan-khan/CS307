@@ -7,6 +7,7 @@ import {
     Stack,
     IconButton,
     Image,
+    Input,
 } from '@chakra-ui/react';
 
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
@@ -23,6 +24,8 @@ export default function Post({ post, label }) {
 
     const [isLiked, setIsLiked] = React.useState(post.isLiked);
     const [isDisliked, setIsDisliked] = React.useState(post.isDisliked);
+    const [comment, setComment] = React.useState("");
+    const [postComment, setPostComment] = React.useState([]);
     var posts = JSON.parse(localStorage.getItem('allPosts'));
     console.log(label)
     var postIndex = label;
@@ -61,6 +64,16 @@ export default function Post({ post, label }) {
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
         }
     }
+
+    const [username, setUsername] = React.useState("");
+    if (localStorage.getItem('token') != null) {
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+        axios.get("http://localhost:5000/api/getUserFromHeader/").then((res) => {
+            console.log(res.data);
+            setUsername(res.data.username);
+        });
+    }
+
 
 
 
@@ -187,8 +200,8 @@ export default function Post({ post, label }) {
                     textAlign={'center'}
                     pt={'10px'}
                     className={'color-switch'}
-                    color={'gray.100'}
-                    >
+                    color={'var(--text-color)'}
+                >
                     {post.postCaption}
                 </Text>
 
@@ -223,17 +236,18 @@ export default function Post({ post, label }) {
                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                         } else {
                             let url = window.location.href;
-                            window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
+                            window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tagID;
                         }
                     }}
                     style={{ cursor: 'pointer' }}
                     px={2}
                     py={1}
                     bg={"#F2AF29"}
-                    color={'--mainColor'}
                     rounded={'full'}
                     fontWeight={'300'}>
-                    {"#" + post.tagID}
+                    <Text color={'black'}>
+                        {"#" + post.tagID}
+                    </Text>
                 </Box>
             </Stack>
             <Stack mt={2} direction={'row'} spacing={4}>
@@ -244,7 +258,7 @@ export default function Post({ post, label }) {
                         fontSize={'sm'}
                         fontFamily={'body'}
                         className={'color-switch'}
-                        color={'gray.100'}
+                        color={'var(--text-color)'}
                     >
                         {post.likesCount}
                     </Text>
@@ -257,14 +271,62 @@ export default function Post({ post, label }) {
                         fontSize={'sm'}
                         fontFamily={'body'}
                         className={'color-switch'}
-                        color={'gray.100'}
+                        color={'var(--text-color)'}
                     >
                         {post.dislikeCount}
                     </Text>
                     {isDisliked ? <IconButton onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} icon={<AiOutlineDislike />} /> : <IconButton style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleDisliked} icon={<AiOutlineDislike />} />}
                 </Stack>
+                <Stack width={'30vw'} direction={'column'}>
+                    <Text
+                        textAlign={'center'}
+                        color={"#DEDDDD"}
+                        fontSize={'sm'}
+                        fontFamily={'body'}
+                        className={'color-switch'}
+                        color={'var(--main-color)'}
+                    >
+                        {50}
+                    </Text>
+                    <Center width={'full'}>
+                        <Input
+                            textAlign={'center'}
+                            width={'full'}
+                            placeholder='Write a comment'
+                            color={'var(--text-color)'}
+                            value={comment}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }}
+                            onChange={(event) => { setComment(event.target.value) }}
+                            onKeyPress={(event) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    if (localStorage.getItem('token') == null) {
+                                        let url = window.location.href;
+                                        window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                                    } else {
+                                        localStorage.setItem('comment', JSON.stringify({ text: comment, username: username, minsAgo: "Now" }));
+                                        setComment("");
+                                        let url = window.location.href;
+                                        window.location.href = url.substring(0, url.indexOf("/")) + "/personalPostPage/" + post.postID;
+                                    }
+                                }
+                            }}
+                            onBlur={(event) => {
+                                event.stopPropagation();
+                                if (localStorage.getItem('token') == null) {
+                                    let url = window.location.href;
+                                    window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                                }
+                            }}
+                        />
+                    </Center>
+                </Stack>
                 <Stack direction={'column'}>
-                    {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "423px", backgroundColor: "darkturquoise", color: "white" }} icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "423px" }} icon={<FaRegBookmark />} />}
+                    {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", backgroundColor: "darkturquoise", color: "white" }} icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px" }} icon={<FaRegBookmark />} />}
                 </Stack>
             </Stack>
         </Box>

@@ -20,7 +20,9 @@ import {
   transform,
   Textarea,
   Checkbox,
-  Box
+  Box,
+  Text,
+  Stack
 } from '@chakra-ui/react'
 
 import React from 'react'
@@ -61,11 +63,16 @@ class CreatePost extends React.Component {
   }
 
   makeAnonymous = (event) => {
-    var checkBox = document.getElementById("checkbox");
-    if (checkBox.checked === true) {
-      this.setState({ anonymous: 1 })
+    if (this.state.anonymous === 0) {
+      this.setState({
+        anonymous: 1
+      })
+      console.log("making anonymous")
     } else {
-      this.setState({ anonymous: 0 })
+      this.setState({
+        anonymous: 0
+      })
+      console.log("not making anonymous")
     }
   }
 
@@ -100,11 +107,13 @@ class CreatePost extends React.Component {
       jsonObj['anonymous'] = this.state.anonymous;
       jsonObj['caption'] = this.state.postText;
       jsonObj['hyperlink'] = this.state.hyperlink;
+      console.log(jsonObj);
       axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj).then((response) => {
         let url = window.location.href;
         window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
       })
     } else {
+      console.log(data);
       axios.post("http://localhost:5000/api/posts/postImage", data).then((response) => {
         let url = window.location.href;
         window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
@@ -186,10 +195,16 @@ class CreatePost extends React.Component {
                   onChange={this.fileSelecteHandler} />
               </FormControl>
 
-              <div className="form-check">
-                <input type="checkbox" className="form-check-input" id="checkbox" onClick={this.makeAnonymous} />
-                <label style={{ color: "var(--text-color)" }} className="form-check-label">Make Anonymous</label>
-              </div>
+              <Box>
+                <Stack direction={'row'}>
+                  <Checkbox checked={this.state.anonymous == 1 ? true : false} onChange={(e) => {
+                    this.setState({
+                      anonymous: e.target.checked ? 1 : 0
+                    })
+                  }} />
+                  <Text style={{ color: "var(--text-color)" }} className="form-check-label">Make Anonymous</Text>
+                </Stack>
+              </Box>
 
               <Popover>
                 <PopoverTrigger>

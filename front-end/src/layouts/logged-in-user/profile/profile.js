@@ -9,25 +9,16 @@ import {
     Stack,
     Text,
     Input,
-    FormControl,
-    FormLabel,
     IconButton,
-    Spacer,
-    Flex,
-    grid,
-    Grid,
-    GridItem,
 } from '@chakra-ui/react'
 import '../../layouts.css'
 import { IoSettingsOutline } from 'react-icons/io5'
-import { GrClose } from 'react-icons/gr'
 
 import Popup from 'reactjs-popup'
 import 'reactjs-popup/dist/index.css'
 import '../../layouts.css'
 import '../../../styles/profile.css'
 import Settings from './settings/settings'
-import { RiContactsBookLine } from 'react-icons/ri'
 import PostInteraction from '../../../components/feed/post/postInteraction'
 
 class Profile extends React.Component {
@@ -217,9 +208,8 @@ class Profile extends React.Component {
                     <Center>
                         <div style={{ display: 'flex' }}>
                             <div
-                                className={`toggle-title ${
-                                    this.state.showPosts ? 'select-title' : ''
-                                }`}
+                                className={`toggle-title ${this.state.showPosts ? 'select-title' : ''
+                                    }`}
                                 onClick={this.toPosts}
                             >
                                 <Box>
@@ -232,9 +222,8 @@ class Profile extends React.Component {
                                 </Box>
                             </div>
                             <div
-                                className={`toggle-title ${
-                                    this.state.showPosts ? '' : 'select-title'
-                                }`}
+                                className={`toggle-title ${this.state.showPosts ? '' : 'select-title'
+                                    }`}
                                 onClick={this.toInteractions}
                             >
                                 <Box>
@@ -251,27 +240,28 @@ class Profile extends React.Component {
                 </Stack>
 
                 <div className="slide-container">
-                    <Box
-                        className={`slide ${
-                            this.state.showPosts ? 'right-hide' : 'show'
-                        }`}
-                        style={{ paddingBottom: '80px' }}
+                    <Center
+                        height={'100vh'}
+                        className={`slide ${this.state.showPosts ? 'right-hide' : 'show'
+                            }`}
                     >
-                        <div style={{ textAlign: 'center' }}>
-                            {this.postInteractionsHandler()}
+                        <div style={{ backgroundColor: "var(--main-color)", overflowX: "hidden", overflowY: "scroll", width: "50vw", height: "100%" }} >
+                            <div style={{ textAlign: 'center' }}>
+                                {this.postInteractionsHandler()}
+                            </div>
                         </div>
-                    </Box>
-
-                    <Box
-                        style={{ paddingBottom: '80px' }}
-                        className={`slide posts-container ${
-                            this.state.showPosts ? 'show' : 'left-hide'
-                        }`}
+                    </Center>
+                    <Center
+                        height={'100vh'}
+                        className={`slide posts-container ${this.state.showPosts ? 'show' : 'left-hide'
+                            }`}
                     >
-                        {this.postHandler()}
-                    </Box>
+                        <div style={{ backgroundColor: "var(--main-color)", overflowX: "hidden", overflowY: "scroll", width: "50vw", height: "100%" }} >
+                            {this.postHandler()}
+                        </div>
+                    </Center>
                 </div>
-            </div>
+            </div >
         )
     }
 
