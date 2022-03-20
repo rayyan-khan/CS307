@@ -19,9 +19,7 @@ import {
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
-import logo from '../../logo.png';
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useAnimationFrame } from 'framer-motion';
 import '../layouts.css';
 
 const axios = require('axios');
