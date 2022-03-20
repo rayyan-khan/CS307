@@ -15,7 +15,7 @@ import {
   Box,
   Center,
   Text,
-  InputGroup,
+  InputGroup
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
@@ -94,6 +94,11 @@ class Login extends React.Component {
     this.setState({ show: !this.state.show });
   }
 
+  forgotPassword = () => {
+    let url = window.location.href;
+    window.location.href = url.substring(0, url.indexOf("/")) + "/reset-password";
+  }
+
   render() {
     return (
       <div className="color-switch">
@@ -159,6 +164,27 @@ class Login extends React.Component {
                 </PopoverContent>
               </Popover>
             </Center>
+            <Center>
+            <Box
+              as='button'
+              height='24px'
+              lineHeight='1.2'
+              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+              border='none'
+              px='8px'
+              borderRadius='2px'
+              fontSize='14px'
+              fontWeight='semibold'
+              bg='none'
+              borderColor='#ccd0d5'
+              color='mediumturquoise'
+              _hover={{ bg: '#ebedf0' }}
+              onClick={this.forgotPassword}
+            >
+              Forgot your password?
+            </Box>
+            </Center>
+            
           </Box>
         </Center>
       </div >
