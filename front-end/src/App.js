@@ -31,7 +31,6 @@ export default class App extends React.Component {
         console.log(window.innerWidth)
         if (window.innerWidth < 575) {
             return (
-                // show that Window is too small
                 <ScreenTooSmall />
             )
         }
@@ -66,7 +65,6 @@ export default class App extends React.Component {
             });
             return loadComponent
         }
-
 
         const SignUpToHomepageRoute = ({ loadComponent }) => {
             axios.defaults.headers.common['authorization'] = localStorage.getItem('token');

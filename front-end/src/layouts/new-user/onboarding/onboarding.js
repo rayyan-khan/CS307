@@ -31,7 +31,7 @@ const Onboarding = () => {
 
     const [bio, setBio] = useState('');
 
-    const [currentFrame, setCurrentFrame] = useState(3);
+    const [currentFrame, setCurrentFrame] = useState(0);
 
     // TODO: Remove this and get auth header from backend
 
