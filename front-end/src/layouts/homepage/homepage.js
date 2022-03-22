@@ -12,7 +12,6 @@ class Homepage extends React.Component {
         this.state = {
             allPosts: [],
             loading: 0,
-            numberOfPosts: 5,
         }
     }
 
@@ -20,15 +19,6 @@ class Homepage extends React.Component {
         console.log('rendering');
         this.fetchPosts();
     }
-
-    onScroll = (e) => {
-        console.log(e.target.clientHeight)
-        const bottom = e.target.scrollHeight - e.target.scrollTop - 10 <= e.target.clientHeight;
-        console.log(bottom);
-        if (bottom) {
-            this.setState({ numberOfPosts: this.state.numberOfPosts + 2 });
-        }
-    };
 
     fetchPosts() {
         // if (localStorage.getItem('allPosts') != null) {
@@ -70,7 +60,7 @@ class Homepage extends React.Component {
     postHandler() {
         console.log(this.state.allPosts);
         localStorage.setItem('allPosts', JSON.stringify(this.state.allPosts));
-        return this.state.allPosts.slice(0, this.state.numberOfPosts).map((post, key) => {
+        return this.state.allPosts.map((post, key) => {
             return (
                 <Center pb={5}>
                     <Post
@@ -89,7 +79,7 @@ class Homepage extends React.Component {
         if (this.state.loading == -1) {
             return (
                 <Center className='color-switch' pb={'100vh'}>
-                    <Center fontSize={'4xl'} color={'white'} pt={'40vh'}>
+                    <Center fontSize={'4xl'} color={'var(--text-color)'} pt={'40vh'}>
                         Failed to get posts. Please check your internet and try again
                     </Center>
                 </Center>
@@ -97,7 +87,7 @@ class Homepage extends React.Component {
         } else if (this.state.loading == 0) {
             return (
                 <Center className='color-switch' pb={'100vh'}>
-                    <Center fontSize={'4xl'} color={'white'} pt={'40vh'}>
+                    <Center fontSize={'4xl'} color={'var(--text-color)'} pt={'40vh'}>
                         <Spinner color='darkturquoise' size='xl' />
                     </Center>
                 </Center>

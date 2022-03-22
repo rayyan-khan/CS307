@@ -1,3 +1,4 @@
+
 import "../../../node_modules/mdb-react-ui-kit/dist/css/mdb.min.css";
 
 import React from 'react';
@@ -114,30 +115,32 @@ class Navbar extends React.Component {
 
     if (this.state.validToken) {
       return (
-        <div style={{ height: "65px", position: 'sticky', top: '0' }}>
-          <MDBNavbar className="color-switch" style={{ height: "100%" }} expand='sm'>
-            {barFront}
-            <div>
-              <MDBNavbarNav>
-                <MDBNavbarItem>
-                  <MDBNavbarLink style={{ color: "#ffffff" }} href='/createPost'>
-                    {this.state.currSection === "createPost" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<BsPlusSquareFill />} /> : <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<BsPlusSquare />} />}
-                  </MDBNavbarLink>
-                </MDBNavbarItem>
-                <MDBNavbarItem>
-                  <MDBNavbarLink style={{ color: "#ffffff" }} href='/dms'>
-                    {this.state.currSection === "dms" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<AiFillMessage />} /> : <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<AiOutlineMessage />} />}
-                  </MDBNavbarLink>
-                </MDBNavbarItem>
-                <MDBNavbarItem>
-                  <MDBNavbarLink style={{ color: "#ffffff" }} href={'/profile/' + this.state.username}>
-                    {this.state.currSection === "profile" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<RiProfileFill />} /> : <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<RiProfileLine />} />}
-                  </MDBNavbarLink>
-                </MDBNavbarItem>
-              </MDBNavbarNav>
-            </div>
-          </MDBNavbar>
-        </div>
+        <Box height={'70px'}>
+          <div style={{ height: "65px", position: 'sticky', top: '0' }}>
+            <MDBNavbar className="color-switch" style={{ height: "100%" }} expand='sm'>
+              {barFront}
+              <div>
+                <MDBNavbarNav>
+                  <MDBNavbarItem>
+                    <MDBNavbarLink style={{ color: "#ffffff" }} href='/createPost'>
+                      {this.state.currSection === "createPost" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<BsPlusSquareFill />} /> : <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<BsPlusSquare />} />}
+                    </MDBNavbarLink>
+                  </MDBNavbarItem>
+                  <MDBNavbarItem>
+                    <MDBNavbarLink style={{ color: "#ffffff" }} href='/dms'>
+                      {this.state.currSection === "dms" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<AiFillMessage />} /> : <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<AiOutlineMessage />} />}
+                    </MDBNavbarLink>
+                  </MDBNavbarItem>
+                  <MDBNavbarItem>
+                    <MDBNavbarLink style={{ color: "#ffffff" }} href={'/profile/' + this.state.username}>
+                      {this.state.currSection === "profile" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<RiProfileFill />} /> : <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<RiProfileLine />} />}
+                    </MDBNavbarLink>
+                  </MDBNavbarItem>
+                </MDBNavbarNav>
+              </div>
+            </MDBNavbar>
+          </div>
+        </Box>
       )
     } else {
       return (

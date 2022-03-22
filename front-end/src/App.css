@@ -3,7 +3,7 @@
 }
 :root {
   --text-color: black;
-  --chakra-colors-gray-100: black;
+  --chakra-colors-white: black;
 }
 @media screen and (prefers-color-scheme: dark) {
   .color-switch {
@@ -11,8 +11,8 @@
   }
   :root {
     --text-color: white;
-    --chakra-colors-gray-100: white;  
-  } 
+    --chakra-colors-white: black;
+  }
 }
 
 .App {
@@ -23,12 +23,12 @@
   background-color: "--mainColor";
 }
 ::-webkit-scrollbar {
-  width: 0;  /* Remove scrollbar space */
-  background: transparent;  /* Optional: just make scrollbar invisible */
+  width: 0; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
 }
 /* Optional: show position indicator in red */
 ::-webkit-scrollbar-thumb {
-  display: 'none';
+  display: "none";
 }
 
 .App-logo {

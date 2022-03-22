@@ -226,7 +226,7 @@ export default function Post({ post, label }) {
             </Stack>
 
 
-            <Stack align={'center'} justify={'center'} direction={'row'} mt={6}>
+            <Stack pt={5} align={'center'} justify={'center'} direction={'row'}>
                 <Box
                     onClick={(event) => {
                         event.preventDefault();
@@ -240,8 +240,8 @@ export default function Post({ post, label }) {
                         }
                     }}
                     style={{ cursor: 'pointer' }}
-                    px={2}
-                    py={1}
+                    px={4}
+                    py={2}
                     bg={"#F2AF29"}
                     rounded={'full'}
                     fontWeight={'300'}>
@@ -250,7 +250,7 @@ export default function Post({ post, label }) {
                     </Text>
                 </Box>
             </Stack>
-            <Stack mt={2} direction={'row'} spacing={4}>
+            <Stack direction={'row'} spacing={4}>
                 <Stack direction={'column'}>
                     <Text
                         textAlign={'center'}
@@ -284,7 +284,7 @@ export default function Post({ post, label }) {
                         fontSize={'sm'}
                         fontFamily={'body'}
                         className={'color-switch'}
-                        color={'var(--main-color)'}
+                        opacity={0}
                     >
                         {50}
                     </Text>
@@ -308,7 +308,7 @@ export default function Post({ post, label }) {
                                         let url = window.location.href;
                                         window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
                                     } else {
-                                        localStorage.setItem('comment', JSON.stringify({ text: comment, username: username, minsAgo: "Now" }));
+                                        localStorage.setItem('comment', JSON.stringify({ text: comment, username: username, minsAgo: "Now", postID: post.postID }));
                                         setComment("");
                                         let url = window.location.href;
                                         window.location.href = url.substring(0, url.indexOf("/")) + "/personalPostPage/" + post.postID;
@@ -329,6 +329,6 @@ export default function Post({ post, label }) {
                     {isBookmarked ? <IconButton onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", backgroundColor: "darkturquoise", color: "white" }} icon={<FaRegBookmark />} /> : <IconButton onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px" }} icon={<FaRegBookmark />} />}
                 </Stack>
             </Stack>
-        </Box>
+        </Box >
     );
 }
