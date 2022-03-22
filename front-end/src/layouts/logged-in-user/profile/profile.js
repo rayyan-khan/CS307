@@ -34,7 +34,7 @@ class Profile extends React.Component {
                 numTagsFollowing: 0,
                 numFollowing: 0,
                 numFollowers: 0,
-                profilePic: ''
+                profilePic: '',
             },
             editedBio: '',
             allPosts: [],
@@ -164,7 +164,7 @@ class Profile extends React.Component {
                         numFollowing: this.formatNum(420000),
                         numFollowers: this.formatNum(44444444),
                         email: res.data.email,
-                        profilePic: res.data.url
+                        profilePic: res.data.url,
                     },
                 })
 
@@ -208,8 +208,9 @@ class Profile extends React.Component {
                     <Center>
                         <div style={{ display: 'flex' }}>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? 'select-title' : ''
-                                    }`}
+                                className={`toggle-title ${
+                                    this.state.showPosts ? 'select-title' : ''
+                                }`}
                                 onClick={this.toPosts}
                             >
                                 <Box>
@@ -222,8 +223,9 @@ class Profile extends React.Component {
                                 </Box>
                             </div>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? '' : 'select-title'
-                                    }`}
+                                className={`toggle-title ${
+                                    this.state.showPosts ? '' : 'select-title'
+                                }`}
                                 onClick={this.toInteractions}
                             >
                                 <Box>
@@ -242,10 +244,19 @@ class Profile extends React.Component {
                 <div className="slide-container">
                     <Center
                         height={'100vh'}
-                        className={`slide ${this.state.showPosts ? 'right-hide' : 'show'
-                            }`}
+                        className={`slide ${
+                            this.state.showPosts ? 'right-hide' : 'show'
+                        }`}
                     >
-                        <div style={{ backgroundColor: "var(--main-color)", overflowX: "hidden", overflowY: "scroll", width: "50vw", height: "100%" }} >
+                        <div
+                            style={{
+                                backgroundColor: 'var(--main-color)',
+                                overflowX: 'hidden',
+                                overflowY: 'scroll',
+                                width: '50vw',
+                                height: '100%',
+                            }}
+                        >
                             <div style={{ textAlign: 'center' }}>
                                 {this.postInteractionsHandler()}
                             </div>
@@ -253,15 +264,24 @@ class Profile extends React.Component {
                     </Center>
                     <Center
                         height={'100vh'}
-                        className={`slide posts-container ${this.state.showPosts ? 'show' : 'left-hide'
-                            }`}
+                        className={`slide posts-container ${
+                            this.state.showPosts ? 'show' : 'left-hide'
+                        }`}
                     >
-                        <div style={{ backgroundColor: "var(--main-color)", overflowX: "hidden", overflowY: "scroll", width: "50vw", height: "100%" }} >
+                        <div
+                            style={{
+                                backgroundColor: 'var(--main-color)',
+                                overflowX: 'hidden',
+                                overflowY: 'scroll',
+                                width: '50vw',
+                                height: '100%',
+                            }}
+                        >
                             {this.postHandler()}
                         </div>
                     </Center>
                 </div>
-            </div >
+            </div>
         )
     }
 
@@ -298,10 +318,16 @@ class Profile extends React.Component {
                                                 <Box>
                                                     <Image
                                                         borderRadius={'full'}
-                                                        src={this.state.user.profilePic}
+                                                        src={
+                                                            this.state.user
+                                                                .profilePic
+                                                                ? this.state
+                                                                      .user
+                                                                      .profilePic
+                                                                : 'https://www.gravatar.com/avatar/?d=mp'
+                                                        }
                                                         boxSize="10vw"
                                                     />
-
                                                 </Box>
                                                 <Box pl={'1vw'}>
                                                     <Stack direction={'column'}>
@@ -496,7 +522,11 @@ class Profile extends React.Component {
                                                                                 'white'
                                                                             }
                                                                             onClick={() => {
-                                                                                console.log(this.state.email)
+                                                                                console.log(
+                                                                                    this
+                                                                                        .state
+                                                                                        .email
+                                                                                )
                                                                                 console.log(
                                                                                     'clicked'
                                                                                 )
