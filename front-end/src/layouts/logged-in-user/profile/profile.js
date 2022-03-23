@@ -247,10 +247,10 @@ class Profile extends React.Component {
                 <div className="slide-container">
                     <Center
                         height={'100vh'}
-                        className={`slide ${this.state.showPosts ? 'right-hide' : 'show'
+                        className={`slide posts-container ${this.state.showPosts ? 'right-hide' : 'show'
                             }`}
                     >
-                        <div style={{ backgroundColor: "var(--main-color)", width: "100vw", paddingBottom: 0 }} >
+                        <div style={{ backgroundColor: "var(--main-color)", width: "100vw", height: "100%" }} >
                             {this.postInteractionsHandler()}
                         </div>
                     </Center>
