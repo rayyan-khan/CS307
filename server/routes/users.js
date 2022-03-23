@@ -172,6 +172,13 @@ userRoutes.route('/followUser/:followed').get(async (req, res) => {
     const { email, username } = user
 
     var sql = `INSERT INTO UserFollow VALUES (${con.escape(followed)}, ${con.escape(username)}, NOW())`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
 })
 
 
