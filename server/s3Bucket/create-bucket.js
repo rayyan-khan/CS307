@@ -2,11 +2,11 @@ const fs = require('fs')
 const AWS = require('aws-sdk')
 
 // Enter copied or downloaded access id and secret here
-const ID = 'AKIA5D526RAUHAYT7D76'
-const SECRET = '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'
+const ID = 'AKIASXVCJW6VKOOZNS5T'
+const SECRET = '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'
 
 // Enter the name of the bucket that you have created here
-const BUCKET_NAME = 'cs307'
+const BUCKET_NAME = 'cs3pics'
 
 // Initializing S3 Interface
 const s3 = new AWS.S3({
