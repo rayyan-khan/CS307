@@ -158,7 +158,8 @@ describe('PUT /api/recoverPassword', () => {
         testQueries.createUnverifiedUser(
             'unverifiedusername',
             'unverifiedemail',
-            'password'
+            'password',
+            123456
         )
 
         jwt.sign(
@@ -226,7 +227,12 @@ describe('PUT /api/passwordRecoveryLink', () => {
     it('Returns failure due to account being unverified', async () => {
         const email = 'unverifiedemail'
 
-        await testQueries.createUnverifiedUser('username', email, 'password')
+        await testQueries.createUnverifiedUser(
+            'username',
+            email,
+            'password',
+            123456
+        )
 
         var result = await request(app)
             .put('/api/passwordRecoveryLink')
