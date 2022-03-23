@@ -12,6 +12,7 @@ import {
 import Navbar from './components/navbar/navbar.js'
 import Signup from './layouts/new-user/signup'
 import Login from './layouts/new-user/login'
+import ResetPassword from './layouts/new-user/reset-password'
 import Homepage from './layouts/homepage/homepage'
 import Profile from './layouts/logged-in-user/profile/profile'
 import DirectMessage from './layouts/logged-in-user/direct-message'
@@ -31,7 +32,6 @@ export default class App extends React.Component {
         console.log(window.innerWidth)
         if (window.innerWidth < 575) {
             return (
-                // show that Window is too small
                 <ScreenTooSmall />
             )
         }
@@ -67,7 +67,6 @@ export default class App extends React.Component {
             return loadComponent
         }
 
-
         const SignUpToHomepageRoute = ({ loadComponent }) => {
             axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
             axios.get("http://localhost:5000/api/test-token").then((res) => {
@@ -102,6 +101,13 @@ export default class App extends React.Component {
 
                                     element={
                                         <SignUpToHomepageRoute loadComponent={<Login />} />
+
+                                    }
+                                />
+                                <Route path="/reset-password"
+                                
+                                    element={
+                                        <SignUpToHomepageRoute loadComponent={<ResetPassword />} />
 
                                     }
                                 />

@@ -1,0 +1,46 @@
+use PurdueCircle;
+
+CREATE TABLE Post (
+postID INT NOT NULL AUTO_INCREMENT,
+tagID VARCHAR(30),
+username VARCHAR(20),
+likesCount INT,
+dislikeCount INT,
+postCaption VARCHAR(200),
+timeStamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+numberOfComments INT,
+anonymous BOOL,
+url VARCHAR(200),
+hyperlink VARCHAR(200),
+Primary Key(postID)
+);
+
+CREATE TABLE User (
+username VARCHAR(20) Primary Key,
+firstName VARCHAR(20),
+lastName VARCHAR(20),
+password VARCHAR(60),
+email VARCHAR(25),
+bio VARCHAR(200),
+private BOOL,
+url VARCHAR(200)
+);
+
+CREATE table UnverifiedUser(
+username nvarchar(50),
+email nvarchar(50), 
+password nvarchar(200), 
+confirmationCode int
+);
+
+CREATE TABLE Tag (
+tagID VARCHAR(30) Primary Key,
+numberOfUsersSubscribed INT(20)
+);
+
+CREATE TABLE Comments (
+postID VARCHAR(30),
+username VARCHAR(30),
+timeStamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+comment VARCHAR(300)
+);

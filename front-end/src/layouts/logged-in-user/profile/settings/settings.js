@@ -1,4 +1,3 @@
-
 import {
     Box,
     Center,
@@ -8,14 +7,20 @@ import {
     Image,
     Input,
     Flex,
+    Avatar,
+    IconButton,
 } from '@chakra-ui/react';
 import axios from 'axios';
 
 import React, { useEffect, useState } from 'react'
+import ProfilePicture from "@dsalvagni/react-profile-picture"
+import "@dsalvagni/react-profile-picture/dist/ProfilePicture.css"
+import { ArrowLeftIcon } from '@chakra-ui/icons';
 
-export default function Settings({ user, label }) {
+export default function Settings({ user, label, section }) {
 
-    const [settingScreen, setSettingScreen] = useState('profile')
+    const [settingScreen, setSettingScreen] = useState(section)
+    console.log(section);
 
 
     const [email, setEmail] = useState(user.email)
@@ -53,12 +58,57 @@ export default function Settings({ user, label }) {
         setOldPasswordError('');
         setNewPasswordError('');
         setConfirmNewPasswordError('');
+        setFirstName(user.firstName);
+        setLastName(user.lastName);
 
     }, [editPassword])
 
+    let pictureRef = React.createRef();
 
+    function handleProfilePic() {
+        const PP = pictureRef.current;
+        const imageData = PP.getData();
+        const file = imageData.file;
+        const imageAsDataUrl = PP.getImageAsDataUrl();
+        const data = new FormData();
+        console.log("imageData", imageData);
+        console.log("File", file);
+        console.log("URL", imageAsDataUrl);
 
-    console.log(settingScreen === 'profile')
+        data.append('image', imageData);
+        axios.post("http://localhost:5000/api/updateProfileImage", data).then((response) => {
+            console.log(response);
+        })
+    }
+
+    if (settingScreen === 'profilePic') {
+        return (
+            <>
+                <Box>
+                    <Stack direction={'column'}>
+                        <Center>
+                            <Text fontSize={'1.25vw'} color={'var(--text-color)'}>
+                                Edit Profile Picture
+                            </Text>
+                        </Center>
+                        <Center>
+                            <ProfilePicture
+                                ref={pictureRef}
+                                frameFormat={'circle'}
+                            />
+                        </Center>
+                        <Box bg='red'>
+                            <Button position={'absolute'} right={5} bottom={3}
+                                onClick={handleProfilePic}
+                            >
+                                Upload
+                            </Button>
+                        </Box>
+                    </Stack>
+                </Box>
+            </>
+        )
+    }
     if (settingScreen === 'profile') {
         return (
             <Box>
@@ -71,7 +121,8 @@ export default function Settings({ user, label }) {
                     <Box pt={'5vh'}>
                         <Center>
                             <Box>
-                                <Image
+                                <Avatar
+                                    name={user.firstName + ' ' + user.lastName}
                                     borderRadius={'full'}
                                     src={user.profilePic}
                                     boxSize='4vw'
@@ -80,25 +131,12 @@ export default function Settings({ user, label }) {
 
                             </Box>
                             <Box pb={'1vh'} pl={'.5vw'}>
-                                <Text fontSize={'.8vw'} fontWeight={'bold'} color={"var(--text-color)"}>
+                                <Text fontSize={'lg'} fontWeight={'bold'} color={"var(--text-color)"}>
                                     {currentName}
                                 </Text>
-                                <Text pl={'1'} fontSize={'.4vw'} color={"var(--text-color)"}>
+                                <Text pl={'1'} fontSize={'sm'} color={"var(--text-color)"}>
                                     @{user.username}
                                 </Text>
-
-                                <Input  style={{ color: "white" }} type='file'
-                                       accept="image/*"
-                                       boxSize='4vw'
-                                        onChange={(e) => {
-                                            const data = new FormData();
-                                            data.append('image', e.target.files[0]);
-                                            axios.post("http://localhost:5000/api/updateProfileImage", data).then((response) => {
-                                                let url = window.location.href;
-                                                window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
-                                            })
-                                        }}
-                                />
                             </Box>
                         </Center>
                     </Box>
@@ -109,7 +147,7 @@ export default function Settings({ user, label }) {
                                 <Box p={'.75vw'} pr={'2vw'}>
                                     <Stack direction={'column'}>
                                         <Box pr={'2.3vw'}>
-                                            <Text fontWeight={'semibold'} fontSize={'.7vw'} color={"var(--settings-head-color)"}>
+                                            <Text fontWeight={'semibold'} fontSize={'lg'} color={"var(--settings-head-color)"}>
                                                 Display Name
                                             </Text>
                                             <Stack direction={'row'}>
@@ -126,7 +164,7 @@ export default function Settings({ user, label }) {
                                                         >
                                                             {editName ?
                                                                 <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                                    <Input height={'3.25vh'} fontSize={'.60vw'} color={"var(--text-color)"}
+                                                                    <Input height={'3.25vh'} fontSize={'md'} color={"var(--text-color)"}
                                                                         value={currentName}
                                                                         onChange={(e) => {
                                                                             setCurrentName(e.target.value)
@@ -136,7 +174,7 @@ export default function Settings({ user, label }) {
                                                                 </Box>
                                                                 :
                                                                 <Box width={'14vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                                    <Text fontSize={'.60vw'} color={"var(--text-color)"}>
+                                                                    <Text fontSize={'md'} color={"var(--text-color)"}>
                                                                         {currentName}
                                                                     </Text>
                                                                 </Box>
@@ -144,7 +182,7 @@ export default function Settings({ user, label }) {
                                                             <Box width={'14vw'}>
                                                                 {
                                                                     (usernameMessage != '') ?
-                                                                        <Text color={usernameError ? 'red' : 'green'} fontSize={'.55vw'}>
+                                                                        <Text color={usernameError ? 'red' : 'green'} fontSize={'md'}>
                                                                             {usernameMessage}
                                                                         </Text>
                                                                         :
@@ -168,7 +206,7 @@ export default function Settings({ user, label }) {
                                                                             user.firstName = currentName.split(' ')[0]
                                                                             user.lastName = currentName.split(' ')[1]
                                                                             console.log(user);
-                                                                            if (user.firstName != undefined && user.lastName != undefined && user.firstName != '' && user.lastName != '') {
+                                                                            if (user.firstName != undefined && user.lastName != undefined && user.firstName != '' && user.lastName != '' && user.firstName.length > 0 && user.lastName.length > 0) {
                                                                                 setEditName(false)
                                                                                 axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
                                                                                 console.log(currentName)
@@ -183,7 +221,11 @@ export default function Settings({ user, label }) {
                                                                                         .then(res => {
                                                                                             console.log(res);
                                                                                             setEditName(false);
-                                                                                            setUsernameMessage('Name updated successfully');
+                                                                                            if (firstName != currentName.split(' ')[0] || lastName != currentName.split(' ')[1]) {
+                                                                                                setUsernameMessage('Name updated successfully');
+                                                                                            }
+
+
                                                                                             setTimeout(() => setUsernameMessage(''), 3000);
                                                                                             setUsernameError(false);
                                                                                         })
@@ -200,8 +242,8 @@ export default function Settings({ user, label }) {
                                                                         }
                                                                     }}
                                                                 >
-                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
-                                                                        {editName ? 'Save' : 'Edit'}
+                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'sm'}>
+                                                                        {editName ? firstName != currentName.split(' ')[0] || lastName != currentName.split(' ')[1] ? 'Save' : 'Cancel' : 'Edit'}
                                                                     </Text>
                                                                 </Button>
                                                             </Box>
@@ -211,7 +253,7 @@ export default function Settings({ user, label }) {
                                             </Stack>
                                         </Box>
                                         <Box>
-                                            <Text fontWeight={'semibold'} fontSize={'.7vw'} color={"var(--settings-head-color)"}>
+                                            <Text fontWeight={'semibold'} fontSize={'lg'} color={"var(--settings-head-color)"}>
                                                 Email
                                             </Text>
                                             <Stack direction={'row'}>
@@ -226,14 +268,14 @@ export default function Settings({ user, label }) {
                                                     >
                                                         {editEmail ?
                                                             <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                                <Input height={'3.25vh'} fontSize={'.60vw'} color={"var(--text-color)"}
+                                                                <Input height={'3.25vh'} fontSize={'md'} color={"var(--text-color)"}
                                                                     value={user.email}
                                                                 >
                                                                 </Input>
                                                             </Box>
                                                             :
                                                             <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                                <Text fontSize={'.60vw'} color={"var(--text-color)"}>
+                                                                <Text fontSize={'md'} color={"var(--text-color)"}>
                                                                     {user.email}
                                                                 </Text>
                                                             </Box>
@@ -263,7 +305,7 @@ export default function Settings({ user, label }) {
                                             </Stack>
                                         </Box>
                                         <Box>
-                                            <Text fontWeight={'semibold'} fontSize={'.7vw'} color={"var(--settings-head-color)"}>
+                                            <Text fontWeight={'semibold'} fontSize={'lg'} color={"var(--settings-head-color)"}>
                                                 Password
                                             </Text>
                                             <Stack direction={'row'}>
@@ -277,7 +319,7 @@ export default function Settings({ user, label }) {
                                                         }}
                                                     >
                                                         <Box width={'11.2vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                            <Text fontSize={'.60vw'} color={"var(--text-color)"}>
+                                                            <Text fontSize={'md'} color={"var(--text-color)"}>
                                                                 {"**********"}
                                                             </Text>
                                                         </Box>
@@ -297,7 +339,7 @@ export default function Settings({ user, label }) {
                                                                     setSettingScreen("password");
                                                                 }}
                                                             >
-                                                                <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
+                                                                <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'sm'}>
                                                                     Change
                                                                 </Text>
                                                             </Button>
@@ -313,7 +355,7 @@ export default function Settings({ user, label }) {
                                 <Box p={'.75vw'}>
                                     <Stack direction={'column'}>
                                         <Box pr={'2.3vw'}>
-                                            <Text fontWeight={'semibold'} fontSize={'.7vw'} color={"var(--settings-head-color)"}>
+                                            <Text fontWeight={'semibold'} fontSize={'lg'} color={"var(--settings-head-color)"}>
                                                 Delete Account
                                             </Text>
                                             <Stack direction={'row'}>
@@ -327,7 +369,7 @@ export default function Settings({ user, label }) {
                                                         }}
                                                     >
                                                         <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                            <Text fontSize={'.60vw'} color={"var(--text-color)"}>
+                                                            <Text fontSize={'md'} color={"var(--text-color)"}>
                                                                 Permanently delete your account
                                                             </Text>
                                                         </Box>
@@ -346,7 +388,7 @@ export default function Settings({ user, label }) {
 
                                                                 }}
                                                             >
-                                                                <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
+                                                                <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'sm'}>
                                                                     Delete
                                                                 </Text>
                                                             </Button>
@@ -369,24 +411,25 @@ export default function Settings({ user, label }) {
                 <Box>
                     <Stack direction={'column'}>
                         <Center>
-                            <Text fontSize={'1.25vw'} color={'var(--text-color)'}>
+                            <Text fontSize={'30'} color={'var(--text-color)'}>
                                 Change Password
                             </Text>
                         </Center>
                         <Box pt={'5vh'}>
                             <Center>
                                 <Box>
-                                    <Image
+                                    <Avatar
+                                        name={user.firstName + ' ' + user.lastName}
                                         borderRadius={'full'}
-                                        src="https://picsum.photos/800/1500"
+                                        src={user.profilePic}
                                         boxSize='4vw'
                                     />
                                 </Box>
                                 <Box pb={'1vh'} pl={'.5vw'}>
-                                    <Text fontSize={'.8vw'} fontWeight={'bold'} color={"var(--text-color)"}>
+                                    <Text fontSize={'20'} fontWeight={'bold'} color={"var(--text-color)"}>
                                         {user.firstName} {user.lastName}
                                     </Text>
-                                    <Text pl={'1'} fontSize={'.4vw'} color={"var(--text-color)"}>
+                                    <Text pl={'1'} fontSize={'13'} color={"var(--text-color)"}>
                                         @{user.username}
                                     </Text>
                                 </Box>
@@ -399,7 +442,7 @@ export default function Settings({ user, label }) {
                                     <Box p={'.75vw'}>
                                         <Stack direction={'column'}>
                                             <Box pr={'2.3vw'}>
-                                                <Text fontWeight={'semibold'} fontSize={'.7vw'} color={"var(--settings-head-color)"}>
+                                                <Text fontWeight={'semibold'} fontSize={'20'} color={"var(--settings-head-color)"}>
                                                     Old Password
                                                 </Text>
                                                 <Stack direction={'row'}>
@@ -414,7 +457,7 @@ export default function Settings({ user, label }) {
                                                         >
                                                             <Box width={'9vw'} pt={'.3vh'} pl={'.1vw'}>
                                                                 <Stack direction={'column'}>
-                                                                    <Input height={'3.25vh'} fontSize={'.55vw'} color={"var(--text-color)"}
+                                                                    <Input height={'3.25vh'} fontSize={'18'} color={"var(--text-color)"}
                                                                         value={oldPassword}
                                                                         type={showPassword ? 'text' : 'password'}
                                                                         onChange={(e) => {
@@ -429,7 +472,7 @@ export default function Settings({ user, label }) {
                                                                     </Input>
                                                                     {
                                                                         (oldPasswordError != '') ?
-                                                                            <Text color={'red'} fontSize={'.55vw'}>
+                                                                            <Text color={'red'} fontSize={'15'}>
                                                                                 {oldPasswordError}
                                                                             </Text>
                                                                             :
@@ -452,7 +495,7 @@ export default function Settings({ user, label }) {
                                                                         setShowPassword(!showPassword);
                                                                     }}
                                                                 >
-                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
+                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'14'}>
                                                                         {showPassword ? 'Hide' : 'Show'}
                                                                     </Text>
                                                                 </Button>
@@ -462,7 +505,7 @@ export default function Settings({ user, label }) {
                                                 </Stack>
                                             </Box>
                                             <Box>
-                                                <Text fontWeight={'semibold'} fontSize={'.7vw'} color={"var(--settings-head-color)"}>
+                                                <Text fontWeight={'semibold'} fontSize={'20'} color={"var(--settings-head-color)"}>
                                                     New Password
                                                 </Text>
                                                 <Stack direction={'row'}>
@@ -477,7 +520,7 @@ export default function Settings({ user, label }) {
                                                         >
                                                             <Box width={'9vw'} pt={'.3vh'} pl={'.1vw'}>
                                                                 <Stack direction={'column'}>
-                                                                    <Input height={'3.25vh'} fontSize={'.55vw'} color={"var(--text-color)"}
+                                                                    <Input height={'3.25vh'} fontSize={'18'} color={"var(--text-color)"}
                                                                         value={newPassword}
                                                                         type={showPassword ? 'text' : 'password'}
                                                                         onChange={(e) => {
@@ -493,7 +536,7 @@ export default function Settings({ user, label }) {
                                                                     </Input>
                                                                     {
                                                                         (newPasswordError != '') ?
-                                                                            <Text color={'red'} fontSize={'.55vw'}>
+                                                                            <Text color={'red'} fontSize={'15'}>
                                                                                 {newPasswordError}
                                                                             </Text>
                                                                             :
@@ -516,7 +559,7 @@ export default function Settings({ user, label }) {
                                                                         setShowPassword(!showPassword);
                                                                     }}
                                                                 >
-                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
+                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'14'}>
                                                                         {showPassword ? 'Hide' : 'Show'}
                                                                     </Text>
                                                                 </Button>
@@ -526,7 +569,7 @@ export default function Settings({ user, label }) {
                                                 </Stack>
                                             </Box>
                                             <Box>
-                                                <Text fontWeight={'semibold'} fontSize={'.7vw'} color={"var(--settings-head-color)"}>
+                                                <Text fontWeight={'semibold'} fontSize={'20'} color={"var(--settings-head-color)"}>
                                                     Confirm New Password
                                                 </Text>
                                                 <Stack direction={'row'}>
@@ -541,7 +584,7 @@ export default function Settings({ user, label }) {
                                                         >
                                                             <Box width={'9vw'} pt={'.3vh'} pl={'.1vw'}>
                                                                 <Stack direction={'column'}>
-                                                                    <Input height={'3.25vh'} fontSize={'.55vw'} color={"var(--text-color)"}
+                                                                    <Input height={'3.25vh'} fontSize={'18'} color={"var(--text-color)"}
                                                                         value={confirmNewPassword}
                                                                         type={showPassword ? 'text' : 'password'}
                                                                         onChange={(e) => {
@@ -557,7 +600,7 @@ export default function Settings({ user, label }) {
                                                                     </Input>
                                                                     {
                                                                         (confirmNewPasswordError != '') ?
-                                                                            <Text color={'red'} fontSize={'.55vw'}>
+                                                                            <Text color={'red'} fontSize={'15'}>
                                                                                 {confirmNewPasswordError}
                                                                             </Text>
                                                                             :
@@ -581,7 +624,7 @@ export default function Settings({ user, label }) {
                                                                         setShowPassword(!showPassword);
                                                                     }}
                                                                 >
-                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'.55vw'}>
+                                                                    <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'14'}>
                                                                         {showPassword ? 'Hide' : 'Show'}
                                                                     </Text>
                                                                 </Button>
@@ -631,7 +674,7 @@ export default function Settings({ user, label }) {
                     >
                         <Center>
                             <Button minH={'2'} minW={'6'} width={'3vw'} height={'2.5vh'} bg={'white'}>
-                                <Text fontSize={'.55vw'} color={'black'}>
+                                <Text fontSize={'14'} color={'black'}>
                                     {closeBoxMessage}
                                 </Text>
                             </Button>
