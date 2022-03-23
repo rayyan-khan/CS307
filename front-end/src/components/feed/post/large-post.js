@@ -277,7 +277,7 @@ export default function LargePost({ post }) {
                                                             {comment.username}
                                                         </Text>
                                                         <Text color={'var(--text-color)'} pl={'15px'} align={'left'} fontSize={'md'} width={'360px'}>
-                                                            {comment.commentText}
+                                                            {comment.comment}
                                                         </Text>
                                                     </Stack>
                                                 </Center>
