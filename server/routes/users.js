@@ -159,6 +159,21 @@ userRoutes.route('/searchUsers/:query').get(async (req, res) => {
     })
 })
 
+userRoutes.route('/followUser/:followed').get(async (req, res) => {
+    var user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+
+    var sql = `INSERT INTO UserFollow VALUES (${con.escape(followed)}, ${con.escape(username)}, NOW())`
+})
+
 
 
 module.exports = userRoutes
