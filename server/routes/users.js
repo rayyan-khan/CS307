@@ -182,7 +182,7 @@ userRoutes.route('/followUser').post(async (req, res) => {
     })
 })
 
-userRoutes.route('/getFollowed').get(async (req, res) => {
+userRoutes.route('/getFollowedUsers').get(async (req, res) => {
     var user
 
     try {
