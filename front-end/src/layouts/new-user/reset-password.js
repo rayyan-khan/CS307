@@ -16,7 +16,7 @@ import {
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 
-const axios = require('axios');
+// const axios = require('axios');
 
 class ResetPassword extends React.Component {
 
