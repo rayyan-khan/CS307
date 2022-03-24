@@ -9,21 +9,26 @@ import {
     Stack,
     Text,
     Input,
+    FormControl,
+    FormLabel,
     IconButton,
-    Avatar,
-    Tooltip,
+    Spacer,
+    Flex,
+    grid,
+    Grid,
+    GridItem,
 } from '@chakra-ui/react'
 import '../../layouts.css'
 import { IoSettingsOutline } from 'react-icons/io5'
+import { GrClose } from 'react-icons/gr'
 
 import Popup from 'reactjs-popup'
 import 'reactjs-popup/dist/index.css'
 import '../../layouts.css'
 import '../../../styles/profile.css'
 import Settings from './settings/settings'
+import { RiContactsBookLine } from 'react-icons/ri'
 import PostInteraction from '../../../components/feed/post/postInteraction'
-import ProfilePicture from "@dsalvagni/react-profile-picture"
-import "@dsalvagni/react-profile-picture/dist/ProfilePicture.css"
 
 class Profile extends React.Component {
     constructor(props) {
@@ -38,8 +43,6 @@ class Profile extends React.Component {
                 numTagsFollowing: 0,
                 numFollowing: 0,
                 numFollowers: 0,
-                profilePic: '',
-                section: '',
             },
             editedBio: '',
             allPosts: [],
@@ -116,7 +119,7 @@ class Profile extends React.Component {
         }
         return this.state.postInteractions.map((post, key) => {
             return (
-                <Center pb={1}>
+                <Center pb={5}>
                     <PostInteraction post={post} />
                 </Center>
             )
@@ -169,10 +172,8 @@ class Profile extends React.Component {
                         numFollowing: this.formatNum(420000),
                         numFollowers: this.formatNum(44444444),
                         email: res.data.email,
-                        profilePic: res.data.url
                     },
                 })
-
                 this.setState({
                     viewingSelf:
                         sessionUsername != null &&
@@ -245,30 +246,29 @@ class Profile extends React.Component {
                 </Stack>
 
                 <div className="slide-container">
-                    <Center
-                        height={'100vh'}
+                    <Box
+                        style={{ paddingBottom: '80px' }}
                         className={`slide posts-container ${this.state.showPosts ? 'right-hide' : 'show'
                             }`}
                     >
-                        <div style={{ backgroundColor: "var(--main-color)", width: "100vw", height: "100%" }} >
-                            {this.postInteractionsHandler()}
-                        </div>
-                    </Center>
-                    <Center
-                        height={'100vh'}
+                        {this.postInteractionsHandler()}
+                    </Box>
+
+                    <Box
+                        style={{ paddingBottom: '80px' }}
                         className={`slide posts-container ${this.state.showPosts ? 'show' : 'left-hide'
                             }`}
                     >
-                        <div style={{ backgroundColor: "var(--main-color)", width: "100vw", height: "100%" }} >
-                            {this.postHandler()}
-                        </div>
-                    </Center>
+                        {this.postHandler()}
+                    </Box>
                 </div>
-            </div >
+            </div>
         )
     }
 
     render() {
+        var popoverContent = <Settings user={this.state.user} />
+
         return (
             <div
                 className="color-switch"
@@ -276,6 +276,7 @@ class Profile extends React.Component {
                     overflowX: 'hidden',
                     overflowY: 'scroll',
                     width: '100%',
+                    height: '100%',
                 }}
             >
                 {this.state.loading ? (
@@ -295,28 +296,12 @@ class Profile extends React.Component {
                                             direction={'row'}
                                         >
                                             <Center>
-                                                <Box on>
-                                                    <Tooltip label="Edit Picture" aria-label='A tooltip'>
-                                                        <Avatar
-                                                            name={this.state.user.firstName + ' ' + this.state.user.lastName}
-                                                            borderRadius={'full'}
-                                                            src={this.state.user.profilePic}
-                                                            style={{ width: 100, height: 100, borderRadius: 100 / 2 }}
-                                                            cursor={'pointer'}
-                                                            _hover={{
-                                                                backgroundColor: 'darkturquoise',
-                                                            }}
-                                                            onClick={() => {
-                                                                this.setState(
-                                                                    {
-                                                                        section: 'profilePic',
-                                                                        open: true,
-                                                                    }
-                                                                )
-                                                            }}
-                                                        />
-                                                    </Tooltip>
-
+                                                <Box>
+                                                    <Image
+                                                        borderRadius={'full'}
+                                                        src="https://picsum.photos/800/1500"
+                                                        boxSize="10vw"
+                                                    />
                                                 </Box>
                                                 <Box pl={'1vw'}>
                                                     <Stack direction={'column'}>
@@ -511,7 +496,6 @@ class Profile extends React.Component {
                                                                                 'white'
                                                                             }
                                                                             onClick={() => {
-                                                                                console.log(this.state.email)
                                                                                 console.log(
                                                                                     'clicked'
                                                                                 )
@@ -593,7 +577,6 @@ class Profile extends React.Component {
                                                                     onClick={() => {
                                                                         this.setState(
                                                                             {
-                                                                                section: 'profile',
                                                                                 open: true,
                                                                             }
                                                                         )
@@ -625,7 +608,7 @@ class Profile extends React.Component {
                                                                     }}
                                                                 >
                                                                     {
-                                                                        <Settings user={this.state.user} section={this.state.section} />
+                                                                        popoverContent
                                                                     }
                                                                 </Popup>
                                                             </Box>
