@@ -7,7 +7,7 @@ var getCon = require('../database/conn')
 var con = getCon.getConObject()
 
 tagRoutes.route('/getTags').get(async (req, res) => {
-    var sql = `SELECT * from Tag`
+    var sql = `SELECT * FROM Tag`
 
     con.query(sql, function (err, fullResponse) {
         if (fullResponse.length === 0)

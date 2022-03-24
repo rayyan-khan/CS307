@@ -159,7 +159,8 @@ userRoutes.route('/searchUsers/:query').get(async (req, res) => {
     })
 })
 
-userRoutes.route('/followUser/:followed').get(async (req, res) => {
+userRoutes.route('/followUser').post(async (req, res) => {
+    let { followed } = req.body
     var user
 
     try {
@@ -181,6 +182,26 @@ userRoutes.route('/followUser/:followed').get(async (req, res) => {
     })
 })
 
+userRoutes.route('/getFollowed').get(async (req, res) => {
+    var user
 
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+
+    var sql = `SELECT followed FROM UserFollow WHERE follower = ${con.escape(username)}`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
 
 module.exports = userRoutes
