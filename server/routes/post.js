@@ -296,7 +296,14 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
     try {
         //Use decodeHeader to extract user info from header or throw an error
         user = await decodeHeader.decodeAuthHeader(req)
-        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post Order BY timeStamp DESC`
+        sql = `SELECT p.postID,p.tagID,p.likesCount,p.dislikeCount,p.postCaption,p.numberOfComments, p.url, p.hyperlink,CASE WHEN p.anonymous=1 THEN "Anonymous" ELSE p.username END AS username, p.timeStamp
+        FROM Post as p, TagFollow as t
+        WHERE t.username = "ClaySpike" and p.tagID = t.tagID
+        UNION
+        SELECT p.postID,p.tagID,p.likesCount,p.dislikeCount,p.postCaption,p.numberOfComments, p.url, p.hyperlink,CASE WHEN p.anonymous=1 THEN "Anonymous" ELSE p.username END AS username, p.timeStamp
+        From Post as p, UserFollow as u
+        WHERE u.follower = "ClaySpike" and u.followed = p.username
+        ORDER BY timeStamp`
     } catch (err) {
         sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post Order BY timeStamp DESC`
     }
