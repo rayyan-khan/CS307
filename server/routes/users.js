@@ -17,6 +17,36 @@ userRoutes.route('/getUserFromHeader').get(async (req, res) => {
     res.status(200).json(user)
 })
 
+userRoutes.route('/deleteProfile'). get(async(req,res) => {
+    var user
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+    console.log(username)
+    var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
+    con.query(sql, function (err, fullResponse) {
+        if (fullResponse.length === 0)
+            return res.status(400).json("User doesn't exist")
+        let result = fullResponse[0]
+        console.log(result)
+        if (err) {
+            console.log(result)
+            return res.status(500).json(err)
+        }
+        if (result.private == 1 && !amUser) {
+            delete result.email
+        }
+
+        res.status(200).json(result)
+    })
+
+})
+
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var user
     var amUser = false
