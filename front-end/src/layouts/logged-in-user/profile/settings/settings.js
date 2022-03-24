@@ -71,14 +71,36 @@ export default function Settings({ user, label, section }) {
         const file = imageData.file;
         const imageAsDataUrl = PP.getImageAsDataUrl();
         const data = new FormData();
+        console.log("PP", PP);
         console.log("imageData", imageData);
         console.log("File", file);
         console.log("URL", imageAsDataUrl);
 
-        data.append('image', imageData);
+
+        var url = imageAsDataUrl;
+        fetch(url)
+            .then(res => res.blob())
+            .then(blob => {
+                data.append('image', blob, 'filename')
+
+                console.log(blob)
+
+                // Upload
+                // fetch('upload', {method: 'POST', body: fd})
+            })
+
         axios.post("http://localhost:5000/api/updateProfileImage", data).then((response) => {
             console.log(response);
         })
+    }
+
+    function dataURItoBlob(dataURI) {
+        var binary = atob(dataURI.split(',')[1]);
+        var array = [];
+        for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        return new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
     }
 
     if (settingScreen === 'profilePic') {
@@ -369,7 +391,19 @@ export default function Settings({ user, label, section }) {
                                                         }}
                                                     >
                                                         <Box width={'11.5vw'} pt={'.3vh'} pl={'.1vw'}>
-                                                            <Text fontSize={'md'} color={"var(--text-color)"}>
+                                                            <Text fontSize={'md'} color={"var(--text-color)"}
+                                                                onClick={() => {
+                                                                    try {
+                                                                        axios.get("http://localhost:5000/api/deleteProfile/").then((res) => {
+                                                                            console.log(res.data);
+                                                                        });
+
+                                                                    } catch (error) {
+                                                                        console.log(error);
+
+                                                                    }
+                                                                }}
+                                                            >
                                                                 Permanently delete your account
                                                             </Text>
                                                         </Box>
