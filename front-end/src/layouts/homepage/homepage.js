@@ -21,11 +21,6 @@ class Homepage extends React.Component {
     }
 
     fetchPosts() {
-        // if (localStorage.getItem('allPosts') != null) {
-        //     console.log('using local storage');
-        //     this.setState({ allPosts: JSON.parse(localStorage.getItem('allPosts')) });
-        //     this.setState({ loading: 1 });
-        // } else {
         try {
             axios.get("http://localhost:5000/api/getOrderedPost")
                 .then(res => {
@@ -46,16 +41,15 @@ class Homepage extends React.Component {
                         this.setState({ loading: 1 });
                     }
                 })
-                .catch(function (error) {
-                    // console.log(error);
-                    // this.setState({ loading: -1 })
+                .catch((error) => {
+                    console.log(error);
+                    this.setState({ loading: -1 });
                 })
         } catch (error) {
             console.log(error);
+            this.setState({ loading: -1 })
         }
-        // }
     }
-
 
     postHandler() {
         console.log(this.state.allPosts);
@@ -79,7 +73,7 @@ class Homepage extends React.Component {
         if (this.state.loading == -1) {
             return (
                 <Center className='color-switch' pb={'100vh'}>
-                    <Center fontSize={'4xl'} color={'var(--text-color)'} pt={'40vh'}>
+                    <Center fontSize={'2xl'} color={'var(--text-color)'} pt={'40vh'}>
                         Failed to get posts. Please check your internet and try again
                     </Center>
                 </Center>
