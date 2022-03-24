@@ -394,6 +394,7 @@ export default function Settings({ user, label, section }) {
                                                             <Text fontSize={'md'} color={"var(--text-color)"}
                                                                 onClick={() => {
                                                                     try {
+                                                                        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
                                                                         axios.get("http://localhost:5000/api/deleteProfile/").then((res) => {
                                                                             console.log(res.data);
                                                                         });
