@@ -426,4 +426,32 @@ authRoutes.route('/recoverPassword').put(async (req, res) => {
     })
 })
 
+authRoutes.route('/resetPassword').put(async (req, res) => {
+    var user
+    try {
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json('Missing auth token')
+    }
+
+    const { newPassword } = req.body
+
+    if (!newPassword) {
+        return res.status(400).json('Missing newPassword field')
+    }
+
+    if (newPassword.length < 8) {
+        return res.status(400).json('newPassword too short')
+    }
+
+    const hash = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(10))
+
+    query.updatePassword(user.email, hash).catch((err) => {
+        console.log(err)
+        return res.status(500).json('Error executing updatePassword query')
+    })
+
+    return res.status(200).json('Password succesfully updated')
+})
+
 module.exports = authRoutes

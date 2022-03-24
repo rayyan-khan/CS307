@@ -22,7 +22,7 @@ import axios from 'axios';
 
 
 import { BsPlusSquare, BsPlusSquareFill } from 'react-icons/bs'
-import { AiFillMessage, AiOutlineMessage, AiOutlineHome } from 'react-icons/ai'
+import { AiFillMessage, AiOutlineMessage, AiOutlineHome, AiOutlineLogout } from 'react-icons/ai'
 import { RiProfileLine, RiProfileFill } from 'react-icons/ri'
 import SearchBar from '../searchBar';
 import "./navbar.css";
@@ -61,6 +61,9 @@ class Navbar extends React.Component {
     window.location.href = url.substring(0, url.indexOf("/")) + "/login";
   }
 
+  logout() {
+    localStorage.removeItem("token");
+  }
 
   async componentWillMount() {
     let url = window.location.href;
@@ -134,6 +137,11 @@ class Navbar extends React.Component {
                   <MDBNavbarItem>
                     <MDBNavbarLink style={{ color: "#ffffff" }} href={'/profile/' + this.state.username}>
                       {this.state.currSection === "profile" ? <IconButton style={{ backgroundColor: "darkturquoise", color: "white" }} icon={<RiProfileFill />} /> : <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<RiProfileLine />} />}
+                    </MDBNavbarLink>
+                  </MDBNavbarItem>
+                  <MDBNavbarItem>
+                    <MDBNavbarLink style={{ color: "#ffffff" }} href='/homepage'>
+                     <IconButton style={{ color: "black", backgroundColor: "var(--secondary-color)" }} icon={<AiOutlineLogout/>} onClick = {this.logout} />
                     </MDBNavbarLink>
                   </MDBNavbarItem>
                 </MDBNavbarNav>

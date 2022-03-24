@@ -226,7 +226,7 @@ export default function Post({ post, label }) {
             </Stack>
 
 
-            <Stack pt={5} align={'center'} justify={'center'} direction={'row'}>
+            {post.tagID !== null ? <Stack visibility={post.tagID !== null ? 'visible' : 'hidden'} align={'center'} justify={'center'} direction={'row'}>
                 <Box
                     onClick={(event) => {
                         event.preventDefault();
@@ -249,7 +249,8 @@ export default function Post({ post, label }) {
                         {"#" + post.tagID}
                     </Text>
                 </Box>
-            </Stack>
+            </Stack> : <></>}
+
             <Stack direction={'row'} spacing={4}>
                 <Stack direction={'column'}>
                     <Text

@@ -289,6 +289,26 @@ postRoutes.route('/postInteractions').get((req, res) => {
     })
 })
 
+postRoutes.route('/getTimeline').get(async (req, res) => {
+    var user
+    var sql = ''
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post Order BY timeStamp DESC`
+    } catch (err) {
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post Order BY timeStamp DESC`
+    }
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
 module.exports = postRoutes
 
 //userRoutes.route("/testing").post(function (req, res) {
