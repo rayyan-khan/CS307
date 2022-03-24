@@ -40,4 +40,72 @@ tagRoutes.route('/createTag/:tagName').get(async (req, res) => {
     })
 })
 
+tagRoutes.route('/followTag').post(async (req, res) => {
+    let { tagID } = req.body
+    var user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+
+    var sql = `INSERT INTO TagFollow VALUES (${con.escape(username)}, ${con.escape(tagID)}, NOW())`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
+tagRoutes.route('/getFollowedTags').get(async (req, res) => {
+    var user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+
+    var sql = `SELECT tagID FROM TagFollow WHERE username = ${con.escape(username)}`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
+tagRoutes.route('/unfollowTag').post(async (req, res) => {
+    let { tagID } = req.body
+    var user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+
+    var sql = `DELETE FROM TagFollow WHERE tagID = ${con.escape(tagID)} and username = ${con.escape(username)}`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
 module.exports = tagRoutes
