@@ -301,8 +301,6 @@ authRoutes.route('/login').post(async (req, res) => {
                 .json('No account with specified username exists')
     } else {
         bcrypt.compare(password, result[0].password).then((isMatch) => {
-            console.log(password)
-            console.log(result[0])
             if (!isMatch) return res.status(400).json('Incorrect password')
 
             const payload = {
@@ -434,7 +432,11 @@ authRoutes.route('/resetPassword').put(async (req, res) => {
         return res.status(400).json('Missing auth token')
     }
 
-    const { newPassword } = req.body
+    const { curPassword, newPassword } = req.body
+
+    if (!curPassword) {
+        return res.status(400).json('Missing curPassword field')
+    }
 
     if (!newPassword) {
         return res.status(400).json('Missing newPassword field')
@@ -444,6 +446,23 @@ authRoutes.route('/resetPassword').put(async (req, res) => {
         return res.status(400).json('newPassword too short')
     }
 
+    const accountExists = await query.accountExists(user.email).catch((err) => {
+        console.log(err)
+        return res
+            .status(500)
+            .json('Internal error attempting to confirm account exists')
+    })
+
+    if (accountExists !== 'Account exists') {
+        return res.status(400).json(accountExists)
+    }
+
+    const curHash = await query.getCurPassword(user.email)
+
+    if (!bcrypt.compareSync(curPassword, curHash)) {
+        return res.status(400).json('Incorrect current password')
+    }
+
     const hash = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(10))
 
     query.updatePassword(user.email, hash).catch((err) => {
@@ -451,7 +470,7 @@ authRoutes.route('/resetPassword').put(async (req, res) => {
         return res.status(500).json('Error executing updatePassword query')
     })
 
-    return res.status(200).json('Password succesfully updated')
+    return res.status(200).json('Password successfully updated')
 })
 
 module.exports = authRoutes

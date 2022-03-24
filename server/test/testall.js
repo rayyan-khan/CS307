@@ -26,6 +26,7 @@ beforeEach(async () => {
 })
 
 const app = require('./testapp')
+const { query } = require('express')
 
 describe('GET /api/test-token', () => {
     it('responds', (done) => {
@@ -224,24 +225,6 @@ describe('PUT /api/passwordRecoveryLink', () => {
             })
     })
 
-    it('Returns failure due to account being unverified', async () => {
-        const email = 'unverifiedemail'
-
-        await testQueries.createUnverifiedUser(
-            'username',
-            email,
-            'password',
-            123456
-        )
-
-        var result = await request(app)
-            .put('/api/passwordRecoveryLink')
-            .send({ email: email })
-
-        assert.equal(result.statusCode, 400)
-        assert.equal(result.body, 'Account not verified')
-    })
-
     it('Successfully sends link to an email', async () => {
         var emailSent
 
@@ -280,5 +263,132 @@ describe('PUT /api/passwordRecoveryLink', () => {
 
         assert.equal(result.statusCode, 200)
         assert.equal(result.body, 'Email sent')
+    })
+})
+
+describe('PUT /api/resetPassword', () => {
+    it('Returns failure for missing curPassword field', (done) => {
+        testQueries.createVerifiedUser('username', 'email', 'password')
+
+        jwt.sign(
+            { email: 'email', username: 'username' },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .put('/api/resetPassword')
+                    .set('authorization', token)
+                    .send({ newPassword: 'newPassword' })
+                    .expect(400)
+                    .expect('"Missing curPassword field"')
+                    .end((err, res) => {
+                        if (err) return done(err)
+                        return done()
+                    })
+            }
+        )
+    })
+
+    it('Returns failure for curPassword not being correct', (done) => {
+        const hash = bcrypt.hashSync('password', 10)
+        testQueries.createVerifiedUser('username', 'email', hash)
+
+        jwt.sign(
+            { email: 'email', username: 'username' },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .put('/api/resetPassword')
+                    .set('authorization', token)
+                    .send({
+                        newPassword: 'newPassword',
+                        curPassword: 'incorrect',
+                    })
+                    .expect(400)
+                    .expect('"Incorrect current password"')
+                    .end((err, res) => {
+                        if (err) return done(err)
+                        return done()
+                    })
+            }
+        )
+    })
+
+    it('Returns failure if new password is too short', (done) => {
+        const hash = bcrypt.hashSync('password', 10)
+        testQueries.createVerifiedUser('username', 'email', hash)
+
+        jwt.sign(
+            { email: 'email', username: 'username' },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .put('/api/resetPassword')
+                    .set('authorization', token)
+                    .send({
+                        newPassword: 'short',
+                        curPassword: 'password',
+                    })
+                    .expect(400)
+                    .expect('"newPassword too short"')
+                    .end((err, res) => {
+                        if (err) return done(err)
+                        return done()
+                    })
+            }
+        )
+    })
+
+    it('Successfully resets password', (done) => {
+        const hash = bcrypt.hashSync('password', 10)
+        testQueries.createVerifiedUser('username', 'email', hash)
+
+        jwt.sign(
+            { email: 'email', username: 'username' },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .put('/api/resetPassword')
+                    .set('authorization', token)
+                    .send({
+                        newPassword: 'newPassword',
+                        curPassword: 'password',
+                    })
+                    .expect(200)
+                    .expect('"Password successfully updated"')
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        //Make sure old password doesn't work
+                        request(app)
+                            .post('/api/login')
+                            .send({
+                                username: 'username',
+                                password: 'password',
+                            })
+                            .expect(400)
+                            .expect('"Incorrect password"')
+                            .end((err2, res2) => {
+                                if (err2) return done(err2)
+
+                                //Make sure new password works
+                                request(app)
+                                    .post('/api/login')
+                                    .send({
+                                        username: 'username',
+                                        password: 'newPassword',
+                                    })
+                                    .expect(200)
+                                    .end((err3, res3) => {
+                                        if (err3) return done(err3)
+                                        return done()
+                                    })
+                            })
+                    })
+            }
+        )
     })
 })

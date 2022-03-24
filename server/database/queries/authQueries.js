@@ -83,6 +83,14 @@ const accountExists = async (email) => {
     }
 }
 
+const getCurPassword = async (email) => {
+    var res = await con.awaitQuery(
+        `SELECT password FROM User WHERE email="${email}"`
+    )
+
+    return res[0].password
+}
+
 module.exports = {
     allUnverifiedUsersByEmail,
     allVerifiedUsersByEmail,
@@ -95,4 +103,5 @@ module.exports = {
     getConfirmationCode,
     updatePassword,
     accountExists,
+    getCurPassword,
 }
