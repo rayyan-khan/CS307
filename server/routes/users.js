@@ -17,6 +17,27 @@ userRoutes.route('/getUserFromHeader').get(async (req, res) => {
     res.status(200).json(user)
 })
 
+userRoutes.route('/deleteProfile'). get(async(req,res) => {
+    var user
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+    console.log(username)
+    var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+
+})
+
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var user
     var amUser = false
@@ -182,7 +203,7 @@ userRoutes.route('/followUser').post(async (req, res) => {
     })
 })
 
-userRoutes.route('/getFollowed').get(async (req, res) => {
+userRoutes.route('/getFollowedUsers').get(async (req, res) => {
     var user
 
     try {
@@ -195,6 +216,29 @@ userRoutes.route('/getFollowed').get(async (req, res) => {
     const { email, username } = user
 
     var sql = `SELECT followed FROM UserFollow WHERE follower = ${con.escape(username)}`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
+userRoutes.route('/unfollowUser').post(async (req, res) => {
+    let { followed } = req.body
+    var user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+
+    var sql = `DELETE FROM UserFollow WHERE follower = ${con.escape(username)} and followed = ${con.escape(followed)}`
 
     con.query(sql, function (err, result) {
         if (err) {
