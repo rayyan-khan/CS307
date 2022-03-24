@@ -29,20 +29,11 @@ userRoutes.route('/deleteProfile'). get(async(req,res) => {
     const { email, username } = user
     console.log(username)
     var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
-    con.query(sql, function (err, fullResponse) {
-        if (fullResponse.length === 0)
-            return res.status(400).json("User doesn't exist")
-        let result = fullResponse[0]
-        console.log(result)
+    con.query(sql, function (err, result) {
         if (err) {
-            console.log(result)
-            return res.status(500).json(err)
-        }
-        if (result.private == 1 && !amUser) {
-            delete result.email
-        }
-
-        res.status(200).json(result)
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
     })
 
 })
