@@ -240,12 +240,12 @@ export default function LargePost({ post }) {
                     boxShadow={'2xl'}
                     rounded={'lg'}
                     p={6}
-                    maxHeight={'calc(100% - 220px)'}
+                    maxHeight={'50%'}
                     position={'absolute'}
                     textAlign={'center'}
                     overflowY={'scroll'}
                 >
-                    <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%" }} >
+                    <div style={{ overflowX: "hidden", overflowY: "scroll", width: "100%", }} >
                         {
                             comments.map((comment, index) => {
                                 return (
@@ -328,6 +328,7 @@ export default function LargePost({ post }) {
         <Box>
             <Grid
                 templateColumns='repeat(2, 1fr)'
+                templateRows='repeat(2, 1fr)'
                 style={{ overflow: 'visible', position: 'relative', }}
             >
                 <GridItem>
@@ -397,30 +398,32 @@ export default function LargePost({ post }) {
                                 backgroundColor='white'
                             /> : <></>}
                         </Stack>
-                        <Stack align={'center'} justify={'center'} direction={'row'} mt={"13%"}>
-                            <Box
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    if (localStorage.getItem('token') == null) {
-                                        let url = window.location.href;
-                                        window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-                                    } else {
-                                        let url = window.location.href;
-                                        window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
-                                    }
-                                }}
-                                style={{ cursor: 'pointer' }}
-                                px={5}
-                                py={2}
-                                bg={"#F2AF29"}
-                                color={'--mainColor'}
-                                rounded={'full'}
-                                fontSize={'2xl'}
-                                fontWeight={'300'}>
-                                {"#" + post.tagID}
-                            </Box>
-                        </Stack>
+                        {post.tagID !== null ?
+                            <Stack align={'center'} justify={'center'} direction={'row'} mt={"13%"}>
+                                <Box
+                                    onClick={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        if (localStorage.getItem('token') == null) {
+                                            let url = window.location.href;
+                                            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                                        } else {
+                                            let url = window.location.href;
+                                            window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
+                                        }
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                    px={5}
+                                    py={2}
+                                    bg={"#F2AF29"}
+                                    color={'--mainColor'}
+                                    rounded={'full'}
+                                    fontSize={'2xl'}
+                                    fontWeight={'300'}>
+                                    {"#" + post.tagID}
+                                </Box>
+                            </Stack>
+                            : <></>}
                         <Stack mt={2} direction={'row'} spacing={4}>
                             <Stack direction={'column'}>
                                 <Text
@@ -451,89 +454,92 @@ export default function LargePost({ post }) {
                     </Box>
                 </GridItem>
                 <GridItem pl={40}>
-                    <Box height={'full'} overflowY={'hidden'}>
-                        <Box height={'calc(100% - 210px)'}>
+                    <Box overflowY={'scroll'}>
+                        <Box>
                             {handleComments()}
                         </Box>
-                        <Box position={'relative'} p={5}>
-                            <Box
-                                minW={'500px'}
-                                maxW={'400px'}
-                                minH={'90px'}
-                                bg={"--mainColor"}
-                                boxShadow={'2xl'}
-                                rounded={'lg'}
-                                p={5}
-                                borderColor={'--secondary-color'}
-                                textAlign={'center'}
-                            >
-                                <Stack direction={'row'}>
-                                    <Center>
-                                        <Avatar
-                                            borderRadius={'full'}
-                                            src={"https://picsum.photos/800/1500"}
-                                            blockSize='50px'
-                                        />
-                                        <Stack direction={'column'} spacing={0}>
-                                            <Text
-                                                color={'darkturquoise'}
-                                                align={'left'}
-                                                pl={'10px'}
-                                            >
-                                                {username}
-                                            </Text>
-                                            <Box p={'10px'}>
-                                                <Input
-                                                    width={'160%'}
-                                                    placeholder='Write a comment'
-                                                    autocomplete="off"
-                                                    color={'var(--text-color)'}
-                                                    value={comment}
-                                                    onChange={(event) => { setComment(event.target.value) }}
-                                                    onKeyPress={(event) => {
-                                                        if (event.key === 'Enter') {
-                                                            event.preventDefault();
-                                                            event.stopPropagation();
-                                                            if (localStorage.getItem('token') == null) {
-                                                                let url = window.location.href;
-                                                                window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-                                                            } else {
-                                                                console.log(post.postID);
-                                                                let jsonObj = {}
-                                                                jsonObj['postID'] = post.postID;
-                                                                jsonObj['comment'] = comment;
-                                                                jsonObj['username'] = username;
-                                                                try {
-                                                                    axios.post("http://localhost:5000/api/createComment", jsonObj)
-                                                                        .then(function (response) {
-                                                                            console.log(response);
-                                                                            setUpdateComments(!updateComments);
-                                                                        }
-                                                                        )
-                                                                        .catch(function (error) {
-                                                                            console.log(error);
-                                                                        }
-                                                                        );
-                                                                } catch (error) {
-
-                                                                }
-                                                                setComment("");
-                                                            }
-                                                        }
-                                                    }}
-                                                    onBlur={(event) => {
+                    </Box>
+                </GridItem>
+                <GridItem height={0}></GridItem>
+                <GridItem height={'30%'} pl={40}>
+                    <Box position={'relative'} p={5}>
+                        <Box
+                            minW={'500px'}
+                            maxW={'400px'}
+                            minH={'90px'}
+                            bg={"--mainColor"}
+                            boxShadow={'2xl'}
+                            rounded={'lg'}
+                            p={5}
+                            borderColor={'--secondary-color'}
+                            textAlign={'center'}
+                        >
+                            <Stack direction={'row'}>
+                                <Center>
+                                    <Avatar
+                                        borderRadius={'full'}
+                                        src={"https://picsum.photos/800/1500"}
+                                        blockSize='50px'
+                                    />
+                                    <Stack direction={'column'} spacing={0}>
+                                        <Text
+                                            color={'darkturquoise'}
+                                            align={'left'}
+                                            pl={'10px'}
+                                        >
+                                            {username}
+                                        </Text>
+                                        <Box p={'10px'}>
+                                            <Input
+                                                width={'160%'}
+                                                placeholder='Write a comment'
+                                                autocomplete="off"
+                                                color={'var(--text-color)'}
+                                                value={comment}
+                                                onChange={(event) => { setComment(event.target.value) }}
+                                                onKeyPress={(event) => {
+                                                    if (event.key === 'Enter') {
+                                                        event.preventDefault();
+                                                        event.stopPropagation();
                                                         if (localStorage.getItem('token') == null) {
                                                             let url = window.location.href;
                                                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-                                                        }
-                                                    }}
-                                                />
-                                            </Box>
+                                                        } else {
+                                                            console.log(post.postID);
+                                                            let jsonObj = {}
+                                                            jsonObj['postID'] = post.postID;
+                                                            jsonObj['comment'] = comment;
+                                                            jsonObj['username'] = username;
+                                                            try {
+                                                                axios.post("http://localhost:5000/api/createComment", jsonObj)
+                                                                    .then(function (response) {
+                                                                        console.log(response);
+                                                                        setUpdateComments(!updateComments);
+                                                                    }
+                                                                    )
+                                                                    .catch(function (error) {
+                                                                        console.log(error);
+                                                                    }
+                                                                    );
+                                                            } catch (error) {
 
-                                        </Stack>
-                                    </Center>
-                                </Stack>
-                            </Box>
+                                                            }
+                                                            setComment("");
+                                                        }
+                                                    }
+                                                }}
+                                                onBlur={(event) => {
+                                                    if (localStorage.getItem('token') == null) {
+                                                        let url = window.location.href;
+                                                        window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                                                    }
+                                                }}
+                                            />
+                                        </Box>
+
+                                    </Stack>
+                                </Center>
+                            </Stack>
                         </Box>
                     </Box>
                 </GridItem>
