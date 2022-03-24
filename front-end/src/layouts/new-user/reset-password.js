@@ -15,6 +15,8 @@ import {
   } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 
+const axios = require('axios');
+
 class ResetPassword extends React.Component {
 
     constructor(props) {
@@ -36,6 +38,8 @@ class ResetPassword extends React.Component {
         console.log("Clicked submit");
 
         // axios stuff
+        axios.put("http://localhost5000/api/passwordRecoveryLink", {email: this.state.email});
+
 
     }
 
