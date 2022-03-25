@@ -237,17 +237,19 @@ postRoutes.route('/getPostsByUser/:viewingUser').get(async (req, res) => {
         //Use decodeHeader to extract user info from header or throw an error
         thisUser = await decodeHeader.decodeAuthHeader(req)
     } catch (err) {
-        return res.json('false')
+        thisUser = undefined
     }
 
-    thisUser = thisUser.username
+    console.log(thisUser)
+
+    thisUser = thisUser ? thisUser.username : undefined
 
     let sql
 
-    if (thisUser === viewingUser) {
-        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username From Post WHERE username='${viewingUser}' Order BY timeStamp DESC`
+    if (thisUser && thisUser === viewingUser) {
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username, anonymous From Post WHERE username='${viewingUser}' Order BY timeStamp DESC`
     } else {
-        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username From Post WHERE username='${viewingUser}' AND anonymous=0 Order BY timeStamp DESC`
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username, anonymous From Post WHERE username='${viewingUser}' AND anonymous=0 Order BY timeStamp DESC`
     }
 
     con.query(sql, function (err, result) {

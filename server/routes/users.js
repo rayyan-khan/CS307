@@ -72,10 +72,12 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
             delete result.email
         }
 
-        let followingUser = await query.isUser1FollowingUser2(
-            user.username,
-            req.params.username
-        )
+        let followingUser =
+            user &&
+            (await query.isUser1FollowingUser2(
+                user.username,
+                req.params.username
+            ))
 
         res.status(200).json({ ...result, following: followingUser })
     })
