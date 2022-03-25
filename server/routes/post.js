@@ -35,8 +35,12 @@ postRoutes
 
             //url = "https://cs307.s3.amazonaws.com/" + req.file.path.substring(8)
             console.log(url)
-            var sql = "UPDATE User Set url = '" + url + "' WHERE username= '" + username + "'";
-
+            var sql =
+                "UPDATE User Set url = '" +
+                url +
+                "' WHERE username= '" +
+                username +
+                "'"
 
             //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
             con.query(sql, function (err, results) {
@@ -45,9 +49,7 @@ postRoutes
                 console.log(results)
             })
         })
-
     })
-
 
 postRoutes
     .route('/posts/postImage')
@@ -159,7 +161,6 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
             console.log(results)
         })
     })
-
 })
 
 // var upload = multer( { storage: storage } );
@@ -224,14 +225,53 @@ postRoutes.route('/getOrderedPost').get(function (req, res) {
     })
 })
 
-postRoutes.route('/comments/:postID').get(function(req,res) {
-    var sql = `SELECT * FROM Comments WHERE postId = ${con.escape(req.params.postID)} Order BY timeStamp DESC`
-con.query(sql, function (err, result) {
-    if (err) {
-        console.log(err)
-        res.status(500).json(err)
-    } else res.json(result)
+postRoutes.route('/getPostsByUser/:viewingUser').get(async (req, res) => {
+    //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
+    let viewingUser = req.params.viewingUser
+    if (!viewingUser) {
+        return res.status(400).json('Missing viewingUser field')
+    }
+
+    var thisUser
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        thisUser = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.json('false')
+    }
+
+    thisUser = thisUser.username
+
+    let sql
+
+    if (thisUser === viewingUser) {
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username From Post WHERE username='${viewingUser}' Order BY timeStamp DESC`
+    } else {
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username From Post WHERE username='${viewingUser}' AND anonymous=0 Order BY timeStamp DESC`
+    }
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else {
+            console.log(result)
+
+            res.json(result)
+        }
+    })
 })
+
+postRoutes.route('/comments/:postID').get(function (req, res) {
+    var sql = `SELECT * FROM Comments WHERE postId = ${con.escape(
+        req.params.postID
+    )} Order BY timeStamp DESC`
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
 })
 
 postRoutes.route('/createComment').post(async function (req, res) {
@@ -246,20 +286,19 @@ postRoutes.route('/createComment').post(async function (req, res) {
     //     return res.status(400).json(err)
     // }
 
-   // const { email, username } = user
-   // console.log(username)
+    // const { email, username } = user
+    // console.log(username)
     //
-    var sql = `Insert INTO Comments Values (${req.body.postID},${con.escape(req.body.username)},NOW(),${con.escape(req.body.comment)})`
+    var sql = `Insert INTO Comments Values (${req.body.postID},${con.escape(
+        req.body.username
+    )},NOW(),${con.escape(req.body.comment)})`
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
             res.status(500).json(err)
         } else res.json(result)
     })
-
-
 })
-
 
 postRoutes.route('/postInteractions').get((req, res) => {
     var anony = 'Anonymous'

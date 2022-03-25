@@ -56,12 +56,19 @@ class Profile extends React.Component {
 
     async fetchPosts() {
         try {
+            console.log(this.state.user.username)
+            let url =
+                'http://localhost:5000/api/getPostsByUser/' +
+                this.state.user.username
+            console.log(url)
             await axios
-                .get('http://localhost:5000/api/getOrderedPost')
+                .get(url)
                 .then((res) => {
                     console.log(this.state.user.username)
                     console.log(res.data)
                     const posts = res.data.filter((post) => {
+                        console.log(post)
+                        console.log(post.username === this.state.user.username)
                         return post.username === this.state.user.username
                     })
                     console.log(posts)
@@ -133,7 +140,6 @@ class Profile extends React.Component {
 
     async componentDidMount() {
         console.log('test')
-        this.fetchPosts()
         this.fetchInteractions()
 
         if (axios.defaults.headers.common['authorization'] != null) {
