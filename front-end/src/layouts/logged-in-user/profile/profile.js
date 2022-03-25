@@ -22,8 +22,8 @@ import '../../layouts.css'
 import '../../../styles/profile.css'
 import Settings from './settings/settings'
 import PostInteraction from '../../../components/feed/post/postInteraction'
-import ProfilePicture from "@dsalvagni/react-profile-picture"
-import "@dsalvagni/react-profile-picture/dist/ProfilePicture.css"
+import ProfilePicture from '@dsalvagni/react-profile-picture'
+import '@dsalvagni/react-profile-picture/dist/ProfilePicture.css'
 
 class Profile extends React.Component {
     constructor(props) {
@@ -169,8 +169,9 @@ class Profile extends React.Component {
                         numFollowing: this.formatNum(420000),
                         numFollowers: this.formatNum(44444444),
                         email: res.data.email,
-                        profilePic: res.data.url
+                        profilePic: res.data.url,
                     },
+                    following: res.data.following,
                 })
 
                 this.setState({
@@ -206,6 +207,26 @@ class Profile extends React.Component {
         this.setState({ showPosts: false })
     }
 
+    updateFollowing = () => {
+        if (!this.state.following) {
+            axios
+                .post('http://localhost:5000/api/followUser', {
+                    followed: this.state.user.username,
+                })
+                .then((res) => {
+                    this.setState({ following: true })
+                })
+        } else {
+            axios
+                .post('http://localhost:5000/api/unfollowUser', {
+                    followed: this.state.user.username,
+                })
+                .then(() => {
+                    this.setState({ following: false })
+                })
+        }
+    }
+
     Userline = () => {
         return (
             <div>
@@ -213,8 +234,9 @@ class Profile extends React.Component {
                     <Center>
                         <div style={{ display: 'flex' }}>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? 'select-title' : ''
-                                    }`}
+                                className={`toggle-title ${
+                                    this.state.showPosts ? 'select-title' : ''
+                                }`}
                                 onClick={this.toPosts}
                             >
                                 <Box>
@@ -227,8 +249,9 @@ class Profile extends React.Component {
                                 </Box>
                             </div>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? '' : 'select-title'
-                                    }`}
+                                className={`toggle-title ${
+                                    this.state.showPosts ? '' : 'select-title'
+                                }`}
                                 onClick={this.toInteractions}
                             >
                                 <Box>
@@ -246,8 +269,9 @@ class Profile extends React.Component {
 
                 <div className="slide-container">
                     <Box
-                        className={`slide ${this.state.showPosts ? 'right-hide' : 'show'
-                            }`}
+                        className={`slide ${
+                            this.state.showPosts ? 'right-hide' : 'show'
+                        }`}
                         style={{ paddingBottom: '80px' }}
                     >
                         <div style={{ textAlign: 'center' }}>
@@ -257,8 +281,9 @@ class Profile extends React.Component {
 
                     <Box
                         style={{ paddingBottom: '80px' }}
-                        className={`slide posts-container ${this.state.showPosts ? 'show' : 'left-hide'
-                            }`}
+                        className={`slide posts-container ${
+                            this.state.showPosts ? 'show' : 'left-hide'
+                        }`}
                     >
                         {this.postHandler()}
                     </Box>
@@ -296,27 +321,45 @@ class Profile extends React.Component {
                                         >
                                             <Center>
                                                 <Box on>
-                                                    <Tooltip label="Edit Picture" aria-label='A tooltip'>
+                                                    <Tooltip
+                                                        label="Edit Picture"
+                                                        aria-label="A tooltip"
+                                                    >
                                                         <Avatar
-                                                            name={this.state.user.firstName + ' ' + this.state.user.lastName}
-                                                            borderRadius={'full'}
-                                                            src={this.state.user.profilePic}
-                                                            style={{ width: 100, height: 100, borderRadius: 100 / 2 }}
+                                                            name={
+                                                                this.state.user
+                                                                    .firstName +
+                                                                ' ' +
+                                                                this.state.user
+                                                                    .lastName
+                                                            }
+                                                            borderRadius={
+                                                                'full'
+                                                            }
+                                                            src={
+                                                                this.state.user
+                                                                    .profilePic
+                                                            }
+                                                            style={{
+                                                                width: 100,
+                                                                height: 100,
+                                                                borderRadius:
+                                                                    100 / 2,
+                                                            }}
                                                             cursor={'pointer'}
                                                             _hover={{
-                                                                backgroundColor: 'darkturquoise',
+                                                                backgroundColor:
+                                                                    'darkturquoise',
                                                             }}
                                                             onClick={() => {
-                                                                this.setState(
-                                                                    {
-                                                                        section: 'profilePic',
-                                                                        open: true,
-                                                                    }
-                                                                )
+                                                                this.setState({
+                                                                    section:
+                                                                        'profilePic',
+                                                                    open: true,
+                                                                })
                                                             }}
                                                         />
                                                     </Tooltip>
-
                                                 </Box>
                                                 <Box pl={'1vw'}>
                                                     <Stack direction={'column'}>
@@ -511,7 +554,11 @@ class Profile extends React.Component {
                                                                                 'white'
                                                                             }
                                                                             onClick={() => {
-                                                                                console.log(this.state.email)
+                                                                                console.log(
+                                                                                    this
+                                                                                        .state
+                                                                                        .email
+                                                                                )
                                                                                 console.log(
                                                                                     'clicked'
                                                                                 )
@@ -593,7 +640,8 @@ class Profile extends React.Component {
                                                                     onClick={() => {
                                                                         this.setState(
                                                                             {
-                                                                                section: 'profile',
+                                                                                section:
+                                                                                    'profile',
                                                                                 open: true,
                                                                             }
                                                                         )
@@ -625,7 +673,18 @@ class Profile extends React.Component {
                                                                     }}
                                                                 >
                                                                     {
-                                                                        <Settings user={this.state.user} section={this.state.section} />
+                                                                        <Settings
+                                                                            user={
+                                                                                this
+                                                                                    .state
+                                                                                    .user
+                                                                            }
+                                                                            section={
+                                                                                this
+                                                                                    .state
+                                                                                    .section
+                                                                            }
+                                                                        />
                                                                     }
                                                                 </Popup>
                                                             </Box>
@@ -643,8 +702,16 @@ class Profile extends React.Component {
                                                                         color={
                                                                             'white'
                                                                         }
+                                                                        onClick={
+                                                                            this
+                                                                                .updateFollowing
+                                                                        }
                                                                     >
-                                                                        Follow/Unfollow
+                                                                        {this
+                                                                            .state
+                                                                            .following
+                                                                            ? 'Unfollow'
+                                                                            : 'Follow'}
                                                                     </Button>
                                                                 </Box>
                                                                 <Box>
