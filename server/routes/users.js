@@ -1,6 +1,7 @@
 const express = require('express')
 const userRoutes = express.Router()
 const decodeHeader = require('../utils/decodeHeader')
+var query = require('../database/queries/postQueries')
 
 //Use the below line in any file to connect to the database
 var getCon = require('../database/conn')
@@ -17,7 +18,7 @@ userRoutes.route('/getUserFromHeader').get(async (req, res) => {
     res.status(200).json(user)
 })
 
-userRoutes.route('/deleteProfile'). get(async(req,res) => {
+userRoutes.route('/deleteProfile').get(async (req, res) => {
     var user
     try {
         //Use decodeHeader to extract user info from header or throw an error
@@ -35,7 +36,6 @@ userRoutes.route('/deleteProfile'). get(async(req,res) => {
             res.status(500).json(err)
         } else res.json(result)
     })
-
 })
 
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
@@ -182,6 +182,9 @@ userRoutes.route('/searchUsers/:query').get(async (req, res) => {
 
 userRoutes.route('/followUser').post(async (req, res) => {
     let { followed } = req.body
+    if (!followed) {
+        return res.status(400).json('Missing followed field')
+    }
     var user
 
     try {
@@ -192,8 +195,17 @@ userRoutes.route('/followUser').post(async (req, res) => {
     }
 
     const { email, username } = user
+    if (!email || !username) {
+        return res.status('Bad token')
+    }
 
-    var sql = `INSERT INTO UserFollow VALUES (${con.escape(followed)}, ${con.escape(username)}, NOW())`
+    if (await query.isUser1FollowingUser2(username, followed)) {
+        return res.status(400).json('Already following that user')
+    }
+
+    var sql = `INSERT INTO UserFollow VALUES (${con.escape(
+        followed
+    )}, ${con.escape(username)}, NOW())`
 
     con.query(sql, function (err, result) {
         if (err) {
@@ -215,7 +227,9 @@ userRoutes.route('/getFollowedUsers').get(async (req, res) => {
 
     const { email, username } = user
 
-    var sql = `SELECT followed FROM UserFollow WHERE follower = ${con.escape(username)}`
+    var sql = `SELECT followed FROM UserFollow WHERE follower = ${con.escape(
+        username
+    )}`
 
     con.query(sql, function (err, result) {
         if (err) {
@@ -238,7 +252,9 @@ userRoutes.route('/unfollowUser').post(async (req, res) => {
 
     const { email, username } = user
 
-    var sql = `DELETE FROM UserFollow WHERE follower = ${con.escape(username)} and followed = ${con.escape(followed)}`
+    var sql = `DELETE FROM UserFollow WHERE follower = ${con.escape(
+        username
+    )} and followed = ${con.escape(followed)}`
 
     con.query(sql, function (err, result) {
         if (err) {
