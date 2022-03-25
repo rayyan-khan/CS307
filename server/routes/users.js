@@ -1,7 +1,8 @@
 const express = require('express')
 const userRoutes = express.Router()
 const decodeHeader = require('../utils/decodeHeader')
-var query = require('../database/queries/postQueries')
+const query = require('../database/queries/postQueries')
+const authQuery = require('../database/queries/authQueries')
 
 //Use the below line in any file to connect to the database
 var getCon = require('../database/conn')
@@ -201,6 +202,12 @@ userRoutes.route('/followUser').post(async (req, res) => {
 
     if (await query.isUser1FollowingUser2(username, followed)) {
         return res.status(400).json('Already following that user')
+    }
+
+    if (
+        (await authQuery.accountExistsUsername(followed)) !== 'Account exists'
+    ) {
+        return res.status(400).json('User does not exist')
     }
 
     var sql = `INSERT INTO UserFollow VALUES (${con.escape(

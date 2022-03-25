@@ -83,6 +83,22 @@ const accountExists = async (email) => {
     }
 }
 
+const accountExistsUsername = async (username) => {
+    const allVerified = await allVerifiedUsersByUsername(username)
+
+    if (allVerified.length == 0) {
+        const allUnverified = await allUnverifiedUsersByUsername(username)
+
+        if (allUnverified == 0) {
+            return 'No account with that username'
+        } else {
+            return 'Account not verified'
+        }
+    } else {
+        return 'Account exists'
+    }
+}
+
 const getCurPassword = async (email) => {
     var res = await con.awaitQuery(
         `SELECT password FROM User WHERE email="${email}"`
@@ -103,5 +119,6 @@ module.exports = {
     getConfirmationCode,
     updatePassword,
     accountExists,
+    accountExistsUsername,
     getCurPassword,
 }
