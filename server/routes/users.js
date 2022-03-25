@@ -59,7 +59,7 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
         req.params.username
     )}`
 
-    con.query(sql, function (err, fullResponse) {
+    con.query(sql, async (err, fullResponse) => {
         if (fullResponse.length === 0)
             return res.status(400).json("User doesn't exist")
         let result = fullResponse[0]
@@ -72,7 +72,12 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
             delete result.email
         }
 
-        res.status(200).json(result)
+        let followingUser = await query.isUser1FollowingUser2(
+            user.username,
+            req.params.username
+        )
+
+        res.status(200).json({ ...result, following: followingUser })
     })
 })
 
