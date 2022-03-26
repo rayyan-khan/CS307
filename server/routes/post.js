@@ -378,4 +378,22 @@ postRoutes.route('/bookmarkPost').post(async (req, res) => {
     res.json('Successfully bookmarked post')
 })
 
+postRoutes.route('/getBookmarks').get(async (req, res) => {
+    let user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    let result = await query.getBookmarks(user.username).catch((err) => {
+        console.log(err)
+        res.status(500).json('Error executing getBookmarks query')
+    })
+
+    res.json(result)
+})
+
 module.exports = postRoutes

@@ -15,6 +15,18 @@ const bookmarkPost = async (username, postID) => {
     )
 }
 
+const getBookmarks = async (username) => {
+    return await con.awaitQuery(`
+        SELECT IF (Post.anonymous = 1, 
+        IF (Post.username = "${username}", Post.username, "Anonymous"), Post.username) as username, 
+        Bookmark.postID, tagId, likesCount, dislikeCount, postCaption, numberOfComments, url, hyperlink 
+        FROM Bookmark
+        JOIN Post ON Bookmark.postID = Post.postID
+        WHERE Bookmark.username="${username}"
+        ;
+        `)
+}
+
 const postExists = async (postID) => {
     let res = await con.awaitQuery(
         `SELECT * FROM Post WHERE postID = "${postID}"`
