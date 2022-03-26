@@ -71,14 +71,32 @@ export default function Settings({ user, label, section }) {
         const file = imageData.file;
         const imageAsDataUrl = PP.getImageAsDataUrl();
         const data = new FormData();
+        console.log("PP", PP);
         console.log("imageData", imageData);
         console.log("File", file);
         console.log("URL", imageAsDataUrl);
 
-        data.append('image', imageData);
+
+        var url = imageAsDataUrl;
+        fetch(url)
+            .then(res => res.blob())
+            .then(blob => {
+                data.append('image', blob, 'filename')
+                console.log(blob)
+            })
+
         axios.post("http://localhost:5000/api/updateProfileImage", data).then((response) => {
             console.log(response);
         })
+    }
+
+    function dataURItoBlob(dataURI) {
+        var binary = atob(dataURI.split(',')[1]);
+        var array = [];
+        for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        return new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
     }
 
     if (settingScreen === 'profilePic') {
@@ -385,7 +403,18 @@ export default function Settings({ user, label, section }) {
                                                         <Box >
                                                             <Button width={'auto'} height={'auto'} backgroundColor={'red'} color={'white'}
                                                                 onClick={() => {
+                                                                    try {
+                                                                        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+                                                                        axios.get("http://localhost:5000/api/deleteProfile/").then((res) => {
+                                                                            localStorage.removeItem('token');
+                                                                            let url = window.location.href;
+                                                                            window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+                                                                        });
 
+                                                                    } catch (error) {
+                                                                        console.log(error);
+
+                                                                    }
                                                                 }}
                                                             >
                                                                 <Text pl={'1px'} pr={'1px'} pt={'4px'} pb={'4px'} fontSize={'sm'}>
@@ -684,9 +713,5 @@ export default function Settings({ user, label, section }) {
             </>
         )
 
-    } else if (settingScreen === 'deleteAccount') {
-        return (
-            <></>
-        )
     }
 }

@@ -13,9 +13,10 @@ import {
     Center,
     Text,
   } from '@chakra-ui/react'
+import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 
-const axios = require('axios');
+// const axios = require('axios');
 
 class ResetPassword extends React.Component {
 
@@ -40,7 +41,6 @@ class ResetPassword extends React.Component {
         // axios stuff
         axios.put("http://localhost5000/api/passwordRecoveryLink", {email: this.state.email});
 
-
     }
 
   render() {
@@ -55,7 +55,6 @@ class ResetPassword extends React.Component {
             <p></p>
             <form>
 
-              {/* username entry part of form */}
               <FormControl isInvalid={this.state.userError}>
                 <FormLabel htmlFor='email'> </FormLabel>
                 <Input

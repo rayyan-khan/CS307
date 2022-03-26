@@ -35,9 +35,9 @@ class Login extends React.Component {
       },
       userError: false,
       passwordError: false,
-      axiosError: true,
+      axiosError: false,
       loginError: 'No account with this username/password combination.',
-      show: false
+      show: false,
     }
   }
 
@@ -54,8 +54,16 @@ class Login extends React.Component {
     });
   }
 
-  loginUser = () => {
+  handleSubmit = (e) => {
+    if (e !== undefined) {
+      if (e.key === "Enter") {
+        this.loginUser();
+      }
+    }
+  }
 
+  loginUser = () => {
+    this.setState({ displayPopover: true });
     console.log("Passed to axios");
     const payload = {
       username: this.state.user.Username,
@@ -63,28 +71,34 @@ class Login extends React.Component {
     }
     axios.post("http://localhost:5000/api/login", payload)
       .then((response) => {
-        console.log("got a response");
-        console.log(response.data);
         var token = response.data.token
-        // TODO: Change the token in the local storage
         localStorage.setItem("token", token);
         let url = window.location.href;
         window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
         this.setState({ axiosError: false });
       })
       .catch(({ response }) => {
-        console.log("got an error");
-        console.log(response.data);
-        this.setState({ loginError: response.data.errors[0] });
-        console.log(this.state.loginError);
+        if (response.data.errors === undefined) {
+          console.log("Only one error");
+          console.log(response.data);
+          this.setState({ loginError: response.data });
+          setTimeout(() => {
+            this.setState({ axiosError: false });
+            this.setState({ loginError: '' })
+          }, 2000);
+          this.setState({ axiosError: false });
+        } else {
+          console.log("multiple errors");
+          this.setState({ loginError: response.data.errors[0] });
+          setTimeout(() => {
+            this.setState({ axiosError: false });
+            this.setState({ loginError: '' })
+          }, 2000);
+          this.setState({ axiosError: false });
+        }
         this.setState({ axiosError: true });
+
       })
-
-    if (this.state.axiosError === false) {
-      let url = window.location.href;
-      window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
-    }
-
   }
 
   handleClick = () => {
@@ -118,6 +132,7 @@ class Login extends React.Component {
                   type="text"
                   name="Username"
                   value={this.state.user.Username}
+                  onKeyPress={this.handleSubmit}
                   onChange={this.changeHandler}
                   style={{ color: 'darkturquoise' }} />
                 {!this.state.userError ? (<FormHelperText>  </FormHelperText>)
@@ -134,7 +149,9 @@ class Login extends React.Component {
                     placeholder='Enter password'
                     style={{ color: 'darkturquoise' }}
                     name="Password"
+                    onEnterC
                     value={this.state.user.Password}
+                    onKeyPress={this.handleSubmit}
                     onChange={this.changeHandler}
                   />
                   <InputRightElement width='4.5rem'>
@@ -149,40 +166,40 @@ class Login extends React.Component {
 
             </form>
             <Center paddingTop={'2vh'}>
-              <Popover>
+              <Popover isOpen={this.state.axiosError}>
                 <PopoverTrigger>
                   <Button colorScheme='black' onClick={this.loginUser} fontSize={25}
                     bg='mediumturquoise'>Submit</Button>
                 </PopoverTrigger>
                 <PopoverContent bg='black' fontWeight='bold' fontSize={16} style={{ color: 'mediumturquoise' }}>
                   <PopoverArrow />
-                  <PopoverCloseButton />
-                  {!this.state.axiosError ? (<PopoverHeader>Logging in...</PopoverHeader>)
-                    : (<PopoverHeader> {this.state.loginError} </PopoverHeader>)}
+                  <PopoverHeader>
+                    {!this.state.axiosError ? "Logging in..." : this.state.loginError}
+                  </PopoverHeader>
                 </PopoverContent>
               </Popover>
             </Center>
             <Center>
-            <Box
-              as='button'
-              height='24px'
-              lineHeight='1.2'
-              transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
-              border='none'
-              px='8px'
-              borderRadius='2px'
-              fontSize='14px'
-              fontWeight='semibold'
-              bg='none'
-              borderColor='#ccd0d5'
-              color='mediumturquoise'
-              _hover={{ bg: '#ebedf0' }}
-              onClick={this.forgotPassword}
-            >
-              Forgot your password?
-            </Box>
+              <Box
+                as='button'
+                height='24px'
+                lineHeight='1.2'
+                transition='all 0.2s cubic-bezier(.08,.52,.52,1)'
+                border='none'
+                px='8px'
+                borderRadius='2px'
+                fontSize='14px'
+                fontWeight='semibold'
+                bg='none'
+                borderColor='#ccd0d5'
+                color='mediumturquoise'
+                _hover={{ bg: '#ebedf0' }}
+                onClick={this.forgotPassword}
+              >
+                Forgot your password?
+              </Box>
             </Center>
-            
+
           </Box>
         </Center>
       </div >

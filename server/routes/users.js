@@ -1,6 +1,8 @@
 const express = require('express')
 const userRoutes = express.Router()
 const decodeHeader = require('../utils/decodeHeader')
+const query = require('../database/queries/userQueries')
+const authQuery = require('../database/queries/authQueries')
 
 //Use the below line in any file to connect to the database
 var getCon = require('../database/conn')
@@ -15,6 +17,26 @@ userRoutes.route('/getUserFromHeader').get(async (req, res) => {
     }
 
     res.status(200).json(user)
+})
+
+userRoutes.route('/deleteProfile').get(async (req, res) => {
+    var user
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+    console.log(username)
+    var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
 })
 
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
@@ -37,7 +59,7 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
         req.params.username
     )}`
 
-    con.query(sql, function (err, fullResponse) {
+    con.query(sql, async (err, fullResponse) => {
         if (fullResponse.length === 0)
             return res.status(400).json("User doesn't exist")
         let result = fullResponse[0]
@@ -50,7 +72,14 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
             delete result.email
         }
 
-        res.status(200).json(result)
+        let followingUser =
+            user &&
+            (await query.isUser1FollowingUser2(
+                user.username,
+                req.params.username
+            ))
+
+        res.status(200).json({ ...result, following: followingUser })
     })
 })
 
@@ -159,6 +188,94 @@ userRoutes.route('/searchUsers/:query').get(async (req, res) => {
     })
 })
 
+userRoutes.route('/followUser').post(async (req, res) => {
+    let { followed } = req.body
+    if (!followed) {
+        return res.status(400).json('Missing followed field')
+    }
+    var user
 
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+    if (!email || !username) {
+        return res.status('Bad token')
+    }
+
+    if (await query.isUser1FollowingUser2(username, followed)) {
+        return res.status(400).json('Already following that user')
+    }
+
+    if (
+        (await authQuery.accountExistsUsername(followed)) !== 'Account exists'
+    ) {
+        return res.status(400).json('User does not exist')
+    }
+
+    var sql = `INSERT INTO UserFollow VALUES (${con.escape(
+        followed
+    )}, ${con.escape(username)}, NOW())`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
+userRoutes.route('/getFollowedUsers').get(async (req, res) => {
+    var user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+
+    var sql = `SELECT followed FROM UserFollow WHERE follower = ${con.escape(
+        username
+    )}`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
+userRoutes.route('/unfollowUser').post(async (req, res) => {
+    let { followed } = req.body
+    var user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+
+    var sql = `DELETE FROM UserFollow WHERE follower = ${con.escape(
+        username
+    )} and followed = ${con.escape(followed)}`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
 
 module.exports = userRoutes
