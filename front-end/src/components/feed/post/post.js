@@ -28,15 +28,17 @@ export default function Post({ post, label }) {
     const [comment, setComment] = React.useState("");
     const [runAPI, setAPI] = React.useState(0);
     const [postComment, setPostComment] = React.useState([]);
+    const [usernamePostID, setUsernamePostID] = React.useState({});
     var posts = JSON.parse(localStorage.getItem('allPosts'));
     console.log(label)
     var postIndex = label;
-    var usernamePostID = {}
 
     useEffect(() => {
+        console.log(runAPI);
+        console.log(usernamePostID);
         try {
             console.log("EFFECT")
-            if (runAPI !== 0) { 
+            if (runAPI !== 0) {
                 console.log("ENTER")
                 console.log(usernamePostID['postID']);
 
@@ -44,7 +46,7 @@ export default function Post({ post, label }) {
                     console.log("Passed")
                 })
             }
-        } catch(error) {
+        } catch (error) {
             console.log("NOT GOOD")
         }
     }, [runAPI]);
@@ -56,31 +58,32 @@ export default function Post({ post, label }) {
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
         } else {
-        
-        event.stopPropagation();
-        
-        usernamePostID['username'] = username;
-        usernamePostID['postID'] = post.postID;
 
-        
-        axios.post("http://localhost:5000/api/likeupdate", usernamePostID).then((res) => {
-            console.log(res.data.value);
+            event.stopPropagation();
 
-            if (res.data.value === "Added") {
-                console.log("WORKS NOW");
-                setIsLiked(true)
-                post.likesCount += 1;
-                usernamePostID['change'] = 1;
-            } else {
-                setIsLiked(false)
-                post.likesCount -= 1;
-                usernamePostID['change'] = -1;
-            }
-            console.log("FIRST HERE");
-            setAPI(1); 
-        });
+            usernamePostID['username'] = username;
+            usernamePostID['postID'] = post.postID;
+            console.log(usernamePostID);
 
-    }
+
+            axios.post("http://localhost:5000/api/likeupdate", usernamePostID).then((res) => {
+                console.log(res.data.value);
+
+                if (res.data.value === "Added") {
+                    console.log("WORKS NOW");
+                    setIsLiked(true)
+                    post.likesCount += 1;
+                    usernamePostID['change'] = 1;
+                } else {
+                    setIsLiked(false)
+                    post.likesCount -= 1;
+                    usernamePostID['change'] = -1;
+                }
+                console.log("FIRST HERE");
+                setAPI(1);
+            });
+
+        }
 
         // setIsLiked(!isLiked);
         // if (!isLiked) {
