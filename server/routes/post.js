@@ -211,10 +211,23 @@ postRoutes.route('/getSpecificPost/:postID').get(function (req, res) {
 })
 
 //use the below route to get all the posts in order of time posted
-postRoutes.route('/getOrderedPost').get(function (req, res) {
+postRoutes.route('/getOrderedPost').get(async function (req, res) {
     //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
+    var user
+    var amUser = false
+    try {
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        user = undefined
+    }
+
+    
+    const { email, username } = user
+    
+    
     var anony = 'Anonymous'
-    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post Order BY timeStamp DESC`
+    var sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
+     Order BY timeStamp DESC`
 
     con.query(sql, function (err, result) {
         if (err) {
@@ -288,6 +301,87 @@ postRoutes.route('/postInteractions').get((req, res) => {
         }
     })
 })
+
+postRoutes.route('/likeupdate').post((req, res) => {
+    
+    // var sql = `SELECT COUNT(*) AS NUM FROM UserLike WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+
+    var sql = `SELECT COUNT(*) AS NUM FROM UserLike WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+    var ans = -1
+    var userExists = 'why'
+    con.query(sql, function (err, result) {
+        
+        if (err) {
+            console.log(err)
+        } else {
+            ans = result[0].NUM
+            console.log(ans);
+            if (ans === 0) {
+                userExists = 'false'
+            } else {
+                userExists = 'true'
+            }
+
+            var insert = ''
+            var val = ''
+        
+            console.log(userExists);
+        
+            if (userExists === 'false') {
+                console.log("RERE")
+                insert = `INSERT INTO UserLike VALUES('${req.body.username}', ${req.body.postID})`
+                val = "Added"
+                           
+            } else {
+                    console.log("WRONG")
+                    insert = `DELETE FROM UserLike WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+                    val = "Deleted"
+            }
+        
+            con.query(insert, function (err, result) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    res.json({value : val});
+                }
+            })
+        }
+    })
+
+    // var userExists = checkUser(req);
+
+            //res.json(["Error2"])
+})
+
+postRoutes.route('/checkUserLike').get((req, res) => {
+    //var ans = checkUser(req);
+    var ans = "hello";
+    res.json({value : ans});
+    
+})
+
+
+function checkUser(req) {
+
+}
+
+postRoutes.route('/updateLikeCount').post((req, res) => {
+    console.log(`${req.body.change}`);
+    console.log("CHECK WHAT HAPPENED");
+
+    var sql = `UPDATE Post SET likesCount = likesCount + ${req.body.change} WHERE postID = ${req.body.postID}`
+
+    con.query(sql,function(err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        }
+        console.log("FINAL")
+        res.json("all good")
+    })
+    
+});
+
 
 module.exports = postRoutes
 

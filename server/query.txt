@@ -15,6 +15,13 @@ hyperlink VARCHAR(200),
 Primary Key(postID)
 );
 
+CREATE TABLE UserLike (
+    username VARCHAR(20),
+    postID INT,
+    PRIMARY KEY(username, postID),
+    FOREIGN KEY (usename) REFERENCES User(username)
+);
+
 CREATE TABLE User (
 username VARCHAR(20) Primary Key,
 firstName VARCHAR(20),

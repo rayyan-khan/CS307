@@ -36,7 +36,14 @@ class Homepage extends React.Component {
                         this.setState({ loading: 1 });
                     } else {
                         posts.map(async (post, key) => {
-                            post.isLiked = false;
+                            
+                            if (post.isLiked === "1") {
+                                post.isLiked = true;
+                                console.log("CHECK ME");
+                            } else {
+                                post.isLiked = false;
+                                console.log("PRINT PLEASE")
+                            }
                             post.isDisliked = false;
                             post.isBookmarked = false;
                         });

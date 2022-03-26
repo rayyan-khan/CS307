@@ -10,6 +10,7 @@ import {
     Input,
 } from '@chakra-ui/react';
 
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
 import { FaRegBookmark } from "react-icons/fa"
 import React from 'react';
@@ -25,44 +26,85 @@ export default function Post({ post, label }) {
     const [isLiked, setIsLiked] = React.useState(post.isLiked);
     const [isDisliked, setIsDisliked] = React.useState(post.isDisliked);
     const [comment, setComment] = React.useState("");
+    const [runAPI, setAPI] = React.useState(0);
     const [postComment, setPostComment] = React.useState([]);
     var posts = JSON.parse(localStorage.getItem('allPosts'));
     console.log(label)
     var postIndex = label;
+    var usernamePostID = {}
 
+    useEffect(() => {
+        try {
+            console.log("EFFECT")
+            if (runAPI !== 0) { 
+                console.log("ENTER")
+                console.log(usernamePostID['postID']);
 
+                axios.post("http://localhost:5000/api/updateLikeCount", usernamePostID).then((res) => {
+                    console.log("Passed")
+                })
+            }
+        } catch(error) {
+            console.log("NOT GOOD")
+        }
+    }, [runAPI]);
 
     const handleLiked = (event) => {
-        event.stopPropagation();
-        setIsLiked(!isLiked);
-        if (!isLiked) {
-            post.likesCount += 1;
-            posts[postIndex].isLiked = true;
-            posts[postIndex].likesCount += 1;
-            localStorage.removeItem('allPosts');
-            localStorage.setItem('allPosts', JSON.stringify(posts));
-            if (isLiked !== isDisliked) {
-                setIsDisliked(false);
-                post.dislikeCount -= 1;
-                posts[postIndex].isDisliked = false;
-                posts[postIndex].dislikeCount -= 1;
-                localStorage.removeItem('allPosts');
-                localStorage.setItem('allPosts', JSON.stringify(posts));
-            }
-        } else {
-            post.likesCount -= 1;
-            posts[postIndex].isLiked = false;
-            posts[postIndex].likesCount -= 1;
-            localStorage.removeItem('allPosts');
-            localStorage.setItem('allPosts', JSON.stringify(posts));
-        }
-
 
         if (localStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-        }
+        } else {
+        
+        event.stopPropagation();
+        
+        usernamePostID['username'] = username;
+        usernamePostID['postID'] = post.postID;
+
+        
+        axios.post("http://localhost:5000/api/likeupdate", usernamePostID).then((res) => {
+            console.log(res.data.value);
+
+            if (res.data.value === "Added") {
+                console.log("WORKS NOW");
+                setIsLiked(true)
+                post.likesCount += 1;
+                usernamePostID['change'] = 1;
+            } else {
+                setIsLiked(false)
+                post.likesCount -= 1;
+                usernamePostID['change'] = -1;
+            }
+            console.log("FIRST HERE");
+            setAPI(1); 
+        });
+
+    }
+
+        // setIsLiked(!isLiked);
+        // if (!isLiked) {
+        //     post.likesCount += 1;
+        //     posts[postIndex].isLiked = true;
+        //     posts[postIndex].likesCount += 1;
+        //     localStorage.removeItem('allPosts');
+        //     localStorage.setItem('allPosts', JSON.stringify(posts));
+        //     if (isLiked !== isDisliked) {
+        //         setIsDisliked(false);
+        //         post.dislikeCount -= 1;
+        //         posts[postIndex].isDisliked = false;
+        //         posts[postIndex].dislikeCount -= 1;
+        //         localStorage.removeItem('allPosts');
+        //         localStorage.setItem('allPosts', JSON.stringify(posts));
+        //     }
+
+        // } else {
+        //     post.likesCount -= 1;
+        //     posts[postIndex].isLiked = false;
+        //     posts[postIndex].likesCount -= 1;
+        //     localStorage.removeItem('allPosts');
+        //     localStorage.setItem('allPosts', JSON.stringify(posts));
+        // }
     }
 
     const [username, setUsername] = React.useState("");
