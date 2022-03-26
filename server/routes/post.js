@@ -1,6 +1,6 @@
 const express = require('express')
 const postRoutes = express.Router()
-//const s3 = require("../s3Bucket/create-bucket")
+const query = require('../database/queries/postQueries')
 const decodeHeader = require('../utils/decodeHeader')
 
 //Use the below route to create a post and store into the database and S3
@@ -350,28 +350,32 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
     })
 })
 
+postRoutes.route('/bookmarkPost').post(async (req, res) => {
+    let { postID } = req.body
+
+    if (!postID) return res.status(400).json('Missing postID field')
+
+    let user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    let username = user.username
+
+    if (!(await query.postExists(postID))) {
+        return res.status(400).json('Post does not exist')
+    }
+
+    await query.bookmarkPost(username, postID).catch((err) => {
+        console.log(err)
+        res.status(500).json('Error executing bookmarkPost SQL statement')
+    })
+
+    res.json('Successfully bookmarked post')
+})
+
 module.exports = postRoutes
-
-//userRoutes.route("/testing").post(function (req, res) {
-//  console.log(req.body);
-//   var sql = "INSERT INTO User (username, password) VALUES ('" + req.body.username + "', '" + req.body.password + "')";
-
-//  con.query(sql, function (err, result) {
-//       if (err) throw err;
-//        console.log("1 record inserted");
-//        console.log(result)
-//    });
-
-//  res.json("user added")/
-//});
-//
-// userRoutes.route("/exists/:username").get(function (req, res) {
-//     var sql = "SELECT * FROM users WHERE username = '" + req.params.username + "'";
-//
-//     con.query(sql, function (err, result) {
-//         if (err) throw err;
-//         console.log(result)
-//
-//         res.json(result.length != 0)
-//     })
-// })

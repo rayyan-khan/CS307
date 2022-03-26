@@ -1,7 +1,7 @@
 const express = require('express')
 const userRoutes = express.Router()
 const decodeHeader = require('../utils/decodeHeader')
-const query = require('../database/queries/postQueries')
+const query = require('../database/queries/userQueries')
 const authQuery = require('../database/queries/authQueries')
 
 //Use the below line in any file to connect to the database
