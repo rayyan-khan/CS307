@@ -215,19 +215,25 @@ postRoutes.route('/getOrderedPost').get(async function (req, res) {
     //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
     var user
     var amUser = false
+    var sql  
     try {
         user = await decodeHeader.decodeAuthHeader(req)
+        const { email, username } = user
+        sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${username}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
+        LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID Order BY timeStamp DESC`
+
     } catch (err) {
         user = undefined
+        sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isLiked, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
+        Order BY timeStamp DESC`
     }
 
     
-    const { email, username } = user
+    
     
     
     var anony = 'Anonymous'
-    var sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
-     Order BY timeStamp DESC`
+
 
     con.query(sql, function (err, result) {
         if (err) {
@@ -306,7 +312,7 @@ postRoutes.route('/likeupdate').post((req, res) => {
     
     // var sql = `SELECT COUNT(*) AS NUM FROM UserLike WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
 
-    var sql = `SELECT COUNT(*) AS NUM FROM UserLike WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+    var sql = `SELECT COUNT(*) AS NUM FROM ${req.body.table} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
     var ans = -1
     var userExists = 'why'
     con.query(sql, function (err, result) {
@@ -328,13 +334,13 @@ postRoutes.route('/likeupdate').post((req, res) => {
             console.log(userExists);
         
             if (userExists === 'false') {
-                console.log("RERE")
-                insert = `INSERT INTO UserLike VALUES('${req.body.username}', ${req.body.postID})`
+                console.log("ADDING USER")
+                insert = `INSERT INTO ${req.body.table} VALUES('${req.body.username}', ${req.body.postID})`
                 val = "Added"
                            
             } else {
-                    console.log("WRONG")
-                    insert = `DELETE FROM UserLike WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+                    console.log("DELETING USER")
+                    insert = `DELETE FROM ${req.body.table} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
                     val = "Deleted"
             }
         
@@ -367,9 +373,17 @@ function checkUser(req) {
 
 postRoutes.route('/updateLikeCount').post((req, res) => {
     console.log(`${req.body.change}`);
-    console.log("CHECK WHAT HAPPENED");
 
-    var sql = `UPDATE Post SET likesCount = likesCount + ${req.body.change} WHERE postID = ${req.body.postID}`
+    var count = '';
+
+
+    if (req.body.table === 'UserLike') {
+        count = 'likesCount';
+    } else {
+        count = 'dislikeCount';
+    }
+
+    var sql = `UPDATE Post SET ${count} = ${count} + ${req.body.change} WHERE postID = ${req.body.postID}`
 
     con.query(sql,function(err, result) {
         if (err) {

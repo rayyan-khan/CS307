@@ -40,7 +40,7 @@ export default function Post({ post, label }) {
             console.log("EFFECT")
             if (runAPI !== 0) {
                 console.log("ENTER")
-                console.log(usernamePostID['postID']);
+                console.log(usernamePostID['table']);
 
                 axios.post("http://localhost:5000/api/updateLikeCount", usernamePostID).then((res) => {
                     console.log("Passed")
@@ -63,6 +63,7 @@ export default function Post({ post, label }) {
 
             usernamePostID['username'] = username;
             usernamePostID['postID'] = post.postID;
+            usernamePostID['table'] = 'UserLike';
             console.log(usernamePostID);
 
 
@@ -71,12 +72,14 @@ export default function Post({ post, label }) {
 
                 if (res.data.value === "Added") {
                     console.log("WORKS NOW");
-                    setIsLiked(true)
+                    
                     post.likesCount += 1;
+                    setIsLiked(true)
                     usernamePostID['change'] = 1;
                 } else {
-                    setIsLiked(false)
                     post.likesCount -= 1;
+                    setIsLiked(false)
+                    
                     usernamePostID['change'] = -1;
                 }
                 console.log("FIRST HERE");
@@ -124,36 +127,70 @@ export default function Post({ post, label }) {
 
 
     const handleDisliked = (event) => {
-        event.stopPropagation();
-        setIsDisliked(!isDisliked);
-        if (!isDisliked) {
-            posts[postIndex].isDisliked = true;
-            post.dislikeCount += 1;
-            posts[postIndex].dislikeCount += 1;
-            localStorage.removeItem('allPosts');
-            localStorage.setItem('allPosts', JSON.stringify(posts));
-
-            if (isLiked !== isDisliked) {
-                setIsLiked(false);
-                post.likesCount -= 1;
-                posts[postIndex].isLiked = false;
-                posts[postIndex].likesCount -= 1;
-                localStorage.removeItem('allPosts');
-                localStorage.setItem('allPosts', JSON.stringify(posts));
-            }
-        } else {
-            post.dislikeCount -= 1;
-            posts[postIndex].isDisliked = false;
-            posts[postIndex].dislikeCount -= 1;
-            localStorage.removeItem('allPosts');
-            localStorage.setItem('allPosts', JSON.stringify(posts));
-        }
-
         if (localStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+        } else {
+
+            event.stopPropagation();
+
+            usernamePostID['username'] = username;
+            usernamePostID['postID'] = post.postID;
+            usernamePostID['table'] = 'UserDisLike';
+            console.log(usernamePostID);
+
+
+            axios.post("http://localhost:5000/api/likeupdate", usernamePostID).then((res) => {
+                console.log(res.data.value);
+
+                if (res.data.value === "Added") {
+                    console.log("WORKS NOW");
+                    
+                    post.dislikeCount += 1;
+                    setIsDisliked(true)
+                    usernamePostID['change'] = 1;
+                } else {
+                    post.dislikeCount -= 1;
+                    setIsDisliked(false)
+                    
+                    usernamePostID['change'] = -1;
+                }
+                console.log("FIRST HERE");
+                setAPI(1);
+            });
+
         }
+        // event.stopPropagation();
+        // setIsDisliked(!isDisliked);
+        // if (!isDisliked) {
+        //     posts[postIndex].isDisliked = true;
+        //     post.dislikeCount += 1;
+        //     posts[postIndex].dislikeCount += 1;
+        //     localStorage.removeItem('allPosts');
+        //     localStorage.setItem('allPosts', JSON.stringify(posts));
+
+        //     if (isLiked !== isDisliked) {
+        //         setIsLiked(false);
+        //         post.likesCount -= 1;
+        //         posts[postIndex].isLiked = false;
+        //         posts[postIndex].likesCount -= 1;
+        //         localStorage.removeItem('allPosts');
+        //         localStorage.setItem('allPosts', JSON.stringify(posts));
+        //     }
+        // } else {
+        //     post.dislikeCount -= 1;
+        //     posts[postIndex].isDisliked = false;
+        //     posts[postIndex].dislikeCount -= 1;
+        //     localStorage.removeItem('allPosts');
+        //     localStorage.setItem('allPosts', JSON.stringify(posts));
+        // }
+
+        // if (localStorage.getItem('token') == null) {
+        //     event.preventDefault();
+        //     let url = window.location.href;
+        //     window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+        // }
     }
 
     const [isBookmarked, setIsBookmarked] = React.useState(post.isBookmarked);

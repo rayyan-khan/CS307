@@ -30,13 +30,15 @@ class Homepage extends React.Component {
             axios.get("http://localhost:5000/api/getOrderedPost")
                 .then(res => {
                     const posts = res.data
-                    if (localStorage.getItem('token') != null && localStorage.getItem('allPosts') != null && posts.length == JSON.parse(localStorage.getItem('allPosts')).length) {
-                        console.log('using local storage');
-                        this.setState({ allPosts: JSON.parse(localStorage.getItem('allPosts')) });
-                        this.setState({ loading: 1 });
-                    } else {
+                    console.log("REACCCCCHED");
+                    // if (localStorage.getItem('token') != null && localStorage.getItem('allPosts') != null && posts.length == JSON.parse(localStorage.getItem('allPosts')).length) {
+                    //     console.log('using local storage');
+                    //     this.setState({ allPosts: JSON.parse(localStorage.getItem('allPosts')) });
+                    //     this.setState({ loading: 1 });
+                    // } else {
                         posts.map(async (post, key) => {
-                            
+
+                        
                             if (post.isLiked === "1") {
                                 post.isLiked = true;
                                 console.log("CHECK ME");
@@ -44,15 +46,24 @@ class Homepage extends React.Component {
                                 post.isLiked = false;
                                 console.log("PRINT PLEASE")
                             }
-                            post.isDisliked = false;
+
+                            if (post.isDisliked === "1") {
+                                post.isDisliked = true;
+                                console.log("Disliked is true at start");
+                            } else {
+                                post.isDisliked = false;
+                                console.log("Disliked is False at start")
+                            }
+
                             post.isBookmarked = false;
                         });
                         console.log('using server');
                         localStorage.setItem('allPosts', JSON.stringify(posts));
                         this.setState({ allPosts: posts });
                         this.setState({ loading: 1 });
-                    }
+                    
                 })
+                
                 .catch(function (error) {
                     // console.log(error);
                     // this.setState({ loading: -1 })
