@@ -370,12 +370,48 @@ postRoutes.route('/bookmarkPost').post(async (req, res) => {
         return res.status(400).json('Post does not exist')
     }
 
+    if (await query.postBookmarked(username, postID)) {
+        return res.status(400).json('Already bookmarked post')
+    }
+
     await query.bookmarkPost(username, postID).catch((err) => {
         console.log(err)
         res.status(500).json('Error executing bookmarkPost SQL statement')
     })
 
     res.json('Successfully bookmarked post')
+})
+
+postRoutes.route('/unbookmarkPost').post(async (req, res) => {
+    let { postID } = req.body
+
+    if (!postID) return res.status(400).json('Missing postID field')
+
+    let user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    let username = user.username
+
+    if (!(await query.postExists(postID))) {
+        return res.status(400).json('Post does not exist')
+    }
+
+    if (!(await query.postBookmarked(username, postID))) {
+        return res.status(400).json('Post not bookmarked')
+    }
+
+    await query.unbookmarkPost(username, postID).catch((err) => {
+        console.log(err)
+        res.status(500).json('Error executing bookmarkPost SQL statement')
+    })
+
+    res.json('Successfully unbookmarked post')
 })
 
 postRoutes.route('/getBookmarks').get(async (req, res) => {

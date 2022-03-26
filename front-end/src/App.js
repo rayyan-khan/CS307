@@ -27,6 +27,7 @@ import TagPage from './layouts/logged-in-user/tag-pages/tag-pages'
 import axios from 'axios'
 
 import { Box } from '@chakra-ui/react'
+import Bookmarks from './layouts/logged-in-user/bookmarks'
 
 export default class App extends React.Component {
     render() {
@@ -141,6 +142,14 @@ export default class App extends React.Component {
                                     element={
                                         <PrivateRoute
                                             loadComponent={<CreatePost />}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="/bookmarks"
+                                    element={
+                                        <PrivateRoute
+                                            loadComponent={<Bookmarks />}
                                         />
                                     }
                                 />

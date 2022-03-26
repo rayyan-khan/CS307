@@ -15,6 +15,12 @@ const bookmarkPost = async (username, postID) => {
     )
 }
 
+const unbookmarkPost = async (username, postID) => {
+    return await con.awaitQuery(
+        `DELETE FROM Bookmark WHERE username = "${username}" AND postID = "${postID}"`
+    )
+}
+
 const getBookmarks = async (username) => {
     return await con.awaitQuery(`
         SELECT IF (Post.anonymous = 1, 
@@ -35,8 +41,19 @@ const postExists = async (postID) => {
     return res.length != 0
 }
 
+const postBookmarked = async (username, postID) => {
+    let res = await con.awaitQuery(
+        `SELECT * FROM Bookmark WHERE username = "${username}" AND postID = "${postID}"`
+    )
+
+    return res.length != 0
+}
+
 module.exports = {
     isUser1FollowingUser2,
     bookmarkPost,
+    unbookmarkPost,
     postExists,
+    getBookmarks,
+    postBookmarked,
 }
