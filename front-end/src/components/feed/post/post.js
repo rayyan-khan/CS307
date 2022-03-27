@@ -8,20 +8,9 @@ import {
     IconButton,
     Image,
     Input,
+} from '@chakra-ui/react'
 
-} from '@chakra-ui/react';
-
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
-import { FaRegBookmark } from "react-icons/fa"
-import React from 'react';
-import { LinkPreview } from "@dhaiwat10/react-link-preview";
-import axios from 'axios';
-import { RiContactsBookLine } from 'react-icons/ri';
-import "./post.css";
-import { GrAnalytics } from 'react-icons/gr';
-
-
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
     AiOutlineDislike,
     AiOutlineLike,
@@ -36,72 +25,73 @@ import './post.css'
 import { GrAnalytics } from 'react-icons/gr'
 
 export default function Post({ post, label }) {
-
-
-    const [isLiked, setIsLiked] = React.useState(post.isLiked);
-    const [isDisliked, setIsDisliked] = React.useState(post.isDisliked);
-    const [comment, setComment] = React.useState("");
-    const [runAPI, setAPI] = React.useState(0);
-    const [postComment, setPostComment] = React.useState([]);
-    const [usernamePostID, setUsernamePostID] = React.useState({});
-    var posts = JSON.parse(localStorage.getItem('allPosts'));
+    const [isLiked, setIsLiked] = React.useState(post.isLiked)
+    const [isDisliked, setIsDisliked] = React.useState(post.isDisliked)
+    const [comment, setComment] = React.useState('')
+    const [runAPI, setAPI] = React.useState(0)
+    const [postComment, setPostComment] = React.useState([])
+    const [usernamePostID, setUsernamePostID] = React.useState({})
+    var posts = JSON.parse(localStorage.getItem('allPosts'))
     console.log(label)
-    var postIndex = label;
+    var postIndex = label
 
     useEffect(() => {
-        console.log(runAPI);
-        console.log(usernamePostID);
+        console.log(runAPI)
+        console.log(usernamePostID)
         try {
-            console.log("EFFECT")
+            console.log('EFFECT')
             if (runAPI !== 0) {
-                console.log("ENTER")
-                console.log(usernamePostID['table']);
+                console.log('ENTER')
+                console.log(usernamePostID['table'])
 
-                axios.post("http://localhost:5000/api/updateLikeCount", usernamePostID).then((res) => {
-                    console.log("Passed")
-                })
+                axios
+                    .post(
+                        'http://localhost:5000/api/updateLikeCount',
+                        usernamePostID
+                    )
+                    .then((res) => {
+                        console.log('Passed')
+                    })
             }
         } catch (error) {
-            console.log("NOT GOOD")
+            console.log('NOT GOOD')
         }
-    }, [runAPI]);
-
+    }, [runAPI])
 
     const handleLiked = (event) => {
-
         if (localStorage.getItem('token') == null) {
-            event.preventDefault();
-            let url = window.location.href;
-            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+            event.preventDefault()
+            let url = window.location.href
+            window.location.href =
+                url.substring(0, url.indexOf('/')) + '/signup'
         } else {
+            event.stopPropagation()
 
-            event.stopPropagation();
+            usernamePostID['username'] = username
+            usernamePostID['postID'] = post.postID
+            usernamePostID['table'] = 'UserLike'
+            console.log(usernamePostID)
 
-            usernamePostID['username'] = username;
-            usernamePostID['postID'] = post.postID;
-            usernamePostID['table'] = 'UserLike';
-            console.log(usernamePostID);
+            axios
+                .post('http://localhost:5000/api/likeupdate', usernamePostID)
+                .then((res) => {
+                    console.log(res.data.value)
 
+                    if (res.data.value === 'Added') {
+                        console.log('WORKS NOW')
 
-            axios.post("http://localhost:5000/api/likeupdate", usernamePostID).then((res) => {
-                console.log(res.data.value);
+                        post.likesCount += 1
+                        setIsLiked(true)
+                        usernamePostID['change'] = 1
+                    } else {
+                        post.likesCount -= 1
+                        setIsLiked(false)
 
-                if (res.data.value === "Added") {
-                    console.log("WORKS NOW");
-                    
-                    post.likesCount += 1;
-                    setIsLiked(true)
-                    usernamePostID['change'] = 1;
-                } else {
-                    post.likesCount -= 1;
-                    setIsLiked(false)
-                    
-                    usernamePostID['change'] = -1;
-                }
-                console.log("FIRST HERE");
-                setAPI(1);
-            });
-
+                        usernamePostID['change'] = -1
+                    }
+                    console.log('FIRST HERE')
+                    setAPI(1)
+                })
         }
 
         // setIsLiked(!isLiked);
@@ -143,38 +133,38 @@ export default function Post({ post, label }) {
 
     const handleDisliked = (event) => {
         if (localStorage.getItem('token') == null) {
-            event.preventDefault();
-            let url = window.location.href;
-            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+            event.preventDefault()
+            let url = window.location.href
+            window.location.href =
+                url.substring(0, url.indexOf('/')) + '/signup'
         } else {
+            event.stopPropagation()
 
-            event.stopPropagation();
+            usernamePostID['username'] = username
+            usernamePostID['postID'] = post.postID
+            usernamePostID['table'] = 'UserDisLike'
+            console.log(usernamePostID)
 
-            usernamePostID['username'] = username;
-            usernamePostID['postID'] = post.postID;
-            usernamePostID['table'] = 'UserDisLike';
-            console.log(usernamePostID);
+            axios
+                .post('http://localhost:5000/api/likeupdate', usernamePostID)
+                .then((res) => {
+                    console.log(res.data.value)
 
+                    if (res.data.value === 'Added') {
+                        console.log('WORKS NOW')
 
-            axios.post("http://localhost:5000/api/likeupdate", usernamePostID).then((res) => {
-                console.log(res.data.value);
+                        post.dislikeCount += 1
+                        setIsDisliked(true)
+                        usernamePostID['change'] = 1
+                    } else {
+                        post.dislikeCount -= 1
+                        setIsDisliked(false)
 
-                if (res.data.value === "Added") {
-                    console.log("WORKS NOW");
-                    
-                    post.dislikeCount += 1;
-                    setIsDisliked(true)
-                    usernamePostID['change'] = 1;
-                } else {
-                    post.dislikeCount -= 1;
-                    setIsDisliked(false)
-                    
-                    usernamePostID['change'] = -1;
-                }
-                console.log("FIRST HERE");
-                setAPI(1);
-            });
-
+                        usernamePostID['change'] = -1
+                    }
+                    console.log('FIRST HERE')
+                    setAPI(1)
+                })
         }
         // event.stopPropagation();
         // setIsDisliked(!isDisliked);
@@ -563,7 +553,6 @@ export default function Post({ post, label }) {
                     )}
                 </Stack>
             </Stack>
-        </Box >
-    );
-
+        </Box>
+    )
 }
