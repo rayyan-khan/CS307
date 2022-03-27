@@ -693,10 +693,25 @@ export default function Settings({ user, label, section }) {
                                 setOldPasswordError('');
                                 setNewPasswordError('');
                                 setConfirmNewPasswordError('');
-                                axios.post('https://localhost:5000/api/changePassword', {
-                                    email: user.email,
-                                    password: confirmNewPassword,
-                                })
+                                try {
+                                    axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
+                                    axios.put('http://localhost:5000/api/resetPassword', {
+                                        curPassword: oldPassword,
+                                        newPassword: confirmNewPassword,
+                                    }).then(res => {
+                                        console.log(res);
+                                        if (res.data === 'Password successfully updated') {
+                                            setEditPassword(false);
+                                            setSettingScreen("profile");
+                                        } else {
+                                            setOldPasswordError('Wrong Password');
+                                        }
+                                    }).catch(err => {
+                                        setOldPasswordError('Wrong Password');
+                                    })
+                                } catch (err) {
+                                
+                                }
                             }
                         }
                         }
