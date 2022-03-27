@@ -73,6 +73,10 @@ const InteractionIcon = ({ post }) => {
 
 export default function PostInteraction({ post, label }) {
     let linkPageBool = true
+
+    console.log('showing post interaction')
+    console.log(post)
+
     if (post.postID == null) {
         if (post[0] != null) {
             post = post[0]

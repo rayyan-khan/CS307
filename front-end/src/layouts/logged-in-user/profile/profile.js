@@ -85,8 +85,11 @@ class Profile extends React.Component {
 
     fetchInteractions() {
         try {
+            let url =
+                'http://localhost:5000/api/postInteractions/' +
+                this.state.user.username
             axios
-                .get('http://localhost:5000/api/postInteractions')
+                .get(url)
                 .then((res) => {
                     const postInteractions = res.data.filter(
                         (postInteraction) => {
@@ -140,7 +143,6 @@ class Profile extends React.Component {
 
     async componentDidMount() {
         console.log('test')
-        this.fetchInteractions()
 
         if (axios.defaults.headers.common['authorization'] != null) {
             var sessionUsername
@@ -197,6 +199,8 @@ class Profile extends React.Component {
                 }
             })
         await this.fetchPosts()
+
+        await this.fetchInteractions()
     }
 
     formatNum(num) {

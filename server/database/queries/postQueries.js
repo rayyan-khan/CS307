@@ -9,6 +9,30 @@ const isUser1FollowingUser2 = async (user1, user2) => {
     return res.length != 0
 }
 
+const getUserInteractions = async (username) => {
+    res = await con.awaitQuery(`
+        SELECT IF (Post.anonymous = 1, "Anonymous", Post.username) AS username, UserLike.postID, tagId, likesCount, dislikeCount,
+        postCaption, numberOfComments, url, hyperlink, NULL as comment, true as liked, false as disliked
+        FROM UserLike
+        JOIN Post ON UserLike.postID = Post.postID
+        WHERE UserLike.username="${username}"
+        UNION
+        SELECT IF (Post.anonymous = 1, "Anonymous", Post.username) AS username, UserDisLike.postID, tagID, likesCount, dislikeCount, 
+        postCaption, numberOfComments, url, hyperlink, NULL as comment, false as liked, true as disliked
+        FROM UserDisLike
+        JOIN Post ON UserDisLike.postID = Post.postID
+        WHERE UserDisLike.username = "${username}"
+        UNION
+        SELECT IF (Post.anonymous = 1, "Anonymous", Post.username) AS username, Comments.postID, tagID, likesCount, dislikeCount,
+        postCaption, numberOfComments, url, hyperlink, comment, false as liked, false as disliked
+        FROM Comments
+        JOIN Post ON Comments.postID = Post.postID
+        WHERE Comments.username = "${username}";
+    `)
+
+    return res
+}
+
 const bookmarkPost = async (username, postID) => {
     return await con.awaitQuery(
         `INSERT INTO Bookmark (username, postID, timestamp) VALUES ("${username}", ${postID}, NOW())`
@@ -51,6 +75,7 @@ const postBookmarked = async (username, postID) => {
 
 module.exports = {
     isUser1FollowingUser2,
+    getUserInteractions,
     bookmarkPost,
     unbookmarkPost,
     postExists,

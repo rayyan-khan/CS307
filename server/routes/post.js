@@ -302,32 +302,23 @@ postRoutes.route('/createComment').post(async function (req, res) {
     })
 })
 
-postRoutes.route('/postInteractions').get((req, res) => {
-    var anony = 'Anonymous'
-    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post Order BY timeStamp DESC`
-
-    const interaction1 = { liked: true, disliked: false, comment: '' }
-    const dumInteractions = [
-        { liked: true, disliked: false, comment: '' },
-        { liked: false, disliked: true, comment: '' },
-        { liked: false, disliked: false, comment: 'This is a comment' },
-    ]
-
-    con.query(sql, function (err, result) {
-        if (err) {
+postRoutes.route('/postInteractions/:username').get(async (req, res) => {
+    let interactions = await query
+        .getUserInteractions(req.params.username)
+        .catch((err) => {
             console.log(err)
-            res.status(500).json(err)
-        } else {
-            let postInteractions = result.map((postInteraction) => {
-                return {
-                    ...postInteraction,
-                    ...dumInteractions[Math.floor(Math.random() * 3)],
-                }
-            })
+            res.status(500).json('Error querying for all interactions')
+        })
 
-            res.json(postInteractions)
-        }
-    })
+    res.json(
+        interactions.map((postInteraction) => {
+            postInteraction.liked = postInteraction.liked == 1 ? true : false
+            postInteraction.disliked =
+                postInteraction.disliked == 1 ? true : false
+
+            return postInteraction
+        })
+    )
 })
 
 postRoutes.route('/getTimeline').get(async (req, res) => {
