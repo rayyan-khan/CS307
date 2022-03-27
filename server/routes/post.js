@@ -1,7 +1,8 @@
 const express = require('express')
 const postRoutes = express.Router()
-const query = require('../database/queries/postQueries')
+//const s3 = require("../s3Bucket/create-bucket")
 const decodeHeader = require('../utils/decodeHeader')
+const query = require('../database/queries/postQueries')
 
 //Use the below route to create a post and store into the database and S3
 const s3 = require('../s3Bucket/create-bucket')
@@ -51,70 +52,63 @@ postRoutes
         })
     })
 
-postRoutes
-    .route('/posts/postImage')
-    .post(upload.single('image'), async function (req, res) {
-        //  var url = s3.uploadFile(req.file);
-        //get username
-        var user
-        console.log(req.body)
-        try {
-            //Use decodeHeader to extract user info from header or throw an error
-            user = await decodeHeader.decodeAuthHeader(req)
-        } catch (err) {
-            return res.status(400).json(err)
+postRoutes.route('/getPostsByUser/:viewingUser').get(async (req, res) => {
+    //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
+    let viewingUser = req.params.viewingUser
+    if (!viewingUser) {
+        return res.status(400).json('Missing viewingUser field')
+    }
+
+    var thisUser
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        thisUser = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        thisUser = undefined
+    }
+
+    console.log(thisUser)
+
+    thisUser = thisUser ? thisUser.username : undefined
+
+    let sql
+
+    if (thisUser && thisUser === viewingUser) {
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username, anonymous From Post WHERE username='${viewingUser}' Order BY timeStamp DESC`
+    } else {
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username, anonymous From Post WHERE username='${viewingUser}' AND anonymous=0 Order BY timeStamp DESC`
+    }
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else {
+            console.log(result)
+
+            res.json(result)
         }
-
-        const { email, username } = user
-        console.log(username)
-        //
-        var getId = 'Select Max(postID) as ID From Post;'
-        var Is
-        con.query(getId, async (err, result) => {
-            if (err) {
-                console.log(err)
-                res.status(500).json(err)
-            } else res.json(result)
-            console.log(result[0].ID)
-            Is = result[0].ID
-            Is += 1 //store the ID
-            //check if file is okay to store
-
-            //
-            //var url = 'garbage for a sec'
-            s3.uploadFile(req.file).then((url) => {
-                console.log('promise result ' + res)
-
-                //url = "https://cs307.s3.amazonaws.com/" + req.file.path.substring(8)
-                console.log(url)
-                function checkEmpty(str) {
-                    if (str === '') {
-                        return 'null'
-                    } else {
-                        return con.escape(str)
-                    }
-                }
-                var sql = `INSERT INTO Post Values (${Is}, ${Is}, ${con.escape(
-                    username
-                )}, 12, 14, ${checkEmpty(
-                    req.body.caption
-                )}, NOW(), 12, ${checkEmpty(req.body.anonymous)}, ${checkEmpty(
-                    url
-                )}, ${checkEmpty(req.body.hyperlink)})`
-
-                //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
-                con.query(sql, function (err, results) {
-                    if (err) throw err
-                    console.log('1 record inserted')
-                    console.log(results)
-                })
-            })
-        })
-        //
-        // // console.log(req.file)
-        // // s3.uploadFile(req.file.path);
-        // // res.json("user added")
     })
+})
+
+postRoutes.route('/postInteractions/:username').get(async (req, res) => {
+    let interactions = await query
+        .getUserInteractions(req.params.username)
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json('Error querying for all interactions')
+        })
+
+    res.json(
+        interactions.map((postInteraction) => {
+            postInteraction.liked = postInteraction.liked == 1 ? true : false
+            postInteraction.disliked =
+                postInteraction.disliked == 1 ? true : false
+
+            return postInteraction
+        })
+    )
+})
 
 postRoutes.route('/posts/postNoImage').post(async function (req, res) {
     //  var url = s3.uploadFile(req.file);
@@ -200,7 +194,7 @@ postRoutes.route('/getSpecificPost/:postID').post(function (req, res) {
 //use the below route to get information on a specific post
 postRoutes.route('/getSpecificPost/:postID').get(function (req, res) {
     var anony = 'Anonymous'
-    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, anonymous, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post WHERE postId = ${con.escape(
+    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, anonymous, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username, timeStamp From Post WHERE postId = ${con.escape(
         req.params.postID
     )}`
     con.query(sql, function (err, result) {
@@ -212,55 +206,29 @@ postRoutes.route('/getSpecificPost/:postID').get(function (req, res) {
 })
 
 //use the below route to get all the posts in order of time posted
-postRoutes.route('/getOrderedPost').get(function (req, res) {
+postRoutes.route('/getOrderedPost').get(async function (req, res) {
     //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
+    var user
+    var amUser = false
+    var sql
+    try {
+        user = await decodeHeader.decodeAuthHeader(req)
+        const { email, username } = user
+        sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${username}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
+        LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID Order BY timeStamp DESC`
+    } catch (err) {
+        user = undefined
+        sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isLiked, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
+        Order BY timeStamp DESC`
+    }
+
     var anony = 'Anonymous'
-    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post Order BY timeStamp DESC`
 
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
             res.status(500).json(err)
         } else res.json(result)
-    })
-})
-
-postRoutes.route('/getPostsByUser/:viewingUser').get(async (req, res) => {
-    //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
-    let viewingUser = req.params.viewingUser
-    if (!viewingUser) {
-        return res.status(400).json('Missing viewingUser field')
-    }
-
-    var thisUser
-    try {
-        //Use decodeHeader to extract user info from header or throw an error
-        thisUser = await decodeHeader.decodeAuthHeader(req)
-    } catch (err) {
-        thisUser = undefined
-    }
-
-    console.log(thisUser)
-
-    thisUser = thisUser ? thisUser.username : undefined
-
-    let sql
-
-    if (thisUser && thisUser === viewingUser) {
-        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username, anonymous From Post WHERE username='${viewingUser}' Order BY timeStamp DESC`
-    } else {
-        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username, anonymous From Post WHERE username='${viewingUser}' AND anonymous=0 Order BY timeStamp DESC`
-    }
-
-    con.query(sql, function (err, result) {
-        if (err) {
-            console.log(err)
-            res.status(500).json(err)
-        } else {
-            console.log(result)
-
-            res.json(result)
-        }
     })
 })
 
@@ -302,23 +270,110 @@ postRoutes.route('/createComment').post(async function (req, res) {
     })
 })
 
-postRoutes.route('/postInteractions/:username').get(async (req, res) => {
-    let interactions = await query
-        .getUserInteractions(req.params.username)
-        .catch((err) => {
+postRoutes.route('/postInteractions').get((req, res) => {
+    var anony = 'Anonymous'
+    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username, timeStamp From Post Order BY timeStamp DESC`
+
+    const interaction1 = { liked: true, disliked: false, comment: '' }
+    const dumInteractions = [
+        { liked: true, disliked: false, comment: '' },
+        { liked: false, disliked: true, comment: '' },
+        { liked: false, disliked: false, comment: 'This is a comment' },
+    ]
+
+    con.query(sql, function (err, result) {
+        if (err) {
             console.log(err)
-            res.status(500).json('Error querying for all interactions')
-        })
+            res.status(500).json(err)
+        } else {
+            let postInteractions = result.map((postInteraction) => {
+                return {
+                    ...postInteraction,
+                    ...dumInteractions[Math.floor(Math.random() * 3)],
+                }
+            })
 
-    res.json(
-        interactions.map((postInteraction) => {
-            postInteraction.liked = postInteraction.liked == 1 ? true : false
-            postInteraction.disliked =
-                postInteraction.disliked == 1 ? true : false
+            res.json(postInteractions)
+        }
+    })
+})
 
-            return postInteraction
-        })
-    )
+postRoutes.route('/likeupdate').post((req, res) => {
+    // var sql = `SELECT COUNT(*) AS NUM FROM UserLike WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+    var sql = `SELECT COUNT(*) AS NUM FROM ${req.body.table} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+    var ans = -1
+    var userExists = 'why'
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+        } else {
+            ans = result[0].NUM
+            console.log(ans)
+            if (ans === 0) {
+                userExists = 'false'
+            } else {
+                userExists = 'true'
+            }
+
+            var insert = ''
+            var val = ''
+
+            console.log(userExists)
+
+            if (userExists === 'false') {
+                console.log('ADDING USER')
+                insert = `INSERT INTO ${req.body.table} VALUES('${req.body.username}', ${req.body.postID})`
+                val = 'Added'
+            } else {
+                console.log('DELETING USER')
+                insert = `DELETE FROM ${req.body.table} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+                val = 'Deleted'
+            }
+
+            con.query(insert, function (err, result) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    res.json({ value: val })
+                }
+            })
+        }
+    })
+
+    // var userExists = checkUser(req);
+
+    //res.json(["Error2"])
+})
+
+postRoutes.route('/checkUserLike').get((req, res) => {
+    //var ans = checkUser(req);
+    var ans = 'hello'
+    res.json({ value: ans })
+})
+
+function checkUser(req) {}
+
+postRoutes.route('/updateLikeCount').post((req, res) => {
+    console.log(`${req.body.change}`)
+
+    var count = ''
+
+    if (req.body.table === 'UserLike') {
+        count = 'likesCount'
+    } else {
+        count = 'dislikeCount'
+    }
+
+    var sql = `UPDATE Post SET ${count} = ${count} + ${req.body.change} WHERE postID = ${req.body.postID}`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        }
+        console.log('FINAL')
+        res.json('all good')
+    })
 })
 
 postRoutes.route('/getTimeline').get(async (req, res) => {
@@ -328,9 +383,19 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
     try {
         //Use decodeHeader to extract user info from header or throw an error
         user = await decodeHeader.decodeAuthHeader(req)
-        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post Order BY timeStamp DESC`
+        const { email, username } = user
+        sql = `SELECT p.postID,p.tagID,p.likesCount,p.dislikeCount,p.postCaption,p.numberOfComments, p.url, p.hyperlink,CASE WHEN p.anonymous=1 THEN "Anonymous" ELSE p.username END AS username, p.timeStamp
+        FROM Post as p, TagFollow as t
+        WHERE t.username = ${con.escape(username)} and p.tagID = t.tagID
+        UNION
+        SELECT p.postID,p.tagID,p.likesCount,p.dislikeCount,p.postCaption,p.numberOfComments, p.url, p.hyperlink,CASE WHEN p.anonymous=1 THEN "Anonymous" ELSE p.username END AS username, p.timeStamp
+        From Post as p, UserFollow as u
+        WHERE u.follower = ${con.escape(
+            username
+        )} and u.followed = p.username and p.anonymous = 0
+        ORDER BY timeStamp`
     } catch (err) {
-        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username From Post Order BY timeStamp DESC`
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE username END AS username, timeStamp From Post Order BY timeStamp DESC`
     }
 
     con.query(sql, function (err, result) {
@@ -341,86 +406,28 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
     })
 })
 
-postRoutes.route('/bookmarkPost').post(async (req, res) => {
-    let { postID } = req.body
-
-    if (!postID) return res.status(400).json('Missing postID field')
-
-    let user
-
-    try {
-        //Use decodeHeader to extract user info from header or throw an error
-        user = await decodeHeader.decodeAuthHeader(req)
-    } catch (err) {
-        return res.status(400).json(err)
-    }
-
-    let username = user.username
-
-    if (!(await query.postExists(postID))) {
-        return res.status(400).json('Post does not exist')
-    }
-
-    if (await query.postBookmarked(username, postID)) {
-        return res.status(400).json('Already bookmarked post')
-    }
-
-    await query.bookmarkPost(username, postID).catch((err) => {
-        console.log(err)
-        res.status(500).json('Error executing bookmarkPost SQL statement')
-    })
-
-    res.json('Successfully bookmarked post')
-})
-
-postRoutes.route('/unbookmarkPost').post(async (req, res) => {
-    let { postID } = req.body
-
-    if (!postID) return res.status(400).json('Missing postID field')
-
-    let user
-
-    try {
-        //Use decodeHeader to extract user info from header or throw an error
-        user = await decodeHeader.decodeAuthHeader(req)
-    } catch (err) {
-        return res.status(400).json(err)
-    }
-
-    let username = user.username
-
-    if (!(await query.postExists(postID))) {
-        return res.status(400).json('Post does not exist')
-    }
-
-    if (!(await query.postBookmarked(username, postID))) {
-        return res.status(400).json('Post not bookmarked')
-    }
-
-    await query.unbookmarkPost(username, postID).catch((err) => {
-        console.log(err)
-        res.status(500).json('Error executing bookmarkPost SQL statement')
-    })
-
-    res.json('Successfully unbookmarked post')
-})
-
-postRoutes.route('/getBookmarks').get(async (req, res) => {
-    let user
-
-    try {
-        //Use decodeHeader to extract user info from header or throw an error
-        user = await decodeHeader.decodeAuthHeader(req)
-    } catch (err) {
-        return res.status(400).json(err)
-    }
-
-    let result = await query.getBookmarks(user.username).catch((err) => {
-        console.log(err)
-        res.status(500).json('Error executing getBookmarks query')
-    })
-
-    res.json(result)
-})
-
 module.exports = postRoutes
+
+//userRoutes.route("/testing").post(function (req, res) {
+//  console.log(req.body);
+//   var sql = "INSERT INTO User (username, password) VALUES ('" + req.body.username + "', '" + req.body.password + "')";
+
+//  con.query(sql, function (err, result) {
+//       if (err) throw err;
+//        console.log("1 record inserted");
+//        console.log(result)
+//    });
+
+//  res.json("user added")/
+//});
+//
+// userRoutes.route("/exists/:username").get(function (req, res) {
+//     var sql = "SELECT * FROM users WHERE username = '" + req.params.username + "'";
+//
+//     con.query(sql, function (err, result) {
+//         if (err) throw err;
+//         console.log(result)
+//
+//         res.json(result.length != 0)
+//     })
+// })
