@@ -12,7 +12,7 @@ tagRoutes.route('/getTags').get(async (req, res) => {
     con.query(sql, function (err, fullResponse) {
         if (fullResponse.length === 0)
             return res.status(400).json("Tags doesn't exist")
-        let result = fullResponse[0]
+        let result = fullResponse
         console.log(result)
         if (err) {
             console.log(result)

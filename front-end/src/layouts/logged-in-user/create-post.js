@@ -25,7 +25,8 @@ import {
   Stack
 } from '@chakra-ui/react'
 
-import React from 'react'
+import React, { Fragment } from 'react'
+import ReactSelect from 'react-select';
 import '../layouts.css';
 const axios = require('axios');
 
@@ -41,13 +42,53 @@ class CreatePost extends React.Component {
       selectedFile: null,
       postError: false,
       hyperlink: '',
-      hyperlinkError: false
+      hyperlinkError: false,
+      tags: [],
+      tagSearch: '',
+      tagSelected: "null",
 
+    }
+  }
+
+  getTags() {
+    try {
+      axios.get("http://localhost:5000/api/getTags/").then((res) => {
+        this.setState({ tags: res.data });
+      });
+
+    } catch (error) {
+      console.log(error);
+
+    }
+  }
+
+  checkTag(tag) {
+    for (let i = 0; i < this.state.tags.length; i++) {
+      if (this.state.tags[i].tagID === tag) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  createTag = (tag) => {
+    if (tag.length > 0 && tag.length < 20 && !this.checkTag(tag)) {
+      console.log('creating tag');
+      try {
+        axios.get("http://localhost:5000/api/createTag/" + tag).then((res) => {
+          this.getTags();
+        });
+
+      } catch (error) {
+        console.log(error);
+
+      }
     }
   }
 
   componentWillMount() {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+    this.getTags();
   }
 
   handlePostTextChange = (event) => {
@@ -98,8 +139,10 @@ class CreatePost extends React.Component {
     data.append('image', this.state.selectedFile);
     data.append('anonymous', this.state.anonymous);
     data.append('caption', this.state.postText);
+    data.append('tag', this.state.postText);
     data.append('hyperlink', this.state.hyperlink);
     data.append('token', localStorage.getItem('token'))
+    data.append('tag', this.state.tagSelected)
 
     let url = window.location.href;
     if (this.state.selectedFile === null) {
@@ -107,6 +150,7 @@ class CreatePost extends React.Component {
       jsonObj['anonymous'] = this.state.anonymous;
       jsonObj['caption'] = this.state.postText;
       jsonObj['hyperlink'] = this.state.hyperlink;
+      jsonObj['tag'] = this.state.tagSelected;
       console.log(jsonObj);
       axios.post("http://localhost:5000/api/posts/postNoImage", jsonObj).then((response) => {
         let url = window.location.href;
@@ -140,6 +184,26 @@ class CreatePost extends React.Component {
 
     return url.protocol === "http:" || url.protocol === "https:";
   }
+
+  onChange = (selectedOption) => {
+    this.setState({
+      tagSelected: selectedOption.tagID
+    })
+  }
+
+  onInputChange = (input) => {
+    console.log(input);
+    this.setState({ tagSearch: input });
+  }
+
+  onKeyDown = (event) => {
+    if (event.code == "Enter") {
+      this.setState({ tagSelected: this.state.tagSearch });
+      console.log("Stuff", this.state.tagSearch)
+      this.createTag(this.state.tagSearch);
+    }
+  }
+
 
   // 
   // 
@@ -193,6 +257,78 @@ class CreatePost extends React.Component {
                 <Input paddingTop={'4px'} style={{ color: "white" }} type='file'
                   accept="image/*"
                   onChange={this.fileSelecteHandler} />
+              </FormControl>
+
+              <FormControl pt={3} isInvalid={this.state.hyperlinkError}>
+                <h2 style={{ color: "var(--text-color)", paddingBottom: 5 }}>Tag </h2>
+                <Fragment >
+                  <ReactSelect
+                    className="basic-single"
+                    classNamePrefix="select"
+                    isClearable
+                    isSearchable
+                    name="color"
+                    options={this.state.tags}
+                    getOptionLabel={(option) => {
+                      return `#${option.tagID}`
+                    }}
+                    formatOptionLabel={"FormatOptionLabel"}
+                    onChange={this.onChange}
+                    onInputChange={this.onInputChange}
+                    placeholder="#"
+                    onKeyDown={this.onKeyDown}
+                    noOptionsMessage={() => 'Create #' + this.state.tagSearch}
+                    styles={{
+                      input: (provided) => ({
+                        ...provided,
+                        color: 'gray',
+                      }),
+                      option: provided => ({
+                        ...provided,
+                        color: 'black',
+                        backgroundColor: 'white',
+                        borderColor: 'var(--bg-color)',
+                      }),
+                      noOptionsMessage: provided => ({
+                        ...provided,
+                        color: 'black',
+                        borderColor: 'var(--bg-color)',
+                      }),
+
+                      singleValue: provided => ({
+                        ...provided,
+                        color: 'var(--text-color)'
+                      }),
+                      control: base => ({
+                        ...base,
+                        backgroundColor: 'var(--bg-color)',
+                        borderColor: 'var(--bg-color)',
+                        color: 'var(--text-color)',
+                        textEmphasisColor: 'var(--text-color)',
+                        textDecorationColor: 'var(--text-color)',
+                      }),
+                      dropdownIndicator: (styles) => ({
+                        ...styles,
+                        paddingTop: 3,
+                        paddingBottom: 3,
+                        backgroundColor: 'var(--bg-color)',
+                        borderColor: 'var(--bg-color)',
+                        color: 'var(--text-color)',
+                        textEmphasisColor: 'var(--text-color)',
+                        textDecorationColor: 'var(--text-color)',
+                      }),
+                      clearIndicator: (styles) => ({
+                        ...styles,
+                        paddingTop: 3,
+                        paddingBottom: 3,
+                      }),
+
+                    }}
+                  />
+                </Fragment>
+                {!this.state.hyperlinkError ? (<FormHelperText> </FormHelperText>)
+                  : (<FormErrorMessage>Please enter a valid hyperlink or leave it blank.</FormErrorMessage>)}
+
               </FormControl>
 
               <Box>
