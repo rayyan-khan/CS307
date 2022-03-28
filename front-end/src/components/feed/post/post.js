@@ -56,6 +56,7 @@ export default function Post({ post, label }) {
         } catch (error) {
             console.log('NOT GOOD')
         }
+        setAPI(0);
     }, [runAPI])
 
     const handleLiked = (event) => {
