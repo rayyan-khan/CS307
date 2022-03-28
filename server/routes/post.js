@@ -133,7 +133,9 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
             console.log(err)
             res.status(500).json(err)
         } else res.json(result)
+        console.log(result)
         console.log(result[0].ID)
+        console.log(req.body);
         Is = result[0].ID
         Is += 1 //store the ID
         function checkEmpty(str) {
@@ -143,7 +145,7 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
                 return con.escape(str)
             }
         }
-        var sql = `INSERT INTO Post Values (${Is}, ${Is}, ${con.escape(
+        var sql = `INSERT INTO Post Values (${Is}, ${checkEmpty(req.body.tag)}, ${con.escape(
             username
         )}, 12, 14, ${checkEmpty(req.body.caption)}, NOW(), 12, ${checkEmpty(
             req.body.anonymous
@@ -351,7 +353,7 @@ postRoutes.route('/checkUserLike').get((req, res) => {
     res.json({ value: ans })
 })
 
-function checkUser(req) {}
+function checkUser(req) { }
 
 postRoutes.route('/updateLikeCount').post((req, res) => {
     console.log(`${req.body.change}`)

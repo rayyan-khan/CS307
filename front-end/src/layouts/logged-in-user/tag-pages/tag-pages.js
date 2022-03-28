@@ -13,12 +13,30 @@ class TagPage extends React.Component {
             allPosts: [],
             loading: 0,
             numberOfPosts: 5,
+            tagData: {},
         }
     }
 
     componentDidMount() {
         console.log('rendering');
         this.fetchPosts();
+        this.fetchTagData();
+    }
+
+    fetchTagData() {
+        try {
+            axios.get("http://localhost:5000/api/getTags/")
+                .then(res => {
+                    for (let i = 0; i < res.data.length; i++) {
+                        if (res.data[i].tagID == this.props.tag) {
+                            console.log("Test", res.data[i]);
+                            this.setState({ tagData: res.data[i] });
+                        }
+                    }
+                })
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     onScroll = (e) => {
@@ -130,7 +148,7 @@ class TagPage extends React.Component {
                                         }).length}
                                     </Text>
                                     <Text pl={2} textAlign={'center'} color={'var(--text-color)'}>
-                                        Followers: 0
+                                        Followers: {this.state.tagData.numberOfUsersSubscribed}
                                     </Text>
                                     <Center>
                                         <Button
