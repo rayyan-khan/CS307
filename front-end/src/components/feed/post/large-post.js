@@ -13,7 +13,7 @@ import {
 
 } from '@chakra-ui/react';
 
-import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai"
+import { AiOutlineDislike, AiOutlineLike, AiOutlineDelete } from "react-icons/ai"
 import { FaRegBookmark } from "react-icons/fa"
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
@@ -197,6 +197,27 @@ export default function LargePost({ post }) {
             console.log(res.data);
             setUsername(res.data.username);
         });
+    }
+
+    const handleDelete = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        var deleteBody = {
+            postID: post.postID,
+        }
+        try {
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
+            axios.post("http://localhost:5000/api/deletePost", deleteBody)
+                .then(function (response) {
+                    let url = window.location.href;
+                    window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const [isBookmarked, setIsBookmarked] = React.useState(false);
@@ -447,8 +468,27 @@ export default function LargePost({ post }) {
                                 </Text>
                                 {isDisliked ? <IconButton size={'lg'} onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton size={'lg'} style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
                             </Stack>
-                            <Stack direction={'column'}>
-                                {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "600px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                            <Stack direction={'row'}>
+                                {post.username === username ? (
+                                    <>
+                                        {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "550px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "550px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                                        <IconButton
+                                            size={'lg'}
+                                            left={"550px"}
+                                            onClick={handleDelete}
+                                            style={{
+                                                backgroundColor: 'red',
+                                                color: 'white',
+                                                top: '30px',
+                                            }}
+                                            icon={<AiOutlineDelete />}
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "600px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                                    </>
+                                )}
                             </Stack>
                         </Stack>
                     </Box>
