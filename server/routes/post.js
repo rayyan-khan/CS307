@@ -265,9 +265,12 @@ postRoutes.route('/getPostWithTag/:tagid').get(async function (req, res) {
 })
 
 postRoutes.route('/comments/:postID').get(function (req, res) {
+    // var sql = `SELECT * FROM Comments WHERE postId = ${con.escape(
+    //     req.params.postID
+    // )} Order BY timeStamp DESC`
     var sql = `SELECT * FROM Comments WHERE postId = ${con.escape(
         req.params.postID
-    )} Order BY timeStamp DESC`
+    )} JOIN User ON User.username=Comments.username Order BY timeStamp DESC`
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
