@@ -237,6 +237,33 @@ postRoutes.route('/getOrderedPost').get(async function (req, res) {
     })
 })
 
+//use the below route to get all the posts in order of time posted
+postRoutes.route('/getPostWithTag/:tagid').get(async function (req, res) {
+    //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
+    var user
+    var amUser = false
+    var sql
+    try {
+        user = await decodeHeader.decodeAuthHeader(req)
+        const { email, username } = user
+        sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${username}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
+        LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID WHERE Post.tagID = "${req.params.tagid}" Order BY timeStamp DESC`
+    } catch (err) {
+        user = undefined
+        sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isLiked, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
+        WHERE Post.tagID = "${req.params.tagid}" Order BY timeStamp DESC`
+    }
+
+    var anony = 'Anonymous'
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
 postRoutes.route('/comments/:postID').get(function (req, res) {
     var sql = `SELECT * FROM Comments WHERE postId = ${con.escape(
         req.params.postID
