@@ -48,6 +48,7 @@ postRoutes
                 if (err) throw err
                 console.log('1 record inserted')
                 console.log(results)
+                return res.status(200).json(results);
             })
         })
     })

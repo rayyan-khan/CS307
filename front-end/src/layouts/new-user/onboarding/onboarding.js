@@ -8,6 +8,7 @@ import {
     FormControl,
     FormLabel,
     color,
+    Spinner,
 } from '@chakra-ui/react';
 import AutoTextArea from '../../../components/autoTextArea.tsx';
 import Tags from './tags';
@@ -25,15 +26,43 @@ const Onboarding = () => {
     const [nameNextDisabled, setNameNextDisabled] = useState(true);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [tags, setTags] = useState([]);
 
     const [imageNextDisabled, setImageNextDisabled] = useState(true);
     const [imageSrc, setImageSrc] = useState();
+
+    const [uploadDisabled, setUploadDisabled] = useState(false);
+    const [newProfilePic, setNewProfilePic] = useState(null);
+    const [uploading, setUploading] = useState(false);
 
     const [bio, setBio] = useState('');
 
     const [currentFrame, setCurrentFrame] = useState(0);
 
     // TODO: Remove this and get auth header from backend
+
+    useEffect(() => {
+        if (currentFrame === 0) {
+            try {
+                let tagsRaw = [];
+                axios.get('http://localhost:5000/api/getTags').then((res) => {
+                    for (let i = 0; i < res.data.length; i++) {
+                        if (res.data[i].tagID != "null") {
+                            tagsRaw.push(res.data[i]);
+                        }
+                    }
+                    tagsRaw.sort((a, b) => {
+                        return a.numberOfUsersSubscribed > b.numberOfUsersSubscribed ? -1 : 1;
+                    });
+                    setTags(tagsRaw);
+                }).catch((err) => {
+                    console.log(err);
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [currentFrame]);
 
 
     const handleNameSubmit = (event) => {
@@ -58,8 +87,19 @@ const Onboarding = () => {
     }
 
     const handleImageSubmit = (event) => {
-        // TODO: Sent axios PUT request to update image
-        setCurrentFrame(2);
+        if (newProfilePic != null) {
+            setUploadDisabled(true);
+            setUploading(true);
+            const data = new FormData();
+            data.append('image', newProfilePic);
+            axios.post("http://localhost:5000/api/updateProfileImage", data).then((response) => {
+                console.log(response);
+                setUploadDisabled(false);
+                setUploading(false);
+                setCurrentFrame(2);
+                return;
+            })
+        }
     }
 
     const handleBioSubmit = (event) => {
@@ -75,24 +115,10 @@ const Onboarding = () => {
     }
 
     const handleTagsSubmit = (event) => {
-        // TODO: Sent axios PUT request to update tags
-        localStorage.setItem('username', 'Guest');
         let url = window.location.href;
         window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
 
     }
-
-
-
-
-    useEffect(() => {
-        console.log(imageSrc);
-        if (imageSrc) {
-            setImageNextDisabled(false);
-        } else {
-            setImageNextDisabled(true);
-        }
-    }, [imageSrc])
 
 
     let tagsFirstRow = [
@@ -200,7 +226,7 @@ const Onboarding = () => {
                         </Center>
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button backgroundColor={'var(--secondary-color)'} width={'4vw'} isDisabled={nameNextDisabled} onClick={handleNameSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>
+                                <Button paddingX={10} backgroundColor={'var(--secondary-color)'} width={'4vw'} isDisabled={nameNextDisabled} onClick={handleNameSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>
                                     Next
                                 </Button>
                             </Center>
@@ -230,23 +256,39 @@ const Onboarding = () => {
                             <Text fontSize='xl' color={'var(--text-color)'}>Please upload an image to set as your profile picture.</Text>
                         </Center>
                         <Center>
-                            <Box>
-                                <ImageUpload
-                                    handleImageSelect={handleImageSelect}
-                                    imageSrc={imageSrc}
-                                    setImageSrc={setImageSrc}
-                                    style={{
-                                        width: "25.5vw",
-                                        height: "18.225vw",
-                                        background: 'var(--tertiary-color)',
-                                    }}
-                                />
-                            </Box>
+                            <Stack direction={'column'}>
+                                <Center pt={5} overflow={'visible'}>
+                                    <Input p={2.5} borderWidth={1} borderColor={'var(--bg-color)'} textColor={'var(--text-color)'} overflowWrap={'break-word'} type='file'
+                                        accept="image/*"
+                                        width={'15vw'}
+                                        height={'5vh'}
+                                        onChange={(e) => {
+                                            if (e.target.files[0]) {
+                                                setNewProfilePic(e.target.files[0]);
+                                                console.log(e.target.files[0]);
+                                                setUploadDisabled(true);
+                                            }
+                                        }}
+                                    />
+                                </Center>
+                                {uploading ?
+                                    <Stack direction={'column'}>
+                                        <Center fontSize={'4xl'} color={'var(--text-color)'} pt={'4vh'}>
+                                            <Spinner color='darkturquoise' size='xl' />
+                                        </Center>
+                                        <Center>
+                                            <Text color={'var(--text-color)'}>
+                                                Uploading...
+                                            </Text>
+                                        </Center>
+                                    </Stack>
+                                    : <></>}
+                            </Stack>
                         </Center>
 
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button backgroundColor={'var(--secondary-color)'} width={'4vw'} isDisabled={imageNextDisabled} onClick={handleImageSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                                <Button paddingX={10} backgroundColor={'var(--secondary-color)'} width={'4vw'} isDisabled={!uploadDisabled} onClick={handleImageSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
@@ -284,7 +326,7 @@ const Onboarding = () => {
 
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button backgroundColor={'var(--secondary-color)'} width={'4vw'} onClick={handleBioSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                                <Button paddingX={10} backgroundColor={'var(--secondary-color)'} width={'4vw'} onClick={handleBioSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
@@ -293,6 +335,7 @@ const Onboarding = () => {
         );
 
     } else if (currentFrame === 3) {
+        console.log(tags);
         return (
             <Center h={'100vh'} overflowY={"hidden"} overflowX={"auto"} bg={"--mainColor"}>
                 <Box
@@ -312,9 +355,9 @@ const Onboarding = () => {
                             <Stack direction={'column'} p={3}>
                                 <Stack p={3} direction={"row"}>
                                     {
-                                        tagsFirstRow.map((tag, index) => {
+                                        tags.slice(0, 4).map((tag, index) => {
                                             return (
-                                                <Tags tagName={tag.name} key={index} />
+                                                <Tags tagName={tag.tagID} key={index} />
                                             )
                                         })
                                     }
@@ -322,18 +365,18 @@ const Onboarding = () => {
                                 </Stack>
                                 <Stack p={3} direction={"row"}>
                                     {
-                                        tagsSecondRow.map((tag, index) => {
+                                        tags.slice(4, 8).map((tag, index) => {
                                             return (
-                                                <Tags tagName={tag.name} key={index} />
+                                                <Tags tagName={tag.tagID} key={index} />
                                             )
                                         })
                                     }
                                 </Stack>
                                 <Stack p={3} direction={"row"}>
                                     {
-                                        tagsThirdRow.map((tag, index) => {
+                                        tags.slice(8, 12).map((tag, index) => {
                                             return (
-                                                <Tags tagName={tag.name} key={index} />
+                                                <Tags tagName={tag.tagID} key={index} />
                                             )
                                         })
                                     }
@@ -344,7 +387,7 @@ const Onboarding = () => {
 
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button backgroundColor={'var(--secondary-color)'} width={'4vw'} onClick={handleTagsSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                                <Button paddingX={10} backgroundColor={'var(--secondary-color)'} width={'4vw'} onClick={handleTagsSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
                             </Center>
                         </Stack>
                     </Stack>
