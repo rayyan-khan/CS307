@@ -442,8 +442,11 @@ authRoutes.route('/resetPassword').put(async (req, res) => {
         return res.status(400).json('Missing newPassword field')
     }
 
-    if (newPassword.length < 8) {
-        return res.status(400).json('newPassword too short')
+    let checkPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+    if (!checkPassword.test(newPassword)) {
+        return res
+            .status(400)
+            .json('Password does not comply with requirements')
     }
 
     const accountExists = await query.accountExists(user.email).catch((err) => {
