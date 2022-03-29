@@ -125,7 +125,6 @@ class TagPage extends React.Component {
             console.log(error);
         }
         this.state.numberOfUsersSubscribed++;
-        this.fetchTagData();
     }
 
     unfollowTag() {
@@ -140,7 +139,6 @@ class TagPage extends React.Component {
             console.log(error);
         }
         this.state.numberOfUsersSubscribed--;
-        this.fetchTagData();
     }
 
 
