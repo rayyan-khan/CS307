@@ -53,6 +53,8 @@ export default function LargePost({ post }) {
         }
     }, [updateComments]);
 
+
+
     useEffect(() => {
         if (localStorage.getItem('comment') != null) {
             let comment = JSON.parse(localStorage.getItem('comment'));
