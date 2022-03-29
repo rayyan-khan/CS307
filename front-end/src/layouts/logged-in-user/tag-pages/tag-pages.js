@@ -64,7 +64,7 @@ class TagPage extends React.Component {
         //     this.setState({ loading: 1 });
         // } else {
         try {
-            axios.get("http://localhost:5000/api/getOrderedPost")
+            axios.get("http://localhost:5000/api/getPostWithTag/" + this.props.tag)
                 .then(res => {
                     const posts = res.data
                     if (localStorage.getItem('token') != null && localStorage.getItem('allPosts') != null && posts.length == JSON.parse(localStorage.getItem('allPosts')).length) {
