@@ -53,7 +53,11 @@ class CreatePost extends React.Component {
   getTags() {
     try {
       axios.get("http://localhost:5000/api/getTags/").then((res) => {
-        this.setState({ tags: res.data });
+        for (let i = 0; i < res.data.length; i++) {
+          if (res.data[i].tagID != "null") {
+            this.state.tags.push(res.data[i]);
+          }
+        }
       });
 
     } catch (error) {
@@ -275,9 +279,10 @@ class CreatePost extends React.Component {
                     formatOptionLabel={"FormatOptionLabel"}
                     onChange={this.onChange}
                     onInputChange={this.onInputChange}
+                    on
                     placeholder="#"
                     onKeyDown={this.onKeyDown}
-                    noOptionsMessage={() => 'Create #' + this.state.tagSearch}
+                    noOptionsMessage={() => 'Press Enter to create #' + this.state.tagSearch}
                     styles={{
                       input: (provided) => ({
                         ...provided,
@@ -293,6 +298,7 @@ class CreatePost extends React.Component {
                         ...provided,
                         color: 'black',
                         borderColor: 'var(--bg-color)',
+                        height: -10,
                       }),
 
                       singleValue: provided => ({

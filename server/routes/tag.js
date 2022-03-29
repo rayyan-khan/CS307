@@ -40,6 +40,21 @@ tagRoutes.route('/createTag/:tagName').get(async (req, res) => {
     })
 })
 
+tagRoutes.route('/getNumberOfTags/:tagName').get(async (req, res) => {
+    var sql = `SELECT COUNT(*) as count FROM TagFollow WHERE tagID = ${con.escape(req.params.tagName)}`
+    con.query(sql, function (err, fullResponse) {
+        let result = fullResponse
+        console.log(result)
+        if (err) {
+            console.log(result)
+            return res.status(500).json(err)
+        }
+
+        res.status(200).json(result)
+    })
+})
+
+
 tagRoutes.route('/followTag').post(async (req, res) => {
     let { tagID } = req.body
     var user

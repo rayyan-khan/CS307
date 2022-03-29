@@ -340,28 +340,29 @@ export default function Post({ post, label }) {
                     {post.postCaption}
                 </Text>
 
-                <Center>
-                    {post.url !== 'undefined' ? (
+                {post.url !== 'undefined' ? (
+                    <Center>
                         <Box alignSelf={'center'} px={0} pt={5} w={'100%'}>
                             <Image src={post.url} />
                         </Box>
-                    ) : (
-                        <></>
-                    )}
-                </Center>
+                    </Center>
+                ) : (
+                    <></>
+                )}
 
-                <Center>
-                    {post.hyperlink !== '' ? (
+
+                {post.hyperlink !== '' ? (
+                    <Center pb={5}>
                         <LinkPreview
-                            // margin="30px 0px"
                             width="500px"
                             url={post.hyperlink}
                             backgroundColor="white"
                         />
-                    ) : (
-                        <></>
-                    )}
-                </Center>
+                    </Center>
+                ) : (
+                    <></>
+                )}
+
             </Stack>
 
             {post.tagID !== null ? (

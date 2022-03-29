@@ -13,6 +13,7 @@ class TagPage extends React.Component {
             allPosts: [],
             loading: 0,
             numberOfPosts: 5,
+            numberOfUsersSubscribed: 0,
             tagData: {},
         }
     }
@@ -25,11 +26,19 @@ class TagPage extends React.Component {
 
     fetchTagData() {
         try {
+            axios.get("http://localhost:5000/api/getNumberOfTags/" + this.props.tag)
+                .then(res => {
+                    console.log(res.data[0].count);
+                    this.setState({ numberOfUsersSubscribed: res.data[0].count });
+                })
+        } catch (error) {
+            console.log(error);
+        }
+        try {
             axios.get("http://localhost:5000/api/getTags/")
                 .then(res => {
                     for (let i = 0; i < res.data.length; i++) {
                         if (res.data[i].tagID == this.props.tag) {
-                            console.log("Test", res.data[i]);
                             this.setState({ tagData: res.data[i] });
                         }
                     }
@@ -148,7 +157,7 @@ class TagPage extends React.Component {
                                         }).length}
                                     </Text>
                                     <Text pl={2} textAlign={'center'} color={'var(--text-color)'}>
-                                        Followers: {this.state.tagData.numberOfUsersSubscribed}
+                                        Followers: {this.state.numberOfUsersSubscribed}
                                     </Text>
                                     <Center>
                                         <Button
