@@ -94,8 +94,8 @@ export default function LargePost({ post }) {
 
 
     // toggle state 
-    const [isLiked, setIsLiked] = React.useState(false);
-    const [isDisliked, setIsDisliked] = React.useState(false);
+    const [isLiked, setIsLiked] = React.useState(post.isLiked)
+    const [isDisliked, setIsDisliked] = React.useState(post.isDisliked)
     const [username, setUsername] = React.useState('');
     const [comments, setComments] = React.useState(commentsJSON.comments);
     const [updateComments, setUpdateComments] = React.useState(false);
@@ -112,6 +112,8 @@ export default function LargePost({ post }) {
 
         }
     }, [updateComments]);
+
+
 
     useEffect(() => {
         if (localStorage.getItem('comment') != null) {
