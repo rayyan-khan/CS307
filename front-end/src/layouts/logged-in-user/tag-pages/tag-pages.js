@@ -15,6 +15,7 @@ class TagPage extends React.Component {
             numberOfPosts: 5,
             numberOfUsersSubscribed: 0,
             tagData: {},
+            following: false,
         }
     }
 
@@ -22,7 +23,26 @@ class TagPage extends React.Component {
         console.log('rendering');
         this.fetchPosts();
         this.fetchTagData();
+        this.fetchUserTagFollows();
     }
+
+    fetchUserTagFollows() {
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
+        try {
+            axios.get("http://localhost:5000/api/getFollowedTags")
+                .then(res => {
+                    for (let i = 0; i < res.data.length; i++) {
+                        console.log(res.data[i].tagID);
+                        if (res.data[i].tagID == this.props.tag) {
+                            this.setState({ following: true });
+                        }
+                    }
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     fetchTagData() {
         try {
@@ -93,6 +113,36 @@ class TagPage extends React.Component {
         // }
     }
 
+    followTag() {
+        try {
+            let jsonObj = {}
+            jsonObj['tagID'] = this.props.tag;
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
+            axios.post("http://localhost:5000/api/followTag", jsonObj).then((response) => {
+                console.log(response);
+            })
+        } catch (error) {
+            console.log(error);
+        }
+        this.state.numberOfUsersSubscribed++;
+        this.fetchTagData();
+    }
+
+    unfollowTag() {
+        try {
+            let jsonObj = {}
+            jsonObj['tagID'] = this.props.tag;
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
+            axios.post("http://localhost:5000/api/unfollowTag", jsonObj).then((response) => {
+                console.log(response);
+            })
+        } catch (error) {
+            console.log(error);
+        }
+        this.state.numberOfUsersSubscribed--;
+        this.fetchTagData();
+    }
+
 
     postHandler() {
         console.log(this.state.allPosts);
@@ -160,13 +210,31 @@ class TagPage extends React.Component {
                                         Followers: {this.state.numberOfUsersSubscribed}
                                     </Text>
                                     <Center>
-                                        <Button
-                                            width={'100px'}
-                                            backgroundColor={'#5581D7'}
-                                            color={'white'}
-                                        >
-                                            Follow
-                                        </Button>
+                                        {this.state.following ?
+                                            <Button
+                                                width={'100px'}
+                                                backgroundColor={'#5581D7'}
+                                                color={'white'}
+                                                onClick={() => {
+                                                    this.setState({ following: false });
+                                                    this.unfollowTag();
+                                                }}
+                                            >
+                                                Unfollow
+                                            </Button>
+                                            :
+                                            <Button
+                                                width={'100px'}
+                                                backgroundColor={'#5581D7'}
+                                                color={'white'}
+                                                onClick={() => {
+                                                    this.setState({ following: true });
+                                                    this.followTag();
+                                                }}
+                                            >
+                                                Follow
+                                            </Button>
+                                        }
                                     </Center>
                                 </Stack>
                             </Center>
