@@ -46,12 +46,32 @@ export default function Post({ post, label }) {
                 console.log('ENTER')
                 console.log(usernamePostID['table'])
 
+
                 axios
                     .post(
                         'http://localhost:5000/api/updateLikeCount',
                         usernamePostID
                     )
                     .then((res) => {
+                        if (isLiked === true && isDisliked === true) {
+                            if (usernamePostID['resetTable'] === 'UserDisLike') {
+                                post.dislikeCount -= 1;
+                                setIsDisliked(false);
+                                usernamePostID['table'] = 'UserDisLike';
+                                //handleDisliked()
+                            } else {
+                                //handleLiked()
+                                post.likesCount -= 1;
+                                setIsLiked(false);
+                                usernamePostID['table'] = 'UserLike';
+                            }
+                            
+                            usernamePostID['change'] = -1;
+                            
+                            
+                            setAPI(0);
+                            setAPI(1);
+                        }
                         console.log('Passed')
                     })
             }
@@ -63,18 +83,23 @@ export default function Post({ post, label }) {
 
     const handleLiked = (event) => {
         if (localStorage.getItem('token') == null) {
-            event.preventDefault()
+            if (event) {
+                event.preventDefault()
+            }
             let url = window.location.href
             window.location.href =
                 url.substring(0, url.indexOf('/')) + '/signup'
         } else {
-            event.stopPropagation()
+            if (event) {
+                event.stopPropagation()
+            }
 
             usernamePostID['username'] = username
             usernamePostID['postID'] = post.postID
             usernamePostID['table'] = 'UserLike'
             console.log(usernamePostID)
-
+            
+            
             axios
                 .post('http://localhost:5000/api/likeupdate', usernamePostID)
                 .then((res) => {
@@ -85,7 +110,17 @@ export default function Post({ post, label }) {
 
                         post.likesCount += 1
                         setIsLiked(true)
-                        usernamePostID['change'] = 1
+                        // console.log(isLiked)
+                        // console.log(isDisliked)
+                        // if (isLiked === true && isDisliked === true) {
+                        //     setIsDisliked(false);
+
+                        //     usernamePostID['table'] = 'UserDisLike';
+                        //     usernamePostID['change'] = -1;
+                        //     setAPI(1)
+                        // }
+                        usernamePostID['change'] = 1;
+                        usernamePostID['resetTable'] = 'UserDisLike';
                     } else {
                         post.likesCount -= 1
                         setIsLiked(false)
@@ -94,7 +129,11 @@ export default function Post({ post, label }) {
                     }
                     console.log('FIRST HERE')
                     setAPI(1)
+
+
                 })
+
+            
         }
 
         // setIsLiked(!isLiked);
@@ -156,12 +195,16 @@ export default function Post({ post, label }) {
 
     const handleDisliked = (event) => {
         if (localStorage.getItem('token') == null) {
-            event.preventDefault()
+            if (event) {
+                event.preventDefault()
+            }
             let url = window.location.href
             window.location.href =
                 url.substring(0, url.indexOf('/')) + '/signup'
         } else {
-            event.stopPropagation()
+            if (event) {
+                event.stopPropagation()
+            }
 
             usernamePostID['username'] = username
             usernamePostID['postID'] = post.postID
@@ -179,6 +222,7 @@ export default function Post({ post, label }) {
                         post.dislikeCount += 1
                         setIsDisliked(true)
                         usernamePostID['change'] = 1
+                        usernamePostID['resetTable'] = 'UserLike';
                     } else {
                         post.dislikeCount -= 1
                         setIsDisliked(false)
