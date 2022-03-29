@@ -135,7 +135,7 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
         } else res.json(result)
         console.log(result)
         console.log(result[0].ID)
-        console.log(req.body);
+        console.log(req.body)
         Is = result[0].ID
         Is += 1 //store the ID
         function checkEmpty(str) {
@@ -145,11 +145,13 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
                 return con.escape(str)
             }
         }
-        var sql = `INSERT INTO Post Values (${Is}, ${checkEmpty(req.body.tag)}, ${con.escape(
-            username
-        )}, 12, 14, ${checkEmpty(req.body.caption)}, NOW(), 12, ${checkEmpty(
-            req.body.anonymous
-        )}, null, ${checkEmpty(req.body.hyperlink)})`
+        var sql = `INSERT INTO Post Values (${Is}, ${checkEmpty(
+            req.body.tag
+        )}, ${con.escape(username)}, 12, 14, ${checkEmpty(
+            req.body.caption
+        )}, NOW(), 12, ${checkEmpty(req.body.anonymous)}, null, ${checkEmpty(
+            req.body.hyperlink
+        )})`
         //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
         con.query(sql, function (err, results) {
             if (err) throw err
@@ -353,7 +355,7 @@ postRoutes.route('/checkUserLike').get((req, res) => {
     res.json({ value: ans })
 })
 
-function checkUser(req) { }
+function checkUser(req) {}
 
 postRoutes.route('/updateLikeCount').post((req, res) => {
     console.log(`${req.body.change}`)
@@ -408,28 +410,22 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
     })
 })
 
+postRoutes.route('/getBookmarks').get(async (req, res) => {
+    let user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    let result = await query.getBookmarks(user.username).catch((err) => {
+        console.log(err)
+        res.status(500).json('Error executing getBookmarks query')
+    })
+
+    res.json(result)
+})
+
 module.exports = postRoutes
-
-//userRoutes.route("/testing").post(function (req, res) {
-//  console.log(req.body);
-//   var sql = "INSERT INTO User (username, password) VALUES ('" + req.body.username + "', '" + req.body.password + "')";
-
-//  con.query(sql, function (err, result) {
-//       if (err) throw err;
-//        console.log("1 record inserted");
-//        console.log(result)
-//    });
-
-//  res.json("user added")/
-//});
-//
-// userRoutes.route("/exists/:username").get(function (req, res) {
-//     var sql = "SELECT * FROM users WHERE username = '" + req.params.username + "'";
-//
-//     con.query(sql, function (err, result) {
-//         if (err) throw err;
-//         console.log(result)
-//
-//         res.json(result.length != 0)
-//     })
-// })
