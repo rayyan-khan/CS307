@@ -345,12 +345,12 @@ postRoutes.route('/postInteractions').get((req, res) => {
     })
 })
 
-postRoutes.route('/likeupdate').post(async (req, res) => {
+postRoutes.route('/likeupdate').post((req, res) => {
     // var sql = `SELECT COUNT(*) AS NUM FROM UserLike WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
     var sql = `SELECT COUNT(*) AS NUM FROM ${req.body.table} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
     var ans = -1
     var userExists = 'why'
-    con.query(sql, async (err, result) => {
+    con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
         } else {
@@ -377,20 +377,13 @@ postRoutes.route('/likeupdate').post(async (req, res) => {
                 val = 'Deleted'
             }
 
-            await con.awaitQuery(insert);
-            
-            if (userExists === 'false') {
-                let otherTable = '';
-                if (req.body.table === 'UserLike') {
-                    otherTable = 'UserDisLike';
+            con.query(insert, function (err, result) {
+                if (err) {
+                    console.log(err)
                 } else {
-                    otherTable = 'UserLike';
+                    res.json({ value: val })
                 }
-                insert = `DELETE FROM ${otherTable} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
-
-            }
-            await con.awaitQuery(insert);
-            res.json({ value: val })
+            })
         }
     })
 
@@ -405,7 +398,7 @@ postRoutes.route('/checkUserLike').get((req, res) => {
     res.json({ value: ans })
 })
 
-function checkUser(req) {}
+function checkUser(req) { }
 
 postRoutes.route('/updateLikeCount').post((req, res) => {
     console.log(`${req.body.change}`)

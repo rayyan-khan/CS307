@@ -22,82 +22,22 @@ import "./post.css"
 import axios from 'axios';
 import moment from 'moment';
 
-const commentsJSON = {
-    "comments": [
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        },
-        {
-            "username": "Junaid",
-            "text": "This is a comment",
-            "minsAgo": "2 min",
-        }
-    ]
-}
-
 moment().format();
 export default function LargePost({ post }) {
     const [comment, setComment] = React.useState('');
-    console.log(post);
-
 
     // toggle state 
-    const [isLiked, setIsLiked] = React.useState(false);
-    const [isDisliked, setIsDisliked] = React.useState(false);
+    console.log(post)
+    var liked = post.isLiked == 1;
+    const [isLiked, setIsLiked] = React.useState(liked);
+    var disliked = post.isDisliked == 1;
+    console.log(liked);
+    console.log(isLiked);
+    const [isDisliked, setIsDisliked] = React.useState(disliked);
+    console.log(disliked);
+    console.log(isDisliked);
     const [username, setUsername] = React.useState('');
-    const [comments, setComments] = React.useState(commentsJSON.comments);
+    const [comments, setComments] = React.useState([]);
     const [updateComments, setUpdateComments] = React.useState(false);
     useEffect(() => {
         try {
@@ -455,7 +395,7 @@ export default function LargePost({ post }) {
                                 >
                                     {post.likesCount}
                                 </Text>
-                                {isLiked ? <IconButton size={'lg'} onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton style={{ backgroundColor: "var(--secondary-color)", color: "black" }} size={'lg'} onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
+                                {post.isLiked == 1 ? <IconButton size={'lg'} onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton style={{ backgroundColor: "var(--secondary-color)", color: "black" }} size={'lg'} onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
                             </Stack>
                             <Stack direction={'column'}>
                                 <Text
@@ -466,7 +406,7 @@ export default function LargePost({ post }) {
                                 >
                                     {post.dislikeCount}
                                 </Text>
-                                {isDisliked ? <IconButton size={'lg'} onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton size={'lg'} style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
+                                {post.isDisliked == 1 ? <IconButton size={'lg'} onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton size={'lg'} style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
                             </Stack>
                             <Stack direction={'row'}>
                                 {post.username === username ? (

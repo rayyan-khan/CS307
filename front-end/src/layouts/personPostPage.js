@@ -22,10 +22,11 @@ class PersonPostPage extends React.Component {
     fetchPosts() {
         console.log("test");
         try {
-            axios.get("http://localhost:5000/api/getSpecificPost/" + this.props.postid)
+            axios.get("http://localhost:5000/api/getOrderedPost")
                 .then(res => {
-                    this.setState({ post: res.data });
-                    console.log(res.data);
+                    const posts = res.data
+                    const post = posts.filter(post => post.postID == this.props.postid);
+                    this.setState({ post: post[0] });
                 })
         } catch (error) {
             return (

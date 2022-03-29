@@ -431,7 +431,7 @@ export default function Post({ post, label }) {
 
             </Stack>
 
-            {post.tagID !== null ? (
+            {post.tagID !== "null" ? (
                 <Stack
                     visibility={post.tagID !== null ? 'visible' : 'hidden'}
                     align={'center'}
