@@ -459,4 +459,29 @@ postRoutes.route('/getBookmarks').get(async (req, res) => {
     res.json(result)
 })
 
+postRoutes.route('/deletePost').post(async (req, res) => {
+    let { postID } = req.body
+    var user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+
+    var sql = `DELETE FROM Post WHERE postID = ${con.escape(
+        postID
+    )} and username = ${con.escape(username)}`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
 module.exports = postRoutes
