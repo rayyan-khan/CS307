@@ -15,6 +15,7 @@ import {
     AiOutlineDislike,
     AiOutlineLike,
     AiFillEyeInvisible,
+    AiOutlineDelete,
 } from 'react-icons/ai'
 import { FaRegBookmark } from 'react-icons/fa'
 import React from 'react'
@@ -23,6 +24,7 @@ import axios from 'axios'
 import { RiContactsBookLine } from 'react-icons/ri'
 import './post.css'
 import { GrAnalytics } from 'react-icons/gr'
+
 
 export default function Post({ post, label }) {
     const [isLiked, setIsLiked] = React.useState(post.isLiked)
@@ -130,6 +132,26 @@ export default function Post({ post, label }) {
                 console.log(res.data)
                 setUsername(res.data.username)
             })
+    }
+
+    const handleDelete = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        var deleteBody = {
+            postID: post.postID,
+        }
+        try {
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
+            axios.post("http://localhost:5000/api/deletePost", deleteBody)
+                .then(function (response) {
+                    window.location.reload();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const handleDisliked = (event) => {
@@ -530,7 +552,7 @@ export default function Post({ post, label }) {
                         />
                     </Center>
                 </Stack>
-                <Stack direction={'column'}>
+                <Stack direction={'row'}>
                     {isBookmarked ? (
                         <IconButton
                             onClick={handleBookmarked}
@@ -552,6 +574,19 @@ export default function Post({ post, label }) {
                             }}
                             icon={<FaRegBookmark />}
                         />
+                    )}
+                    {post.username === username ? (
+                        <IconButton
+                            onClick={handleDelete}
+                            style={{
+                                backgroundColor: 'red',
+                                color: 'white',
+                                top: '30px',
+                            }}
+                            icon={<AiOutlineDelete />}
+                        />
+                    ) : (
+                        <></>
                     )}
                 </Stack>
             </Stack>
