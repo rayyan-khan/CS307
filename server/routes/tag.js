@@ -123,4 +123,22 @@ tagRoutes.route('/unfollowTag').post(async (req, res) => {
     })
 })
 
+tagRoutes.route('/searchTags/:query').get(async (req, res) => {
+    var sql = `SELECT * FROM Tag WHERE locate(${con.escape(
+        req.params.query
+    )}, tagID) > 0`
+
+    con.query(sql, function (err, result) {
+        if (result.length === 0)
+            return res.status(400).json("Tag don't exist")
+        console.log(result)
+        if (err) {
+            console.log(result)
+            return res.status(500).json(err)
+        }
+
+        return res.json(result)
+    })
+})
+
 module.exports = tagRoutes
