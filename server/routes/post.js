@@ -449,13 +449,13 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
         //Use decodeHeader to extract user info from header or throw an error
         user = await decodeHeader.decodeAuthHeader(req)
         const { email, username } = user
-        sql = `SELECT p.postID,p.tagID,p.likesCount,p.dislikeCount,p.postCaption,p.numberOfComments, p.url, p.hyperlink,CASE WHEN p.anonymous=1 and username!=${con.escape(
+        sql = `SELECT p.postID,p.tagID,p.likesCount,p.dislikeCount,p.postCaption,p.numberOfComments, p.url, p.hyperlink,CASE WHEN p.anonymous=1 and p.username!=${con.escape(
             username
         )} THEN "Anonymous" ELSE p.username END AS username, p.timeStamp
         FROM Post as p, TagFollow as t
         WHERE t.username = ${con.escape(username)} and p.tagID = t.tagID
         UNION
-        SELECT p.postID,p.tagID,p.likesCount,p.dislikeCount,p.postCaption,p.numberOfComments, p.url, p.hyperlink,CASE WHEN p.anonymous=1 and username!=${con.escape(
+        SELECT p.postID,p.tagID,p.likesCount,p.dislikeCount,p.postCaption,p.numberOfComments, p.url, p.hyperlink,CASE WHEN p.anonymous=1 and p.username!=${con.escape(
             username
         )} THEN "Anonymous" ELSE p.username END AS username, p.timeStamp
         From Post as p, UserFollow as u
