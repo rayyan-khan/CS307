@@ -134,10 +134,23 @@ export default function LargePost({ post }) {
         }
     }
 
+    const [profilePic, setProfilePic] = React.useState('');
+    const [firstName, setFirstName] = React.useState('');
+    const [lastName, setLastName] = React.useState('');
     if (localStorage.getItem('token') != null) {
         axios.get("http://localhost:5000/api/getUserFromHeader/").then((res) => {
-            console.log(res.data);
+            console.log("user", res.data);
             setUsername(res.data.username);
+            try {
+                axios.get("http://localhost:5000/api/getProfile/" + res.data.username).then((res) => {
+                    console.log("userprofile", res.data);
+                    setProfilePic(res.data.url);
+                    setFirstName(res.data.firstName);
+                    setLastName(res.data.lastName);
+                });
+            } catch (error) {
+                console.log(error);
+            }
         });
     }
 
@@ -220,7 +233,8 @@ export default function LargePost({ post }) {
                                             <Stack height={'75px'} p={'10px'} direction="row">
                                                 <Center>
                                                     <Avatar borderRadius={'full'}
-                                                        src={"https://picsum.photos/800/1500"}
+                                                        src={comment.url}
+                                                        name={comment.firstName + ' ' + comment.lastName}
                                                         blockSize='50px'
                                                     />
                                                     <Stack spacing={0} direction={'column'}>
@@ -460,7 +474,8 @@ export default function LargePost({ post }) {
                                 <Center>
                                     <Avatar
                                         borderRadius={'full'}
-                                        src={"https://picsum.photos/800/1500"}
+                                        src={profilePic}
+                                        name={firstName + ' ' + lastName}
                                         blockSize='50px'
                                     />
                                     <Stack direction={'column'} spacing={0}>

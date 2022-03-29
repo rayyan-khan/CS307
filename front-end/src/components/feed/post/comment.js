@@ -12,7 +12,7 @@ import "./post.css";
 
 
 export default function Comment({ comment, index }) {
-
+    console.log(comment);
 
 
     return (
@@ -26,7 +26,7 @@ export default function Comment({ comment, index }) {
                 <Stack p={'10px'} direction="row">
                     <Center>
                         <Avatar borderRadius={'full'}
-                            src={"https://picsum.photos/800/1500?random=" + index}
+                            src={comment.url}
                             boxSize='3vw' />
                         <Stack spacing={0} direction={'column'}>
                             <Text align={'left'} pl={'10px'} color={'darkturquoise'} fontSize={'lg'}>
