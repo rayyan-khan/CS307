@@ -9,6 +9,7 @@ import {
     Flex,
     Avatar,
     IconButton,
+    Spinner,
 } from '@chakra-ui/react';
 import axios from 'axios';
 
@@ -20,6 +21,9 @@ import { ArrowLeftIcon } from '@chakra-ui/icons';
 export default function Settings({ user, label, section }) {
 
     const [settingScreen, setSettingScreen] = useState(section)
+    const [uploadDisabled, setUploadDisabled] = useState(false);
+    const [newProfilePic, setNewProfilePic] = useState(null);
+    const [uploading, setUploading] = useState(false);
     console.log(section);
 
 
@@ -63,40 +67,20 @@ export default function Settings({ user, label, section }) {
 
     }, [editPassword])
 
-    let pictureRef = React.createRef();
 
     function handleProfilePic() {
-        const PP = pictureRef.current;
-        const imageData = PP.getData();
-        const file = imageData.file;
-        const imageAsDataUrl = PP.getImageAsDataUrl();
-        const data = new FormData();
-        console.log("PP", PP);
-        console.log("imageData", imageData);
-        console.log("File", file);
-        console.log("URL", imageAsDataUrl);
-
-
-        var url = imageAsDataUrl;
-        fetch(url)
-            .then(res => res.blob())
-            .then(blob => {
-                data.append('image', blob, 'filename')
-                console.log(blob)
+        if (newProfilePic != null) {
+            setUploading(true);
+            const data = new FormData();
+            data.append('image', newProfilePic);
+            axios.post("http://localhost:5000/api/updateProfileImage", data).then((response) => {
+                console.log(response);
+                setUploading(false);
+                let url = window.location.href;
+                window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + user.username;
+                return;
             })
-
-        axios.post("http://localhost:5000/api/updateProfileImage", data).then((response) => {
-            console.log(response);
-        })
-    }
-
-    function dataURItoBlob(dataURI) {
-        var binary = atob(dataURI.split(',')[1]);
-        var array = [];
-        for (var i = 0; i < binary.length; i++) {
-            array.push(binary.charCodeAt(i));
         }
-        return new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
     }
 
     if (settingScreen === 'profilePic') {
@@ -110,13 +94,55 @@ export default function Settings({ user, label, section }) {
                             </Text>
                         </Center>
                         <Center>
-                            <ProfilePicture
-                                ref={pictureRef}
-                                frameFormat={'circle'}
+                            <Avatar
+                                name={
+                                    user.firstName + ' ' + user.lastName
+                                }
+                                borderRadius={
+                                    'full'
+                                }
+                                src={
+                                    user.profilePic
+                                }
+                                style={{
+                                    width: 100,
+                                    height: 100,
+                                    borderRadius:
+                                        100 / 2,
+                                }}
                             />
                         </Center>
+                        <Stack direction={'column'}>
+                            <Center pt={5} overflow={'visible'}>
+                                <Input p={2.5} borderWidth={1} borderColor={'var(--bg-color)'} textColor={'var(--text-color)'} overflowWrap={'break-word'} type='file'
+                                    accept="image/*"
+                                    width={'15vw'}
+                                    height={'5vh'}
+                                    onChange={(e) => {
+                                        if (e.target.files[0]) {
+                                            setNewProfilePic(e.target.files[0]);
+                                            console.log(e.target.files[0]);
+                                            setUploadDisabled(true);
+                                        }
+                                    }}
+                                />
+                            </Center>
+                            {uploading ?
+                                <Stack direction={'column'}>
+                                    <Center fontSize={'4xl'} color={'var(--text-color)'} pt={'4vh'}>
+                                        <Spinner color='darkturquoise' size='xl' />
+                                    </Center>
+                                    <Center>
+                                        <Text color={'var(--text-color)'}>
+                                            Uploading...
+                                        </Text>
+                                    </Center>
+                                </Stack>
+                                : <></>}
+                        </Stack>
                         <Box bg='red'>
                             <Button position={'absolute'} right={5} bottom={3}
+                                isDisabled={!uploadDisabled}
                                 onClick={handleProfilePic}
                             >
                                 Upload
@@ -710,7 +736,7 @@ export default function Settings({ user, label, section }) {
                                         setOldPasswordError('Wrong Password');
                                     })
                                 } catch (err) {
-                                
+
                                 }
                             }
                         }
