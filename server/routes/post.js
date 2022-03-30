@@ -144,7 +144,7 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
         }
         var sql = `INSERT INTO Post Values (${Is}, ${checkEmpty(
             req.body.tag
-        )}, ${con.escape(username)}, 12, 14, ${checkEmpty(
+        )}, ${con.escape(username)}, 0, 0, ${checkEmpty(
             req.body.caption
         )}, NOW(), 12, ${checkEmpty(req.body.anonymous)}, null, ${checkEmpty(
             req.body.hyperlink
@@ -392,6 +392,19 @@ postRoutes.route('/likeupdate').post(async (req, res) => {
                 insert = `DELETE FROM ${otherTable} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
             }
             await con.awaitQuery(insert)
+
+            //Update like count
+            let likeCount = await con.awaitQuery(
+                `SELECT * FROM UserLike WHERE postID = "${req.body.postID}"`
+            )
+            let dislikeCount = await con.awaitQuery(
+                `SELECT * FROM UserDisLike WHERE postID = "${req.body.postID}"`
+            )
+
+            await con.awaitQuery(
+                `UPDATE Post set likesCount= ${likeCount.length}, dislikeCount = ${dislikeCount.length} where postID = ${req.body.postID};`
+            )
+
             return res.json({ value: val })
         }
     })

@@ -900,11 +900,12 @@ describe('Likes/Dislikes', () => {
                             if (err) return done(err)
                             assert.equal(results.length, 1)
 
-                            let sql2 = `SELECT likesCount FROM Post WHERE postID="${postID1}"`
+                            let sql2 = `SELECT likesCount, dislikeCount FROM Post WHERE postID="${postID1}"`
 
                             testCon.query(sql2, (err, results) => {
                                 if (err) return done(err)
-                                //assert.equal(results[0].likesCount, 1)
+                                assert.equal(results[0].likesCount, 1)
+                                assert.equal(results[0].dislikeCount, 0)
 
                                 return done()
                             })
@@ -955,11 +956,12 @@ describe('Likes/Dislikes', () => {
                             if (err) return done(err)
                             assert.equal(results.length, 1)
 
-                            let sql2 = `SELECT dislikeCount FROM Post WHERE postID="${postID1}"`
+                            let sql2 = `SELECT likesCount, dislikeCount FROM Post WHERE postID="${postID1}"`
 
                             testCon.query(sql2, (err, results) => {
                                 if (err) return done(err)
-                                // assert.equal(results[0].dislikeCount, 1)
+                                assert.equal(results[0].likesCount, 0)
+                                assert.equal(results[0].dislikeCount, 1)
 
                                 return done()
                             })
@@ -1025,11 +1027,12 @@ describe('Likes/Dislikes', () => {
                                     if (err) return done(err)
                                     assert.equal(results.length, 0)
 
-                                    let sql2 = `SELECT likesCount FROM Post WHERE postID="${postID1}"`
+                                    let sql2 = `SELECT likesCount, dislikeCount FROM Post WHERE postID="${postID1}"`
 
                                     testCon.query(sql2, (err, results) => {
                                         if (err) return done(err)
                                         assert.equal(results[0].likesCount, 0)
+                                        assert.equal(results[0].dislikeCount, 0)
 
                                         return done()
                                     })
