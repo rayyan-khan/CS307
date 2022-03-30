@@ -227,45 +227,50 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
     }
 })
 
-userRoutes.route('/searchUsers/:query').get(async (req, res) => {
+userRoutes.route('/search/:query').get(async (req, res) => {
     var sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
         req.params.query
-    )}, username) > 0 OR locate(${con.escape(
-        req.params.query
-    )}, firstName) > 0 OR locate(${con.escape(req.params.query)}, lastName) > 0`
+    )}, username) > 0 OR locate(${con.escape(req.params.query)}, firstName) > 0 OR locate(${con.escape(req.params.query)}, lastName) > 0`
 
     const name = req.params.query.split(' ')
     if (name.length > 1) {
-        sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
-            name[0]
-        )}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0`
+        sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(name[0])}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0`
     }
 
+    var sql1 = `SELECT * FROM Tag WHERE locate(${con.escape(
+        req.params.query
+    )}, tagID) > 0`
+
     con.query(sql, function (err, result) {
-        if (result.length === 0)
-            return res.status(400).json("Users don't exist")
-        console.log(result)
-        if (err) {
-            console.log(result)
-            return res.status(500).json(err)
-        }
-
-        try {
-            let list = result.map((user) => {
-                return {
-                    value: user.username,
-                    label:
-                        user.firstName && user.lastName
-                            ? `${user.firstName} ${user.lastName}`
-                            : '',
-                    type: 'user',
-                }
-            })
-
-            return res.status(200).json(list)
-        } catch (error) {
-            return res.status(400).json(error)
-        }
+        con.query(sql1, function (err1, result1) {
+            if (result1.length === 0 && result.length === 0)
+                return res.status(400).json("Nothing such as that exists")
+            console.log(result1)
+            if (err) {
+                console.log(result)
+                return res.status(500).json(err)
+            }
+            if (err1) {
+                console.log(result1)
+                return res.status(500).json(err1)
+            }
+            try {
+                var list = result.map((user) => {
+                    return {
+                        value: user.username,
+                        label:
+                            user.firstName && user.lastName
+                                ? `${user.firstName} ${user.lastName}`
+                                : '',
+                        type: 'user',
+                    }
+                })
+    
+                return res.status(200).json(list)
+            } catch (error) {
+                return res.status(400).json(error)
+            }
+        })
     })
 })
 
