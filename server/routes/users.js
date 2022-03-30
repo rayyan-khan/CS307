@@ -69,14 +69,7 @@ userRoutes.route('/getNumberFollowers').get(async (req, res) => {
 
     const { email, username } = user
     //var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
-    var sql = `Select Count(followed) FROM UserFollow Where followed=${con.escape(username)}`
 
-    con.query(sql, function (err, result) {
-        if (err) {
-            console.log(err)
-            res.status(500).json(err)
-        } else res.json('Successfully deleted user')
-    })
 })
 
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
@@ -98,6 +91,9 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var sql = `SELECT username, email, bio, private, firstName, lastName, url from User WHERE username = ${con.escape(
         req.params.username
     )}`
+    // var sql = `SELECT User.username, User.email, User.bio, User.private, User.firstName, User.lastName, User.url from User, UserFollow WHERE User.username = ${con.escape(
+    //     req.params.username
+    // )} and `
 
     con.query(sql, async (err, fullResponse) => {
         if (fullResponse.length === 0)
@@ -119,7 +115,43 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
                 req.params.username
             ))
 
-        res.status(200).json({ ...result, following: followingUser })
+        var numberFollwersSQL = `Select Count(followed) FROM UserFollow Where followed=${con.escape(req.params.username)}`
+
+        con.query(numberFollwersSQL, function (err, result) {
+            if (err) {
+                console.log(err)
+                res.status(500).json(err)
+            } else {
+                let numberFollowers = result[0]['Count(followed)'];
+                console.log(numberFollowers)
+
+                var numberFollowingSQL = `Select Count(follower) FROM UserFollow Where follower=${con.escape(req.params.username)}`
+
+                con.query(numberFollowingSQL, function (err, result) {
+                    if (err) {
+                        console.log(err)
+                        res.status(500).json(err)
+                    } else {
+                        let numberFollowing = result[0]['Count(follower)'];
+                        console.log(numberFollowing)
+
+                        let numTagsFollowingSQL = `SELECT * FROM TagFollow WHERE username = "${req.params.username}"`
+
+                        con.query(numTagsFollowingSQL, (err, result) => {
+                            let numTagsFollowing = result.length
+
+                            res.status(200).json({ ...result, following: followingUser,
+                                numberFollowers: numberFollowers,
+                                numberFollowing: numberFollowing,
+                                numTagsFollowing: numTagsFollowing
+                            })
+                        })
+
+                    }
+                })
+            }
+        })
+
     })
 })
 

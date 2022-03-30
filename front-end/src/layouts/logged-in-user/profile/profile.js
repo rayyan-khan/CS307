@@ -163,6 +163,7 @@ class Profile extends React.Component {
         await axios
             .get('http://localhost:5000/api/getProfile/' + userViewing)
             .then((res) => {
+                console.log('profile data over here')
                 console.log(res.data)
                 this.setState({
                     user: {
@@ -173,9 +174,9 @@ class Profile extends React.Component {
                         editedBio: res.data.bio,
                         firstName: res.data.firstName ? res.data.firstName : '',
                         lastName: res.data.lastName ? res.data.lastName : '',
-                        numTagsFollowing: this.formatNum(6900),
-                        numFollowing: this.formatNum(420000),
-                        numFollowers: this.formatNum(44444444),
+                        numTagsFollowing: this.formatNum(res.data.numTagsFollowing),
+                        numFollowing: this.formatNum(res.data.numberFollowing),
+                        numFollowers: this.formatNum(res.data.numberFollowers),
                         email: res.data.email,
                         profilePic: res.data.url,
                     },
