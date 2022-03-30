@@ -176,7 +176,7 @@ class Profile extends React.Component {
                         lastName: res.data.lastName ? res.data.lastName : '',
                         numTagsFollowing: this.formatNum(res.data.numTagsFollowing),
                         numFollowing: this.formatNum(res.data.numberFollowing),
-                        numFollowers: this.formatNum(res.data.numberFollowers),
+                        numFollowers: res.data.numberFollowers,
                         email: res.data.email,
                         profilePic: res.data.url,
                     },
@@ -226,6 +226,8 @@ class Profile extends React.Component {
                 })
                 .then((res) => {
                     this.setState({ following: true })
+                    this.state.user.numFollowers += 1;
+                    this.forceUpdate();
                 })
         } else {
             axios
@@ -234,6 +236,8 @@ class Profile extends React.Component {
                 })
                 .then(() => {
                     this.setState({ following: false })
+                    this.state.user.numFollowers -= 1;
+                    this.forceUpdate();
                 })
         }
     }
@@ -245,9 +249,8 @@ class Profile extends React.Component {
                     <Center>
                         <div style={{ display: 'flex' }}>
                             <div
-                                className={`toggle-title ${
-                                    this.state.showPosts ? 'select-title' : ''
-                                }`}
+                                className={`toggle-title ${this.state.showPosts ? 'select-title' : ''
+                                    }`}
                                 onClick={this.toPosts}
                             >
                                 <Box>
@@ -260,9 +263,8 @@ class Profile extends React.Component {
                                 </Box>
                             </div>
                             <div
-                                className={`toggle-title ${
-                                    this.state.showPosts ? '' : 'select-title'
-                                }`}
+                                className={`toggle-title ${this.state.showPosts ? '' : 'select-title'
+                                    }`}
                                 onClick={this.toInteractions}
                             >
                                 <Box>
@@ -280,9 +282,8 @@ class Profile extends React.Component {
 
                 <div className="slide-container">
                     <Box
-                        className={`slide ${
-                            this.state.showPosts ? 'right-hide' : 'show'
-                        }`}
+                        className={`slide ${this.state.showPosts ? 'right-hide' : 'show'
+                            }`}
                         style={{ paddingBottom: '80px' }}
                     >
                         <div style={{ textAlign: 'center' }}>
@@ -292,9 +293,8 @@ class Profile extends React.Component {
 
                     <Box
                         style={{ paddingBottom: '80px' }}
-                        className={`slide posts-container ${
-                            this.state.showPosts ? 'show' : 'left-hide'
-                        }`}
+                        className={`slide posts-container ${this.state.showPosts ? 'show' : 'left-hide'
+                            }`}
                     >
                         {this.postHandler()}
                     </Box>
@@ -458,9 +458,9 @@ class Profile extends React.Component {
                                                                 }
                                                             >
                                                                 {
-                                                                    this.state
+                                                                    this.formatNum(this.state
                                                                         .user
-                                                                        .numFollowers
+                                                                        .numFollowers)
                                                                 }
                                                             </Text>
                                                             <Text color="var(--text-color)">
