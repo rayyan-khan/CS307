@@ -98,17 +98,17 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
     con.query(sql, async (err, fullResponse) => {
         if (fullResponse.length === 0)
             return res.status(400).json("User doesn't exist")
-        let result = fullResponse[0]
-        console.log(result)
+        let userResult = fullResponse[0]
+        console.log(userResult)
         if (err) {
-            console.log(result)
+            console.log(userResult)
             return res.status(500).json(err)
         }
-        if (result.private == 1 && !amUser) {
-            delete result.email
+        if (userResult.private == 1 && !amUser) {
+            delete userResult.email
         }
 
-        let followingUser =
+        let following =
             user &&
             (await query.isUser1FollowingUser2(
                 user.username,
@@ -117,33 +117,31 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
 
         var numberFollwersSQL = `Select Count(followed) FROM UserFollow Where followed=${con.escape(req.params.username)}`
 
-        con.query(numberFollwersSQL, function (err, result) {
+        con.query(numberFollwersSQL, function (err, userFollowersResult) {
             if (err) {
                 console.log(err)
                 res.status(500).json(err)
             } else {
-                let numberFollowers = result[0]['Count(followed)'];
+                let numberFollowers = userFollowersResult[0]['Count(followed)'];
                 console.log(numberFollowers)
 
                 var numberFollowingSQL = `Select Count(follower) FROM UserFollow Where follower=${con.escape(req.params.username)}`
 
-                con.query(numberFollowingSQL, function (err, result) {
+                con.query(numberFollowingSQL, function (err, userFollwoingResult) {
                     if (err) {
                         console.log(err)
                         res.status(500).json(err)
                     } else {
-                        let numberFollowing = result[0]['Count(follower)'];
+                        let numberFollowing = userFollwoingResult[0]['Count(follower)'];
                         console.log(numberFollowing)
 
                         let numTagsFollowingSQL = `SELECT * FROM TagFollow WHERE username = "${req.params.username}"`
 
-                        con.query(numTagsFollowingSQL, (err, result) => {
-                            let numTagsFollowing = result.length
+                        con.query(numTagsFollowingSQL, (err, tagFollowingResult) => {
+                            let numTagsFollowing = tagFollowingResult.length
 
-                            res.status(200).json({ ...result, following: followingUser,
-                                numberFollowers: numberFollowers,
-                                numberFollowing: numberFollowing,
-                                numTagsFollowing: numTagsFollowing
+                            res.status(200).json({
+                                ...userResult, following, numberFollowers, numberFollowing, numTagsFollowing
                             })
                         })
 
@@ -255,7 +253,7 @@ userRoutes.route('/search/:query').get(async (req, res) => {
                 return res.status(500).json(err1)
             }
             try {
-                let userList = result.map((user) => {
+                var list = result.map((user) => {
                     return {
                         value: user.username,
                         label:
@@ -266,15 +264,7 @@ userRoutes.route('/search/:query').get(async (req, res) => {
                     }
                 })
 
-                let tagList = result1.map((tag) => {
-                    return {
-                        value: tag.tagID,
-                        label: tag.tagID,
-                        type: 'tag'
-                    }
-                })
-    
-                return res.status(200).json([...userList, ...tagList])
+                return res.status(200).json(list)
             } catch (error) {
                 return res.status(400).json(error)
             }
