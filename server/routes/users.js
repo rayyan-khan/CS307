@@ -38,6 +38,47 @@ userRoutes.route('/deleteProfile').get(async (req, res) => {
     })
 })
 
+userRoutes.route('/getNumberFollowing').get(async (req, res) => {
+    var user
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+    //var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
+    var sql = `Select Count(followed) FROM UserFollow Where follower=${con.escape(username)}`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json('Successfully deleted user')
+    })
+})
+userRoutes.route('/getNumberFollowers').get(async (req, res) => {
+    var user
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+    //var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
+    var sql = `Select Count(followed) FROM UserFollow Where followed=${con.escape(username)}`
+
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json('Successfully deleted user')
+    })
+})
+
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var user
     var amUser = false
