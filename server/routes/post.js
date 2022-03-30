@@ -238,7 +238,7 @@ postRoutes.route('/getOrderedPost').get(async function (req, res) {
     } catch (err) {
         user = undefined
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isLiked, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
-        Order BY {ost.timeStamp DESC`
+        Order BY Post.timeStamp DESC`
     }
 
     var anony = 'Anonymous'
@@ -263,9 +263,8 @@ postRoutes.route('/getPostWithTag/:tagid').get(async function (req, res) {
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 and Post.username!=${con.escape(
             username
         )} THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${username}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
-        LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID WHERE Post.tagID = "${
-            req.params.tagid
-        }" Order BY Post.timeStamp DESC`
+        LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID WHERE Post.tagID = "${req.params.tagid
+            }" Order BY Post.timeStamp DESC`
     } catch (err) {
         user = undefined
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isLiked, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
@@ -416,7 +415,7 @@ postRoutes.route('/checkUserLike').get((req, res) => {
     res.json({ value: ans })
 })
 
-function checkUser(req) {}
+function checkUser(req) { }
 
 postRoutes.route('/updateLikeCount').post((req, res) => {
     console.log(`${req.body.change}`)

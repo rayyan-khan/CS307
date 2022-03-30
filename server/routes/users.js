@@ -69,14 +69,7 @@ userRoutes.route('/getNumberFollowers').get(async (req, res) => {
 
     const { email, username } = user
     //var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
-    var sql = `Select Count(followed) FROM UserFollow Where followed=${con.escape(username)}`
 
-    con.query(sql, function (err, result) {
-        if (err) {
-            console.log(err)
-            res.status(500).json(err)
-        } else res.json('Successfully deleted user')
-    })
 })
 
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
@@ -98,6 +91,9 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var sql = `SELECT username, email, bio, private, firstName, lastName, url from User WHERE username = ${con.escape(
         req.params.username
     )}`
+    // var sql = `SELECT User.username, User.email, User.bio, User.private, User.firstName, User.lastName, User.url from User, UserFollow WHERE User.username = ${con.escape(
+    //     req.params.username
+    // )} and `
 
     con.query(sql, async (err, fullResponse) => {
         if (fullResponse.length === 0)
@@ -119,7 +115,43 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
                 req.params.username
             ))
 
-        res.status(200).json({ ...result, following: followingUser })
+        var numberFollwersSQL = `Select Count(followed) FROM UserFollow Where followed=${con.escape(req.params.username)}`
+
+        con.query(numberFollwersSQL, function (err, result) {
+            if (err) {
+                console.log(err)
+                res.status(500).json(err)
+            } else {
+                let numberFollowers = result[0]['Count(followed)'];
+                console.log(numberFollowers)
+
+                var numberFollowingSQL = `Select Count(follower) FROM UserFollow Where follower=${con.escape(req.params.username)}`
+
+                con.query(numberFollowingSQL, function (err, result) {
+                    if (err) {
+                        console.log(err)
+                        res.status(500).json(err)
+                    } else {
+                        let numberFollowing = result[0]['Count(follower)'];
+                        console.log(numberFollowing)
+
+                        let numTagsFollowingSQL = `SELECT * FROM TagFollow WHERE username = "${req.params.username}"`
+
+                        con.query(numTagsFollowingSQL, (err, result) => {
+                            let numTagsFollowing = result.length
+
+                            res.status(200).json({ ...result, following: followingUser,
+                                numberFollowers: numberFollowers,
+                                numberFollowing: numberFollowing,
+                                numTagsFollowing: numTagsFollowing
+                            })
+                        })
+
+                    }
+                })
+            }
+        })
+
     })
 })
 
@@ -195,45 +227,50 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
     }
 })
 
-userRoutes.route('/searchUsers/:query').get(async (req, res) => {
+userRoutes.route('/search/:query').get(async (req, res) => {
     var sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
         req.params.query
-    )}, username) > 0 OR locate(${con.escape(
-        req.params.query
-    )}, firstName) > 0 OR locate(${con.escape(req.params.query)}, lastName) > 0`
+    )}, username) > 0 OR locate(${con.escape(req.params.query)}, firstName) > 0 OR locate(${con.escape(req.params.query)}, lastName) > 0`
 
     const name = req.params.query.split(' ')
     if (name.length > 1) {
-        sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
-            name[0]
-        )}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0`
+        sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(name[0])}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0`
     }
 
+    var sql1 = `SELECT * FROM Tag WHERE locate(${con.escape(
+        req.params.query
+    )}, tagID) > 0`
+
     con.query(sql, function (err, result) {
-        if (result.length === 0)
-            return res.status(400).json("Users don't exist")
-        console.log(result)
-        if (err) {
-            console.log(result)
-            return res.status(500).json(err)
-        }
-
-        try {
-            let list = result.map((user) => {
-                return {
-                    value: user.username,
-                    label:
-                        user.firstName && user.lastName
-                            ? `${user.firstName} ${user.lastName}`
-                            : '',
-                    type: 'user',
-                }
-            })
-
-            return res.status(200).json(list)
-        } catch (error) {
-            return res.status(400).json(error)
-        }
+        con.query(sql1, function (err1, result1) {
+            if (result1.length === 0 && result.length === 0)
+                return res.status(400).json("Nothing such as that exists")
+            console.log(result1)
+            if (err) {
+                console.log(result)
+                return res.status(500).json(err)
+            }
+            if (err1) {
+                console.log(result1)
+                return res.status(500).json(err1)
+            }
+            try {
+                var list = result.map((user) => {
+                    return {
+                        value: user.username,
+                        label:
+                            user.firstName && user.lastName
+                                ? `${user.firstName} ${user.lastName}`
+                                : '',
+                        type: 'user',
+                    }
+                })
+    
+                return res.status(200).json(list)
+            } catch (error) {
+                return res.status(400).json(error)
+            }
+        })
     })
 })
 
