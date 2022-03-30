@@ -143,10 +143,9 @@ class CreatePost extends React.Component {
     data.append('image', this.state.selectedFile);
     data.append('anonymous', this.state.anonymous);
     data.append('caption', this.state.postText);
-    data.append('tag', this.state.postText);
     data.append('hyperlink', this.state.hyperlink);
     data.append('token', localStorage.getItem('token'))
-    data.append('tag', this.state.tagSelected)
+    data.append('tag', this.state.tagSelected);
 
     let url = window.location.href;
     if (this.state.selectedFile === null) {

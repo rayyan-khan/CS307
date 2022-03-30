@@ -4,6 +4,8 @@ import {
     Stack,
     Spinner,
     Box,
+    Text,
+    Button,
 } from '@chakra-ui/react'
 import React, { useRef } from 'react'
 
@@ -33,9 +35,23 @@ class Bookmarks extends React.Component {
                 .then((res) => {
                     const posts = res.data
                     posts.map(async (post, key) => {
-                        post.isLiked = false
-                        post.isDisliked = false
-                        post.isBookmarked = false
+                        if (post.isLiked === "1") {
+                            post.isLiked = true;
+                            console.log("CHECK ME");
+                        } else {
+                            post.isLiked = false;
+                            console.log("PRINT PLEASE")
+                        }
+
+                        if (post.isDisliked === "1") {
+                            post.isDisliked = true;
+                            console.log("Disliked is true at start");
+                        } else {
+                            post.isDisliked = false;
+                            console.log("Disliked is False at start")
+                        }
+
+                        post.isBookmarked = false;
                     })
                     this.setState({ allPosts: posts })
                     this.setState({ loading: 1 })
@@ -90,25 +106,47 @@ class Bookmarks extends React.Component {
             )
         } else if (this.state.loading == 1) {
             return (
-                <Box h={'100vh'} className="color-switch">
-                    <div
-                        onScroll={this.onScroll}
-                        style={{
-                            backgroundColor: '--mainColor',
-                            overflowX: 'hidden',
-                            overflowY: 'scroll',
-                            width: '100%',
-                            height: '100%',
-                        }}
-                    >
-                        <div>Bookmarked Posts</div>
-                        <Center bg={'--mainColor'} pb={20}>
-                            <Stack pt={50}>
-                                {this.bookmarkedPostHandler()}
-                            </Stack>
-                        </Center>
-                    </div>
-                </Box>
+                <Stack direction={'row'}>
+                    <Box pl={100} pt={100} w={'45%'}>
+                        <Box
+                            minW={'320px'}
+                            maxW={'320px'}
+                            className='color-switch' maxH={'100vh'}
+
+                            boxShadow={'2xl'}
+                            rounded={'lg'}
+                            p={6}
+                            textAlign={'center'}
+                        >
+                            <Center>
+                                <Stack direction={'column'}>
+                                    <Text color={'var(--text-color)'} fontWeight={'bold'} textAlign={'center'}>
+                                        Bookmarked Posts
+                                    </Text>
+                                </Stack>
+                            </Center>
+                        </Box>
+                    </Box>
+
+                    <Box h={'100vh'} className="color-switch">
+                        <div
+                            onScroll={this.onScroll}
+                            style={{
+                                backgroundColor: '--mainColor',
+                                overflowX: 'hidden',
+                                overflowY: 'scroll',
+                                width: '100%',
+                                height: '100%',
+                            }}
+                        >
+                            <Center bg={'--mainColor'} pb={20}>
+                                <Stack pt={50}>
+                                    {this.bookmarkedPostHandler()}
+                                </Stack>
+                            </Center>
+                        </div>
+                    </Box>
+                </Stack>
             )
         }
     }

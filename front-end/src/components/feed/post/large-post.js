@@ -457,7 +457,7 @@ export default function LargePost({ post }) {
                     </Box>
                 </GridItem>
                 <GridItem height={0}></GridItem>
-                <GridItem pt={10} height={'30%'}>
+                <GridItem pt={10} pb={0} height={'30%'}>
                     <Box style={{ paddingLeft: '200px' }} position={'relative'} p={5}>
                         <Box
                             minW={'500px'}
