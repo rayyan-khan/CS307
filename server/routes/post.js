@@ -53,6 +53,70 @@ postRoutes
         })
     })
 
+postRoutes
+    .route('/posts/postImage')
+    .post(upload.single('image'), async function (req, res) {
+        //  var url = s3.uploadFile(req.file);
+        //get username
+        var user
+        console.log(req.body)
+        try {
+            //Use decodeHeader to extract user info from header or throw an error
+            user = await decodeHeader.decodeAuthHeader(req)
+        } catch (err) {
+            return res.status(400).json(err)
+        }
+        const {email, username} = user
+        console.log(username)
+        //
+
+        var getId = 'Select Max(postID) as ID From Post;'
+        var Is
+        con.query(getId, async (err, result) => {
+            if (err) {
+                console.log(err)
+                res.status(500).json(err)
+            } else res.json(result)
+            console.log(result[0].ID)
+            Is = result[0].ID
+            Is += 1 //store the ID
+            //check if file is okay to store
+
+            //
+            //var url = 'garbage for a sec'
+            s3.uploadFile(req.file).then((url) => {
+                console.log('promise result ' + res)
+
+                //url = "https://cs307.s3.amazonaws.com/" + req.file.path.substring(8)
+                console.log(url)
+
+                function checkEmpty(str) {
+                    if (str === '') {
+                        return 'null'
+                    } else {
+                        return con.escape(str)
+                    }
+                }
+
+                var sql = `INSERT INTO Post Values (${Is}, ${checkEmpty(req.body.tag)}, ${con.escape(
+                    username
+                )}, 0, 0, ${checkEmpty(
+                    req.body.caption
+                )}, NOW(), 12, ${checkEmpty(req.body.anonymous)}, ${checkEmpty(
+                    url
+                )}, ${checkEmpty(req.body.hyperlink)})`
+
+                //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
+                con.query(sql, function (err, results) {
+                    if (err) throw err
+                    console.log('1 record inserted')
+                    console.log(results)
+                })
+            })
+        })
+    })
+
+
 postRoutes.route('/getPostsByUser/:viewingUser').get(async (req, res) => {
     //  var sql = 'SELECT * From Post Order BY timeStamp DESC'
     let viewingUser = req.params.viewingUser
