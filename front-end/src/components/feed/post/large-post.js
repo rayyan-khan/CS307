@@ -80,12 +80,26 @@ export default function LargePost({ post }) {
     console.log(comments);
 
     const handleLiked = (event) => {
-        if (post.isLiked == "1") {
-            post.isLiked = "0";
-            post.likesCount -= 1;
-        } else {
+        if (post.isDisliked == "1") {
             post.isLiked = "1";
+            post.isDisliked = "0";
             post.likesCount += 1;
+            post.dislikeCount -= 1;
+            // They clicked on dislike and then clicked on like
+            // Undislike the post and the like the post
+
+
+        } else {
+            if (post.isLiked == "1") {
+                post.isLiked = "0";
+                post.likesCount -= 1;
+                // They already liked it and now want to unlike it
+
+            } else {
+                post.isLiked = "1";
+                post.likesCount += 1;
+                // They want to like the post
+            }
         }
         event.stopPropagation();
         if (localStorage.getItem('token') == null) {
@@ -93,8 +107,6 @@ export default function LargePost({ post }) {
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
         } else {
-
-
             setIsLiked(!isLiked);
             if (isLiked !== isDisliked) {
                 setIsDisliked(false);
@@ -125,11 +137,25 @@ export default function LargePost({ post }) {
 
     const handleDisliked = (event) => {
         if (post.isLiked == "1") {
-            post.isDisliked = "0";
-            post.dislikeCount -= 1;
-        } else {
+            post.isLiked = "0";
             post.isDisliked = "1";
+            post.likesCount -= 1;
             post.dislikeCount += 1;
+            // They clicked on like and then clicked on dislike
+            // Unlike the post and the dislike the post
+
+        } else {
+            if (post.isDisliked == "1") {
+                post.isDisliked = "0";
+                post.dislikeCount -= 1;
+                // They already disliked it and now want to undislike it
+
+            } else {
+                post.isDisliked = "1";
+                post.dislikeCount += 1;
+                // They want to dislike the post
+
+            }
         }
         event.stopPropagation();
         if (localStorage.getItem('token') == null) {
