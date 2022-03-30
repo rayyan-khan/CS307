@@ -65,10 +65,10 @@ export default function Post({ post, label }) {
                                 setIsLiked(false);
                                 usernamePostID['table'] = 'UserLike';
                             }
-                            
+
                             usernamePostID['change'] = -1;
-                            
-                            
+
+
                             setAPI(0);
                             setAPI(1);
                         }
@@ -80,6 +80,26 @@ export default function Post({ post, label }) {
         }
         setAPI(0);
     }, [runAPI])
+
+    useEffect(() => {
+        try {
+            axios.defaults.headers.common['authorization'] =
+                localStorage.getItem('token')
+            axios.get('http://localhost:5000/api/getBookmarks').then((res) => {
+                console.log("Bookmarks: ", res.data)
+                var bookmarks = res.data
+                console.log(bookmarks.includes(post));
+                for (var i = 0; i < bookmarks.length; i++) {
+                    if (bookmarks[i].postID === post.postID) {
+                        post.isBookmarked = true;
+                        setIsBookmarked(true);
+                    }
+                }
+            });
+        } catch (error) {
+
+        }
+    }, []);
 
     const handleLiked = (event) => {
         if (localStorage.getItem('token') == null) {
@@ -98,8 +118,8 @@ export default function Post({ post, label }) {
             usernamePostID['postID'] = post.postID
             usernamePostID['table'] = 'UserLike'
             console.log(usernamePostID)
-            
-            
+
+
             axios
                 .post('http://localhost:5000/api/likeupdate', usernamePostID)
                 .then((res) => {
@@ -133,7 +153,7 @@ export default function Post({ post, label }) {
 
                 })
 
-            
+
         }
 
         // setIsLiked(!isLiked);
@@ -266,22 +286,67 @@ export default function Post({ post, label }) {
     }
 
     const [isBookmarked, setIsBookmarked] = React.useState(post.isBookmarked)
+
+
+
+
+    const addBookmark = () => {
+        try {
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
+            axios.post('http://localhost:5000/api/createBookmark', {
+                postID: post.postID,
+            })
+                .then((res) => {
+                    if (res.data === 'Post bookmarked') {
+                        post.isBookmarked = true;
+                        setIsBookmarked(true)
+                    } else {
+                        post.isBookmarked = false;
+                        setIsBookmarked(false)
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const deleteBookmark = () => {
+        try {
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token')
+            axios.post('http://localhost:5000/api/deleteBookmark', {
+                postID: post.postID,
+            })
+                .then((res) => {
+                    if (res.data === 'Post unbookmarked') {
+                        post.isBookmarked = false;
+                        setIsBookmarked(false)
+                    } else {
+                        post.isBookmarked = true;
+                        setIsBookmarked(true)
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const handleBookmarked = (event) => {
         event.stopPropagation()
-        setIsBookmarked(!isBookmarked)
-        if (!isBookmarked) {
-            posts[postIndex].isBookmarked = true
-        } else {
-            posts[postIndex].isBookmarked = false
-        }
-        localStorage.removeItem('allPosts')
-        localStorage.setItem('allPosts', JSON.stringify(posts))
-
         if (localStorage.getItem('token') == null) {
             event.preventDefault()
             let url = window.location.href
             window.location.href =
                 url.substring(0, url.indexOf('/')) + '/signup'
+        } else {
+            if (isBookmarked) {
+                deleteBookmark()
+            } else {
+                addBookmark()
+            }
         }
     }
 
@@ -406,9 +471,9 @@ export default function Post({ post, label }) {
                     {post.postCaption}
                 </Text>
 
-                {post.url !== 'undefined' ? (
+                {post.url !== null ? (
                     <Center>
-                        <Box alignSelf={'center'} px={0} pt={5} w={'100%'}>
+                        <Box alignSelf={'center'} px={0} pt={post.url !== null ? 5 : 5} w={'100%'}>
                             <Image src={post.url} />
                         </Box>
                     </Center>
@@ -418,7 +483,7 @@ export default function Post({ post, label }) {
 
 
                 {post.hyperlink !== '' ? (
-                    <Center pb={5}>
+                    <Center pb={post.hyperlink !== '' ? 3 : 0}>
                         <LinkPreview
                             width="500px"
                             url={post.hyperlink}
@@ -431,7 +496,7 @@ export default function Post({ post, label }) {
 
             </Stack>
 
-            {post.tagID !== "null" ? (
+            {(post.tagID !== null && post.tagID !== "null" && post.tagID !== "undefined" && post.tagID !== undefined) ? (
                 <Stack
                     visibility={post.tagID !== null ? 'visible' : 'hidden'}
                     align={'center'}
