@@ -34,6 +34,9 @@ export default function LargePost({ post }) {
     const [username, setUsername] = React.useState('');
     const [comments, setComments] = React.useState([]);
     const [updateComments, setUpdateComments] = React.useState(false);
+    const[render, setRender] = React.useState(false)
+    const [usernamePostID, setUsernamePostID] = React.useState({})
+
     useEffect(() => {
         try {
             axios.get("http://localhost:5000/api/comments/" + post.postID).then((res) => {
@@ -80,37 +83,53 @@ export default function LargePost({ post }) {
     console.log(comments);
 
     const handleLiked = (event) => {
-        if (post.isDisliked == "1") {
-            post.isLiked = "1";
-            post.isDisliked = "0";
-            post.likesCount += 1;
-            post.dislikeCount -= 1;
-            // They clicked on dislike and then clicked on like
-            // Undislike the post and the like the post
-
-
-        } else {
-            if (post.isLiked == "1") {
-                post.isLiked = "0";
-                post.likesCount -= 1;
-                // They already liked it and now want to unlike it
-
-            } else {
-                post.isLiked = "1";
-                post.likesCount += 1;
-                // They want to like the post
-            }
-        }
-        event.stopPropagation();
         if (localStorage.getItem('token') == null) {
-            event.preventDefault();
-            let url = window.location.href;
-            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-        } else {
-            setIsLiked(!isLiked);
-            if (isLiked !== isDisliked) {
-                setIsDisliked(false);
+            if (event) {
+                event.preventDefault()
             }
+            let url = window.location.href
+            window.location.href =
+                url.substring(0, url.indexOf('/')) + '/signup'
+        } else {
+            if (event) {
+                event.stopPropagation()
+            }
+
+            usernamePostID['username'] = username
+            usernamePostID['postID'] = post.postID
+            usernamePostID['table'] = 'UserLike'
+            console.log(usernamePostID)
+
+
+            axios
+                .post('http://localhost:5000/api/likeupdate', usernamePostID)
+                .then((res) => {
+                    console.log(res.data.value)
+
+                    
+
+                    if (res.data.value === 'Added') {
+                        console.log('WORKS NOW')
+
+                        post.likesCount += 1
+                        post.isLiked = "1"
+                        setRender(!render)
+
+                        if (post.isDisliked == "1") {
+                            
+                            post.dislikeCount -= 1;
+                            post.isDisliked = "0"
+                            setRender(!render)
+                        }
+                    } else {
+                        post.likesCount -= 1
+                        post.isLiked = "0"
+                        setRender(!render)
+                       // usernamePostID['change'] = -1
+                    }
+                    console.log('FIRST HERE')
+                    //setAPI(1)
+                })
         }
     }
 
@@ -136,37 +155,51 @@ export default function LargePost({ post }) {
     }
 
     const handleDisliked = (event) => {
-        if (post.isLiked == "1") {
-            post.isLiked = "0";
-            post.isDisliked = "1";
-            post.likesCount -= 1;
-            post.dislikeCount += 1;
-            // They clicked on like and then clicked on dislike
-            // Unlike the post and the dislike the post
-
-        } else {
-            if (post.isDisliked == "1") {
-                post.isDisliked = "0";
-                post.dislikeCount -= 1;
-                // They already disliked it and now want to undislike it
-
-            } else {
-                post.isDisliked = "1";
-                post.dislikeCount += 1;
-                // They want to dislike the post
-
-            }
-        }
-        event.stopPropagation();
         if (localStorage.getItem('token') == null) {
-            event.preventDefault();
-            let url = window.location.href;
-            window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-        } else {
-            setIsDisliked(!isDisliked);
-            if (isLiked !== isDisliked) {
-                setIsLiked(false);
+            if (event) {
+                event.preventDefault()
             }
+            let url = window.location.href
+            window.location.href =
+                url.substring(0, url.indexOf('/')) + '/signup'
+        } else {
+            if (event) {
+                event.stopPropagation()
+            }
+
+            usernamePostID['username'] = username
+            usernamePostID['postID'] = post.postID
+            usernamePostID['table'] = 'UserDisLike'
+            console.log(usernamePostID)
+
+            axios
+                .post('http://localhost:5000/api/likeupdate', usernamePostID)
+                .then((res) => {
+                    console.log(res.data.value)
+
+                    if (res.data.value === 'Added') {
+                        console.log('WORKS NOW')
+
+                        post.dislikeCount += 1
+                        post.isDisliked = "1"
+                        setRender(!render);
+
+                        if (post.isLiked == "1") {
+                            post.likesCount -= 1;
+                            post.isLiked = "0"
+                            setRender(!render);
+                        }
+                        //usernamePostID['change'] = 1
+                        //usernamePostID['resetTable'] = 'UserLike';
+                    } else {
+                        post.dislikeCount -= 1
+                        post.isDisliked = "0"
+                        setRender(!render);
+
+                        //usernamePostID['change'] = -1
+                    }
+                    console.log('FIRST HERE')
+                })
         }
     }
 
