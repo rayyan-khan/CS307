@@ -80,12 +80,20 @@ export default function LargePost({ post }) {
     console.log(comments);
 
     const handleLiked = (event) => {
+        if (post.isLiked == "1") {
+            post.isLiked = "0";
+            post.likesCount -= 1;
+        } else {
+            post.isLiked = "1";
+            post.likesCount += 1;
+        }
         event.stopPropagation();
         if (localStorage.getItem('token') == null) {
             event.preventDefault();
             let url = window.location.href;
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
         } else {
+
 
             setIsLiked(!isLiked);
             if (isLiked !== isDisliked) {
@@ -116,6 +124,13 @@ export default function LargePost({ post }) {
     }
 
     const handleDisliked = (event) => {
+        if (post.isLiked == "1") {
+            post.isDisliked = "0";
+            post.dislikeCount -= 1;
+        } else {
+            post.isDisliked = "1";
+            post.dislikeCount += 1;
+        }
         event.stopPropagation();
         if (localStorage.getItem('token') == null) {
             event.preventDefault();
