@@ -255,7 +255,7 @@ userRoutes.route('/search/:query').get(async (req, res) => {
                 return res.status(500).json(err1)
             }
             try {
-                var list = result.map((user) => {
+                let userList = result.map((user) => {
                     return {
                         value: user.username,
                         label:
@@ -265,8 +265,16 @@ userRoutes.route('/search/:query').get(async (req, res) => {
                         type: 'user',
                     }
                 })
+
+                let tagList = result1.map((tag) => {
+                    return {
+                        value: tag.tagID,
+                        label: tag.tagID,
+                        type: 'tag'
+                    }
+                })
     
-                return res.status(200).json(list)
+                return res.status(200).json([...userList, ...tagList])
             } catch (error) {
                 return res.status(400).json(error)
             }

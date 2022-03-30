@@ -1,7 +1,7 @@
-const FormatOptionLabel = ({ value, label }) => (
+const FormatOptionLabel = ({ value, label, type }) => (
     <div style={{ display: 'flex' }}>
-        <div>{label}&nbsp;</div>
-        <div style={{ 'font-weight': 'bold' }}>@{value}</div>
+        {type === 'user' ? <div>{label}&nbsp;</div> : <div />}
+        <div style={{ 'font-weight': 'bold' }}>{type === 'user' ? '@' : 'r/'}{value}</div>
     </div>
 )
 
