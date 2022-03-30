@@ -66,10 +66,8 @@ class SearchBar extends Component {
                         console.log(option.type)
 
                         if (option.type === 'user') {
-                            console.log('giving user')
                             return `${option.label} @${option.value}`
                         } else {
-                            console.log('giving tag')
                             return `r/${option.label}`
                         }
                     }}
@@ -78,10 +76,10 @@ class SearchBar extends Component {
                     onInputChange={this.onInputChange}
                     placeholder="Search"
                     styles={{
-                        control: base => ({
+                        control: (base) => ({
                             ...base,
                             height: 35,
-                            minHeight: 35
+                            minHeight: 35,
                         }),
                         dropdownIndicator: (styles) => ({
                             ...styles,
