@@ -68,8 +68,6 @@ postRoutes.route('/getPostsByUser/:viewingUser').get(async (req, res) => {
         thisUser = undefined
     }
 
-    console.log(thisUser)
-
     thisUser = thisUser ? thisUser.username : undefined
 
     let sql
@@ -85,8 +83,6 @@ postRoutes.route('/getPostsByUser/:viewingUser').get(async (req, res) => {
             console.log(err)
             res.status(500).json(err)
         } else {
-            console.log(result)
-
             res.json(result)
         }
     })
@@ -269,11 +265,11 @@ postRoutes.route('/getPostWithTag/:tagid').get(async function (req, res) {
         )} THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${username}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
         LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID WHERE Post.tagID = "${
             req.params.tagid
-        }" Order BY timeStamp DESC`
+        }" Order BY Post.timeStamp DESC`
     } catch (err) {
         user = undefined
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isLiked, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
-        WHERE Post.tagID = "${req.params.tagid}" Order BY timeStamp DESC`
+        WHERE Post.tagID = "${req.params.tagid}" Order BY Post.timeStamp DESC`
     }
 
     var anony = 'Anonymous'
@@ -367,7 +363,6 @@ postRoutes.route('/likeupdate').post(async (req, res) => {
             console.log(err)
         } else {
             ans = result[0].NUM
-            console.log(ans)
             if (ans === 0) {
                 userExists = 'false'
             } else {
@@ -377,11 +372,8 @@ postRoutes.route('/likeupdate').post(async (req, res) => {
             var insert = ''
             var val = ''
 
-            console.log(userExists)
-
             if (userExists === 'false') {
-                console.log('ADDING USER')
-                insert = `INSERT INTO ${req.body.table} VALUES('${req.body.username}', ${req.body.postID})`
+                insert = `INSERT INTO ${req.body.table} VALUES('${req.body.username}', ${req.body.postID}, NOW())`
                 val = 'Added'
             } else {
                 console.log('DELETING USER')

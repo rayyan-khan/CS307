@@ -12,22 +12,26 @@ const isUser1FollowingUser2 = async (user1, user2) => {
 const getUserInteractions = async (username) => {
     res = await con.awaitQuery(`
         SELECT IF (Post.anonymous = 1, "Anonymous", Post.username) AS username, UserLike.postID, tagId, likesCount, dislikeCount,
-        postCaption, numberOfComments, url, hyperlink, NULL as comment, true as liked, false as disliked
+        postCaption, numberOfComments, url, hyperlink, NULL as comment, true as liked, false as disliked,
+        UserLike.timestamp
         FROM UserLike
         JOIN Post ON UserLike.postID = Post.postID
         WHERE UserLike.username="${username}"
         UNION
         SELECT IF (Post.anonymous = 1, "Anonymous", Post.username) AS username, UserDisLike.postID, tagID, likesCount, dislikeCount, 
-        postCaption, numberOfComments, url, hyperlink, NULL as comment, false as liked, true as disliked
+        postCaption, numberOfComments, url, hyperlink, NULL as comment, false as liked, true as disliked,
+        UserDislike.timestamp
         FROM UserDisLike
         JOIN Post ON UserDisLike.postID = Post.postID
         WHERE UserDisLike.username = "${username}"
         UNION
         SELECT IF (Post.anonymous = 1, "Anonymous", Post.username) AS username, Comments.postID, tagID, likesCount, dislikeCount,
-        postCaption, numberOfComments, url, hyperlink, comment, false as liked, false as disliked
+        postCaption, numberOfComments, url, hyperlink, comment, false as liked, false as disliked,
+        Comments.timestamp
         FROM Comments
         JOIN Post ON Comments.postID = Post.postID
-        WHERE Comments.username = "${username}";
+        WHERE Comments.username = "${username}"
+        ORDER BY timestamp DESC;
     `)
 
     return res

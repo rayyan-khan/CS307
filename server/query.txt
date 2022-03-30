@@ -18,8 +18,17 @@ Primary Key(postID)
 CREATE TABLE UserLike (
     username VARCHAR(20),
     postID INT,
+    timeStamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(username, postID),
-    FOREIGN KEY (usename) REFERENCES User(username)
+    FOREIGN KEY (username) REFERENCES User(username)
+);
+
+CREATE TABLE UserDislike (
+    username VARCHAR(20),
+    postID INT,
+    timeStamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(username, postID),
+    FOREIGN KEY (username) REFERENCES User(username)
 );
 
 CREATE TABLE User (
