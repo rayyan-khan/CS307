@@ -17,7 +17,6 @@ import React, { useEffect, useState } from 'react'
 import { GrNext } from "react-icons/gr"
 import ImageUpload from 'image-upload-react'
 import 'image-upload-react/dist/index.css'
-import posts from '../../../components/feed/posts';
 import "../../layouts.css";
 import axios from 'axios';
 

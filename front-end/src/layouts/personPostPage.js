@@ -2,7 +2,6 @@ import { Center, Stack } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 
 import LargePost from '../components/feed/post/large-post';
-import posts from '../components/feed/posts';
 import "./layouts.css";
 const axios = require('axios');
 
@@ -25,6 +24,7 @@ class PersonPostPage extends React.Component {
             axios.get("http://localhost:5000/api/getOrderedPost")
                 .then(res => {
                     const posts = res.data
+                    console.log(posts);
                     const post = posts.filter(post => post.postID == this.props.postid);
                     this.setState({ post: post[0] });
                 })
