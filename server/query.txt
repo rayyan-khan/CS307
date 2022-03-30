@@ -12,7 +12,9 @@ numberOfComments INT,
 anonymous BOOL,
 url VARCHAR(200),
 hyperlink VARCHAR(200),
-Primary Key(postID)
+Primary Key(postID),
+FOREIGN KEY (username) REFERENCES User(username)
+ON DELETE CASCADE
 );
 
 CREATE TABLE UserLike (
@@ -21,14 +23,16 @@ CREATE TABLE UserLike (
     timeStamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(username, postID),
     FOREIGN KEY (username) REFERENCES User(username)
+    ON DELETE CASCADE
 );
 
-CREATE TABLE UserDislike (
+CREATE TABLE UserDisLike (
     username VARCHAR(20),
     postID INT,
     timeStamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(username, postID),
     FOREIGN KEY (username) REFERENCES User(username)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE User (
@@ -64,5 +68,11 @@ comment VARCHAR(300)
 CREATE TABLE Bookmark (
 username VARCHAR(30),
 postID INT,
+timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE UserFollow (
+followed VARCHAR(30),
+follower VARCHAR(30),
 timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

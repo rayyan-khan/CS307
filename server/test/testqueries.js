@@ -10,12 +10,29 @@ let con2 = mysql.createConnection({
 })
 
 con2.connect((err) => {
-    if (!err) console.log('connected')
+    if (err) console.log(err)
 })
 
 const cleanDatabase = async () => {
-    await con.awaitQuery('DELETE FROM unverifieduser WHERE true')
-    await con.awaitQuery('DELETE FROM user WHERE true')
+    let tableNames = [
+        'unverifieduser',
+        'user',
+        'post',
+        'bookmark',
+        'comments',
+        'tag',
+        'userlike',
+        'userdislike',
+        'userfollow',
+    ]
+
+    await con.awaitQuery('SET FOREIGN_KEY_CHECKS = 0;')
+
+    for (let i = 0; i < tableNames.length; i++) {
+        await con.awaitQuery(`DELETE FROM ${tableNames[i]} WHERE true`)
+    }
+
+    await con.awaitQuery('SET FOREIGN_KEY_CHECKS = 1;')
 }
 
 const createUnverifiedUser = async (
@@ -48,10 +65,25 @@ const allVerifiedUsersByEmail = async (email) => {
     return await con.awaitQuery(`SELECT * FROM User WHERE email='${email}'`)
 }
 
+const createPost = async (postID, tagID, username, postCaption, anonymous) => {
+    return await con.awaitQuery(`
+    INSERT INTO Post Values 
+    (${postID}, ${tagID}, '${username}', 0, 0, '${postCaption}', NOW(), 0, ${anonymous}, null, null);
+    `)
+}
+
+const numberOfLikes = async (postID) => {
+    return await con.awaitQuery(
+        `SELECT likesCount FROM Post WHERE postID = "${postID}"`
+    )
+}
+
 module.exports = {
     cleanDatabase,
     createUnverifiedUser,
     verifyConfirmationCode,
     createVerifiedUser,
     allVerifiedUsersByEmail,
+    createPost,
+    numberOfLikes,
 }

@@ -10,5 +10,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 app.use('/api', require('../routes/auth'))
+app.use('/api', require('../routes/post'))
+app.use('/api', require('../routes/users'))
 
 module.exports = app

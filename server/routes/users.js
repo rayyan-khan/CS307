@@ -29,13 +29,12 @@ userRoutes.route('/deleteProfile').get(async (req, res) => {
     }
 
     const { email, username } = user
-    console.log(username)
     var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
             res.status(500).json(err)
-        } else res.json(result)
+        } else res.json('Successfully deleted user')
     })
 })
 
@@ -158,11 +157,15 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
 userRoutes.route('/searchUsers/:query').get(async (req, res) => {
     var sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
         req.params.query
-    )}, username) > 0 OR locate(${con.escape(req.params.query)}, firstName) > 0 OR locate(${con.escape(req.params.query)}, lastName) > 0`
+    )}, username) > 0 OR locate(${con.escape(
+        req.params.query
+    )}, firstName) > 0 OR locate(${con.escape(req.params.query)}, lastName) > 0`
 
     const name = req.params.query.split(' ')
     if (name.length > 1) {
-        sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(name[0])}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0`
+        sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
+            name[0]
+        )}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0`
     }
 
     con.query(sql, function (err, result) {
@@ -230,7 +233,7 @@ userRoutes.route('/followUser').post(async (req, res) => {
         if (err) {
             console.log(err)
             res.status(500).json(err)
-        } else res.json(result)
+        } else res.json('Successfully followed user')
     })
 })
 
@@ -279,7 +282,7 @@ userRoutes.route('/unfollowUser').post(async (req, res) => {
         if (err) {
             console.log(err)
             res.status(500).json(err)
-        } else res.json(result)
+        } else res.json('Successfully unfollowed user')
     })
 })
 

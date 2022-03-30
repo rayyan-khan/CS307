@@ -20,7 +20,7 @@ const getUserInteractions = async (username) => {
         UNION
         SELECT IF (Post.anonymous = 1, "Anonymous", Post.username) AS username, UserDisLike.postID, tagID, likesCount, dislikeCount, 
         postCaption, numberOfComments, url, hyperlink, NULL as comment, false as liked, true as disliked,
-        UserDislike.timestamp
+        UserDisLike.timeStamp
         FROM UserDisLike
         JOIN Post ON UserDisLike.postID = Post.postID
         WHERE UserDisLike.username = "${username}"
