@@ -39,7 +39,7 @@ class ResetPassword extends React.Component {
         console.log("Clicked submit");
 
         // axios stuff
-        axios.put("http://localhost5000/api/passwordRecoveryLink", {email: this.state.email});
+        axios.put("http://localhost:5000/api/passwordRecoveryLink", {email: this.state.email});
 
     }
 

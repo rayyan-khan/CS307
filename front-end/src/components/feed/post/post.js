@@ -37,49 +37,49 @@ export default function Post({ post, label }) {
     console.log(label)
     var postIndex = label
 
-    useEffect(() => {
-        console.log(runAPI)
-        console.log(usernamePostID)
-        try {
-            console.log('EFFECT')
-            if (runAPI !== 0) {
-                console.log('ENTER')
-                console.log(usernamePostID['table'])
+    // useEffect(() => {
+    //     console.log(runAPI)
+    //     console.log(usernamePostID)
+    //     try {
+    //         console.log('EFFECT')
+    //         if (runAPI !== 0) {
+    //             console.log('ENTER')
+    //             console.log(usernamePostID['table'])
 
 
-                axios
-                    .post(
-                        'http://localhost:5000/api/updateLikeCount',
-                        usernamePostID
-                    )
-                    .then((res) => {
-                        if (isLiked === true && isDisliked === true) {
-                            if (usernamePostID['resetTable'] === 'UserDisLike') {
-                                post.dislikeCount -= 1;
-                                setIsDisliked(false);
-                                usernamePostID['table'] = 'UserDisLike';
-                                //handleDisliked()
-                            } else {
-                                //handleLiked()
-                                post.likesCount -= 1;
-                                setIsLiked(false);
-                                usernamePostID['table'] = 'UserLike';
-                            }
-
-                            usernamePostID['change'] = -1;
-
-
-                            setAPI(0);
-                            setAPI(1);
-                        }
-                        console.log('Passed')
-                    })
-            }
-        } catch (error) {
-            console.log('NOT GOOD')
-        }
-        setAPI(0);
-    }, [runAPI])
+    //             axios
+    //                 .post(
+    //                     'http://localhost:5000/api/updateLikeCount',
+    //                     usernamePostID
+    //                 )
+    //                 .then((res) => {
+    //                     if (isLiked === true && isDisliked === true) {
+    //                         if (usernamePostID['resetTable'] === 'UserDisLike') {
+    //                             post.dislikeCount -= 1;
+    //                             setIsDisliked(false);
+    //                             usernamePostID['table'] = 'UserDisLike';
+    //                             //handleDisliked()
+    //                         } else {
+    //                             //handleLiked()
+    //                             post.likesCount -= 1;
+    //                             setIsLiked(false);
+    //                             usernamePostID['table'] = 'UserLike';
+    //                         }
+                            
+    //                         usernamePostID['change'] = -1;
+                            
+                            
+    //                         setAPI(0);
+    //                         setAPI(1);
+    //                     }
+    //                     console.log('Passed')
+    //                 })
+    //         }
+    //     } catch (error) {
+    //         console.log('NOT GOOD')
+    //     }
+    //     setAPI(0);
+    // }, [runAPI])
 
     useEffect(() => {
         try {
@@ -125,11 +125,20 @@ export default function Post({ post, label }) {
                 .then((res) => {
                     console.log(res.data.value)
 
+                    
+
                     if (res.data.value === 'Added') {
                         console.log('WORKS NOW')
 
                         post.likesCount += 1
                         setIsLiked(true)
+
+                        if (isDisliked === true) {
+                            
+                            post.dislikeCount -= 1;
+                            console.log(post.dislikeCount)
+                            setIsDisliked(false)
+                        }
                         // console.log(isLiked)
                         // console.log(isDisliked)
                         // if (isLiked === true && isDisliked === true) {
@@ -139,23 +148,18 @@ export default function Post({ post, label }) {
                         //     usernamePostID['change'] = -1;
                         //     setAPI(1)
                         // }
-                        usernamePostID['change'] = 1;
-                        usernamePostID['resetTable'] = 'UserDisLike';
+                        //usernamePostID['change'] = 1;
+                        //usernamePostID['resetTable'] = 'UserDisLike';
                     } else {
                         post.likesCount -= 1
                         setIsLiked(false)
 
-                        usernamePostID['change'] = -1
+                       // usernamePostID['change'] = -1
                     }
                     console.log('FIRST HERE')
-                    setAPI(1)
-
-
+                    //setAPI(1)
                 })
-
-
         }
-
         // setIsLiked(!isLiked);
         // if (!isLiked) {
         //     post.likesCount += 1;
@@ -241,48 +245,22 @@ export default function Post({ post, label }) {
 
                         post.dislikeCount += 1
                         setIsDisliked(true)
-                        usernamePostID['change'] = 1
-                        usernamePostID['resetTable'] = 'UserLike';
+
+                        if (isLiked === true) {
+                            post.likesCount -= 1;
+                            setIsLiked(false)
+                        }
+                        //usernamePostID['change'] = 1
+                        //usernamePostID['resetTable'] = 'UserLike';
                     } else {
                         post.dislikeCount -= 1
                         setIsDisliked(false)
 
-                        usernamePostID['change'] = -1
+                        //usernamePostID['change'] = -1
                     }
                     console.log('FIRST HERE')
-                    setAPI(1)
                 })
         }
-        // event.stopPropagation();
-        // setIsDisliked(!isDisliked);
-        // if (!isDisliked) {
-        //     posts[postIndex].isDisliked = true;
-        //     post.dislikeCount += 1;
-        //     posts[postIndex].dislikeCount += 1;
-        //     localStorage.removeItem('allPosts');
-        //     localStorage.setItem('allPosts', JSON.stringify(posts));
-
-        //     if (isLiked !== isDisliked) {
-        //         setIsLiked(false);
-        //         post.likesCount -= 1;
-        //         posts[postIndex].isLiked = false;
-        //         posts[postIndex].likesCount -= 1;
-        //         localStorage.removeItem('allPosts');
-        //         localStorage.setItem('allPosts', JSON.stringify(posts));
-        //     }
-        // } else {
-        //     post.dislikeCount -= 1;
-        //     posts[postIndex].isDisliked = false;
-        //     posts[postIndex].dislikeCount -= 1;
-        //     localStorage.removeItem('allPosts');
-        //     localStorage.setItem('allPosts', JSON.stringify(posts));
-        // }
-
-        // if (localStorage.getItem('token') == null) {
-        //     event.preventDefault();
-        //     let url = window.location.href;
-        //     window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-        // }
     }
 
     const [isBookmarked, setIsBookmarked] = React.useState(post.isBookmarked)

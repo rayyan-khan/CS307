@@ -36,7 +36,7 @@ class SearchBar extends Component {
             this.setState({ searchableNames: [] })
         } else {
             axios
-                .get('http://localhost:5000/api/searchUsers/' + input)
+                .get('http://localhost:5000/api/search/' + input)
                 .then((response) => {
                     console.log(response.data)
                     this.setState({
@@ -61,9 +61,17 @@ class SearchBar extends Component {
                     name="color"
                     options={this.state.searchableNames}
                     getOptionLabel={(option) => {
-                        return option.type === 'user'
-                            ? `${option.label} @${option.value}`
-                            : `r/${option.label}`
+                        console.log('here')
+                        console.log(option)
+                        console.log(option.type)
+
+                        if (option.type === 'user') {
+                            console.log('giving user')
+                            return `${option.label} @${option.value}`
+                        } else {
+                            console.log('giving tag')
+                            return `r/${option.label}`
+                        }
                     }}
                     formatOptionLabel={FormatOptionLabel}
                     onChange={this.onChange}
