@@ -158,33 +158,37 @@ export default function PostInteraction({ post, label }) {
                             : post.username}
                     </Heading>
 
-                    <Box
-                        onClick={(event) => {
-                            event.preventDefault()
-                            event.stopPropagation()
-                            if (localStorage.getItem('token') == null) {
-                                let url = window.location.href
-                                window.location.href =
-                                    url.substring(0, url.indexOf('/')) +
-                                    '/signup'
-                            } else {
-                                let url = window.location.href
-                                window.location.href =
-                                    url.substring(0, url.indexOf('/')) +
-                                    '/tag/' +
-                                    post.tag
-                            }
-                        }}
-                        style={{ cursor: 'pointer' }}
-                        px={2}
-                        py={1}
-                        bg={'#F2AF29'}
-                        color={'--mainColor'}
-                        rounded={'full'}
-                        fontWeight={'300'}
-                    >
-                        {'#' + post.tagID}
-                    </Box>
+                    {(post.tagID != null && post.tagID != "null" && post.tagID != undefined && post.tagID != "undefined") ? (
+                        <Box
+                            onClick={(event) => {
+                                event.preventDefault()
+                                event.stopPropagation()
+                                if (localStorage.getItem('token') == null) {
+                                    let url = window.location.href
+                                    window.location.href =
+                                        url.substring(0, url.indexOf('/')) +
+                                        '/signup'
+                                } else {
+                                    let url = window.location.href
+                                    window.location.href =
+                                        url.substring(0, url.indexOf('/')) +
+                                        '/tag/' +
+                                        post.tag
+                                }
+                            }}
+                            style={{ cursor: 'pointer' }}
+                            px={2}
+                            py={1}
+                            bg={'#F2AF29'}
+                            color={'--mainColor'}
+                            rounded={'full'}
+                            fontWeight={'300'}
+                        >
+                            {'#' + post.tagID}
+                        </Box>
+                    ) : (
+                        <></>
+                    )}
 
                     <div className="interaction-post-caption">
                         <Text
