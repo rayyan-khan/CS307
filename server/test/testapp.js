@@ -12,5 +12,6 @@ app.use(cors())
 app.use('/api', require('../routes/auth'))
 app.use('/api', require('../routes/post'))
 app.use('/api', require('../routes/users'))
+app.use('/api', require('../routes/tag'))
 
 module.exports = app

@@ -713,7 +713,7 @@ describe('Deleting Users', () => {
 })
 
 //User Story 3
-describe('Following/Unfollowing', () => {
+describe('Following/Unfollowing Users', () => {
     it('Following a user successfully', (done) => {
         const followerUsername = 'username1'
         const followerEmail = 'email1'
@@ -851,6 +851,239 @@ describe('Following/Unfollowing', () => {
 
                                 return done()
                             })
+                    })
+            }
+        )
+    })
+})
+
+//User Story 4
+describe('Following/Unfollowing Topics', () => {
+    it('Following a tag successfully', (done) => {
+        const user = 'username1'
+        const email = 'email1'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user, email, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'post caption'
+        let anonymous1 = '0'
+        testQueries.createPost(postID1, tagID1, user, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: email, username: user },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followTag`)
+                    .set('authorization', token)
+                    .send({
+                        tagID: tagID1,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let sql = `SELECT * FROM TagFollow WHERE username="${user}" AND tagID="${tagID1}"`
+
+                        testCon.query(sql, (err, res) => {
+                            if (err) return done(err)
+
+                            assert.equal(res.length, 1)
+
+                            return done()
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Unfollowing a tag successfully', (done) => {
+        const user = 'username1'
+        const email = 'email1'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user, email, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'post caption'
+        let anonymous1 = '0'
+        testQueries.createPost(postID1, tagID1, user, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: email, username: user },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followTag`)
+                    .set('authorization', token)
+                    .send({
+                        tagID: tagID1,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let sql = `SELECT * FROM TagFollow WHERE username="${user}" AND tagID="${tagID1}"`
+
+                        testCon.query(sql, (err, res) => {
+                            if (err) return done(err)
+
+                            assert.equal(res.length, 1)
+
+                            request(app)
+                                .post(`/api/unfollowTag`)
+                                .set('authorization', token)
+                                .send({
+                                    tagID: tagID1,
+                                })
+                                .expect(200)
+                                .end((err, res) => {
+                                    if (err) return done(err)
+
+                                    let sql = `SELECT * FROM TagFollow WHERE username="${user}" AND tagID="${tagID1}"`
+
+                                    testCon.query(sql, (err, res) => {
+                                        if (err) return done(err)
+
+                                        assert.equal(res.length, 0)
+
+                                        return done()
+                                    })
+                                })
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Following a tag twice fails', (done) => {
+        const user = 'username1'
+        const email = 'email1'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user, email, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'post caption'
+        let anonymous1 = '0'
+        testQueries.createPost(postID1, tagID1, user, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: email, username: user },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followTag`)
+                    .set('authorization', token)
+                    .send({
+                        tagID: tagID1,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let sql = `SELECT * FROM TagFollow WHERE username="${user}" AND tagID="${tagID1}"`
+
+                        testCon.query(sql, (err, res) => {
+                            if (err) return done(err)
+
+                            assert.equal(res.length, 1)
+
+                            request(app)
+                                .post(`/api/followTag`)
+                                .set('authorization', token)
+                                .send({
+                                    tagID: tagID1,
+                                })
+                                .expect(400)
+                                .expect('"Already following tag"')
+                                .end((err, res) => {
+                                    if (err) return done(err)
+
+                                    return done()
+                                })
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Unfollowing a tag twice fails', (done) => {
+        const user = 'username1'
+        const email = 'email1'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user, email, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'post caption'
+        let anonymous1 = '0'
+        testQueries.createPost(postID1, tagID1, user, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: email, username: user },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followTag`)
+                    .set('authorization', token)
+                    .send({
+                        tagID: tagID1,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let sql = `SELECT * FROM TagFollow WHERE username="${user}" AND tagID="${tagID1}"`
+
+                        testCon.query(sql, (err, res) => {
+                            if (err) return done(err)
+
+                            assert.equal(res.length, 1)
+
+                            request(app)
+                                .post(`/api/unfollowTag`)
+                                .set('authorization', token)
+                                .send({
+                                    tagID: tagID1,
+                                })
+                                .expect(200)
+                                .end((err, res) => {
+                                    if (err) return done(err)
+
+                                    request(app)
+                                        .post(`/api/unfollowTag`)
+                                        .set('authorization', token)
+                                        .send({
+                                            tagID: tagID1,
+                                        })
+                                        .expect(400)
+                                        .expect('"Not following tag"')
+                                        .end((err, res) => {
+                                            if (err) return done(err)
+
+                                            return done()
+                                        })
+                                })
+                        })
                     })
             }
         )

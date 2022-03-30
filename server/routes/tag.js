@@ -41,7 +41,9 @@ tagRoutes.route('/createTag/:tagName').get(async (req, res) => {
 })
 
 tagRoutes.route('/getNumberOfTags/:tagName').get(async (req, res) => {
-    var sql = `SELECT COUNT(*) as count FROM TagFollow WHERE tagID = ${con.escape(req.params.tagName)}`
+    var sql = `SELECT COUNT(*) as count FROM TagFollow WHERE tagID = ${con.escape(
+        req.params.tagName
+    )}`
     con.query(sql, function (err, fullResponse) {
         let result = fullResponse
         console.log(result)
@@ -53,7 +55,6 @@ tagRoutes.route('/getNumberOfTags/:tagName').get(async (req, res) => {
         res.status(200).json(result)
     })
 })
-
 
 tagRoutes.route('/followTag').post(async (req, res) => {
     let { tagID } = req.body
@@ -68,7 +69,17 @@ tagRoutes.route('/followTag').post(async (req, res) => {
 
     const { email, username } = user
 
-    var sql = `INSERT INTO TagFollow VALUES (${con.escape(username)}, ${con.escape(tagID)}, NOW())`
+    let isFollowing = await con.awaitQuery(
+        `SELECT * FROM TagFollow where username = "${username}" and tagID = "${tagID}"`
+    )
+
+    if (isFollowing.length != 0) {
+        return res.status(400).json('Already following tag')
+    }
+
+    var sql = `INSERT INTO TagFollow VALUES (${con.escape(
+        username
+    )}, ${con.escape(tagID)}, NOW())`
 
     con.query(sql, function (err, result) {
         if (err) {
@@ -90,7 +101,9 @@ tagRoutes.route('/getFollowedTags').get(async (req, res) => {
 
     const { email, username } = user
 
-    var sql = `SELECT tagID FROM TagFollow WHERE username = ${con.escape(username)}`
+    var sql = `SELECT tagID FROM TagFollow WHERE username = ${con.escape(
+        username
+    )}`
 
     con.query(sql, function (err, result) {
         if (err) {
@@ -113,7 +126,17 @@ tagRoutes.route('/unfollowTag').post(async (req, res) => {
 
     const { email, username } = user
 
-    var sql = `DELETE FROM TagFollow WHERE tagID = ${con.escape(tagID)} and username = ${con.escape(username)}`
+    let isFollowing = await con.awaitQuery(
+        `SELECT * FROM TagFollow where username = "${username}" and tagID = "${tagID}"`
+    )
+
+    if (isFollowing.length == 0) {
+        return res.status(400).json('Not following tag')
+    }
+
+    var sql = `DELETE FROM TagFollow WHERE tagID = ${con.escape(
+        tagID
+    )} and username = ${con.escape(username)}`
 
     con.query(sql, function (err, result) {
         if (err) {
@@ -129,8 +152,7 @@ tagRoutes.route('/searchTags/:query').get(async (req, res) => {
     )}, tagID) > 0`
 
     con.query(sql, function (err, result) {
-        if (result.length === 0)
-            return res.status(400).json("Tag don't exist")
+        if (result.length === 0) return res.status(400).json("Tag don't exist")
         console.log(result)
         if (err) {
             console.log(result)
