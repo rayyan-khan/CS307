@@ -392,13 +392,9 @@ postRoutes.route('/likeupdate').post(async (req, res) => {
                 insert = `DELETE FROM ${otherTable} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
             }
             await con.awaitQuery(insert)
-            res.json({ value: val })
+            return res.json({ value: val })
         }
     })
-
-    // var userExists = checkUser(req);
-
-    //res.json(["Error2"])
 })
 
 postRoutes.route('/checkUserLike').get((req, res) => {
@@ -497,6 +493,13 @@ postRoutes.route('/deletePost').post(async (req, res) => {
 
     const { email, username } = user
 
+    let checkAuthor = `SELECT * FROM Post WHERE postID = "${postID}" AND username = "${username}"`
+
+    let isAuthor = await con.awaitQuery(checkAuthor)
+    if (isAuthor.length == 0) {
+        return res.status(400).json('User is not creator of post')
+    }
+
     var sql = `DELETE FROM Post WHERE postID = ${con.escape(
         postID
     )} and username = ${con.escape(username)}`
@@ -505,7 +508,7 @@ postRoutes.route('/deletePost').post(async (req, res) => {
         if (err) {
             console.log(err)
             res.status(500).json(err)
-        } else res.json(result)
+        } else res.json('Successfully deleted post')
     })
 })
 

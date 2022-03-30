@@ -41,38 +41,284 @@ const app = require('./testapp')
 
 //User Story 1
 describe('Deleting Posts', () => {
-    //TODO
     it('Post is deleted', (done) => {
         const user1 = 'username1'
-        const user1Email = 'email1'
-        const deleteUser = 'username2'
-        const deleteEmail = 'email2'
+        const email1 = 'email1'
 
         const password = 'password123'
         const hash = bcrypt.hashSync(password, 10)
 
-        testQueries.createVerifiedUser(user1, user1Email, hash)
-        testQueries.createVerifiedUser(deleteUser, deleteEmail, hash)
+        testQueries.createVerifiedUser(user1, email1, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'post caption'
+        let anonymous1 = '0'
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
 
         jwt.sign(
-            { email: deleteEmail, username: deleteUser },
+            { email: email1, username: user1 },
             process.env.TOKEN_SECRET,
             { expiresIn: 3600 },
             (err, token) => {
                 request(app)
-                    .get(`/api/deleteProfile`)
+                    .post(`/api/deletePost`)
                     .set('authorization', token)
+                    .send({ postID: postID1 })
                     .expect(200)
-                    .expect('"Successfully deleted user"')
+                    .expect('"Successfully deleted post"')
                     .end((err, res) => {
                         if (err) return done(err)
 
-                        let sql = `SELECT * FROM User WHERE username = "${deleteUser}"`
+                        let sql = `SELECT * FROM Post WHERE postID = "${postID1}"`
 
                         testCon.query(sql, (err, res) => {
                             assert.equal(res.length, 0)
 
                             return done()
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Post only deleted by post author', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+
+        const user2 = 'username2'
+        const email2 = 'email2'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(user2, email2, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'post caption'
+        let anonymous1 = '0'
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: email2, username: user2 },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/deletePost`)
+                    .set('authorization', token)
+                    .send({ postID: postID1 })
+                    .expect(400)
+                    .expect('"User is not creator of post"')
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let sql = `SELECT * FROM Post WHERE postID = "${postID1}"`
+
+                        testCon.query(sql, (err, res) => {
+                            assert.equal(res.length, 1)
+
+                            return done()
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Comments deleted when a post is deleted', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+
+        const user2 = 'username2'
+        const email2 = 'email2'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(user2, email2, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'post caption'
+        let anonymous1 = '0'
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: email1, username: user1 },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/createComment`)
+                    .set('authorization', token)
+                    .send({
+                        postID: postID1,
+                        username: user1,
+                        comment: 'comment',
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let sql = `SELECT * FROM Comments WHERE postID = "${postID1}"`
+
+                        testCon.query(sql, (err, res) => {
+                            assert.equal(res.length, 1)
+
+                            request(app)
+                                .post(`/api/deletePost`)
+                                .set('authorization', token)
+                                .send({ postID: postID1 })
+                                .expect(200)
+                                .expect('"Successfully deleted post"')
+                                .end((err, res) => {
+                                    if (err) return done(err)
+
+                                    let sql = `SELECT * FROM Comments WHERE postID = "${postID1}"`
+
+                                    testCon.query(sql, (err, res) => {
+                                        assert.equal(res.length, 0)
+
+                                        return done()
+                                    })
+                                })
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Likes deleted when a post is deleted', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+
+        const user2 = 'username2'
+        const email2 = 'email2'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(user2, email2, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'post caption'
+        let anonymous1 = '0'
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: email1, username: user1 },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/likeupdate`)
+                    .set('authorization', token)
+                    .send({
+                        postID: postID1,
+                        username: user1,
+                        table: 'UserLike',
+                    })
+                    .expect(200)
+                    .expect({
+                        value: 'Added',
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let sql = `SELECT * FROM UserLike WHERE postID = "${postID1}"`
+
+                        testCon.query(sql, (err, res) => {
+                            assert.equal(res.length, 1)
+
+                            request(app)
+                                .post(`/api/deletePost`)
+                                .set('authorization', token)
+                                .send({ postID: postID1 })
+                                .expect(200)
+                                .expect('"Successfully deleted post"')
+                                .end((err, res) => {
+                                    if (err) return done(err)
+
+                                    let sql = `SELECT * FROM UserLike WHERE postID = "${postID1}"`
+
+                                    testCon.query(sql, (err, res) => {
+                                        assert.equal(res.length, 0)
+
+                                        return done()
+                                    })
+                                })
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Dislikes deleted when a post is deleted', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+
+        const user2 = 'username2'
+        const email2 = 'email2'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(user2, email2, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'post caption'
+        let anonymous1 = '0'
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: email1, username: user1 },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/likeupdate`)
+                    .set('authorization', token)
+                    .send({
+                        postID: postID1,
+                        username: user1,
+                        table: 'UserDisLike',
+                    })
+                    .expect(200)
+                    .expect({
+                        value: 'Added',
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let sql = `SELECT * FROM UserDisLike WHERE postID = "${postID1}"`
+
+                        testCon.query(sql, (err, res) => {
+                            assert.equal(res.length, 1)
+
+                            request(app)
+                                .post(`/api/deletePost`)
+                                .set('authorization', token)
+                                .send({ postID: postID1 })
+                                .expect(200)
+                                .expect('"Successfully deleted post"')
+                                .end((err, res) => {
+                                    if (err) return done(err)
+
+                                    let sql = `SELECT * FROM UserDisLike WHERE postID = "${postID1}"`
+
+                                    testCon.query(sql, (err, res) => {
+                                        assert.equal(res.length, 0)
+
+                                        return done()
+                                    })
+                                })
                         })
                     })
             }
@@ -182,7 +428,7 @@ describe('Deleting Users', () => {
         testQueries.createPost(
             postID1,
             tagID1,
-            poster,
+            deleteUser,
             postCaption1,
             anonymous1
         )
@@ -245,7 +491,7 @@ describe('Deleting Users', () => {
         testQueries.createPost(
             postID1,
             tagID1,
-            poster,
+            deleteUser,
             postCaption1,
             anonymous1
         )
@@ -305,54 +551,52 @@ describe('Deleting Users', () => {
         let tagID1 = '1'
         let postCaption1 = 'post caption'
         let anonymous1 = '0'
-        testQueries.createPost(
-            postID1,
-            tagID1,
-            poster,
-            postCaption1,
-            anonymous1
-        )
 
-        jwt.sign(
-            { email: deleteEmail, username: deleteUser },
-            process.env.TOKEN_SECRET,
-            { expiresIn: 3600 },
-            (err, token) => {
-                request(app)
-                    .post(`/api/createComment`)
-                    .set('authorization', token)
-                    .send({
-                        postID: postID1,
-                        username: deleteUser,
-                        comment: 'comment',
-                    })
-                    .expect(200)
-                    .end((err, res) => {
-                        if (err) return done(err)
+        testCon.query(
+            `INSERT INTO Post Values (${postID1}, ${tagID1}, '${deleteUser}', 0, 0, '${postCaption1}', NOW(), 0, ${anonymous1}, null, null);`,
+            (err, res) => {
+                jwt.sign(
+                    { email: deleteEmail, username: deleteUser },
+                    process.env.TOKEN_SECRET,
+                    { expiresIn: 3600 },
+                    (err, token) => {
+                        request(app)
+                            .post(`/api/createComment`)
+                            .set('authorization', token)
+                            .send({
+                                postID: postID1,
+                                username: deleteUser,
+                                comment: 'comment',
+                            })
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
 
-                        let sql = `SELECT * FROM Comments WHERE username = "${deleteUser}"`
+                                let sql = `SELECT * FROM Comments WHERE username = "${deleteUser}"`
 
-                        testCon.query(sql, (err, res) => {
-                            assert.equal(res.length, 1)
+                                testCon.query(sql, (err, res) => {
+                                    assert.equal(res.length, 1)
 
-                            request(app)
-                                .get(`/api/deleteProfile`)
-                                .set('authorization', token)
-                                .expect(200)
-                                .expect('"Successfully deleted user"')
-                                .end((err, res) => {
-                                    if (err) return done(err)
+                                    request(app)
+                                        .get(`/api/deleteProfile`)
+                                        .set('authorization', token)
+                                        .expect(200)
+                                        .expect('"Successfully deleted user"')
+                                        .end((err, res) => {
+                                            if (err) return done(err)
 
-                                    let sql = `SELECT * FROM Comments WHERE username = "${deleteUser}"`
+                                            let sql = `SELECT * FROM Comments WHERE username = "${deleteUser}"`
 
-                                    testCon.query(sql, (err, res) => {
-                                        assert.equal(res.length, 0)
+                                            testCon.query(sql, (err, res) => {
+                                                assert.equal(res.length, 0)
 
-                                        return done()
-                                    })
+                                                return done()
+                                            })
+                                        })
                                 })
-                        })
-                    })
+                            })
+                    }
+                )
             }
         )
     })

@@ -66,10 +66,12 @@ const allVerifiedUsersByEmail = async (email) => {
 }
 
 const createPost = async (postID, tagID, username, postCaption, anonymous) => {
-    return await con.awaitQuery(`
+    let res = await con.awaitQuery(`
     INSERT INTO Post Values 
     (${postID}, ${tagID}, '${username}', 0, 0, '${postCaption}', NOW(), 0, ${anonymous}, null, null);
     `)
+
+    return res
 }
 
 const numberOfLikes = async (postID) => {
