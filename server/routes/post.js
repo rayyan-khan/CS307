@@ -234,11 +234,11 @@ postRoutes.route('/getOrderedPost').get(async function (req, res) {
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 and Post.username!=${con.escape(
             username
         )} THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${username}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
-        LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID Order BY timeStamp DESC`
+        LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID Order BY Post.timeStamp DESC`
     } catch (err) {
         user = undefined
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isLiked, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
-        Order BY timeStamp DESC`
+        Order BY {ost.timeStamp DESC`
     }
 
     var anony = 'Anonymous'
@@ -376,7 +376,6 @@ postRoutes.route('/likeupdate').post(async (req, res) => {
                 insert = `INSERT INTO ${req.body.table} VALUES('${req.body.username}', ${req.body.postID}, NOW())`
                 val = 'Added'
             } else {
-                console.log('DELETING USER')
                 insert = `DELETE FROM ${req.body.table} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
                 val = 'Deleted'
             }
