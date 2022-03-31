@@ -337,11 +337,50 @@ class Profile extends React.Component {
                                             direction={'row'}
                                         >
                                             <Center>
-                                                <Box on>
-                                                    <Tooltip
-                                                        label="Edit Picture"
-                                                        aria-label="A tooltip"
-                                                    >
+                                                {this.state.viewingSelf ? (
+                                                    <Box on>
+                                                        <Tooltip
+                                                            label="Edit Picture"
+                                                            aria-label="A tooltip"
+                                                        >
+                                                            <Avatar
+                                                                name={
+                                                                    this.state.user
+                                                                        .firstName +
+                                                                    ' ' +
+                                                                    this.state.user
+                                                                        .lastName
+                                                                }
+                                                                borderRadius={
+                                                                    'full'
+                                                                }
+                                                                src={
+                                                                    this.state.user
+                                                                        .profilePic
+                                                                }
+                                                                style={{
+                                                                    width: 100,
+                                                                    height: 100,
+                                                                    borderRadius:
+                                                                        100 / 2,
+                                                                }}
+                                                                cursor={'pointer'}
+                                                                _hover={{
+                                                                    backgroundColor:
+                                                                        'darkturquoise',
+                                                                }}
+                                                                onClick={() => {
+                                                                    this.setState({
+                                                                        section:
+                                                                            'profilePic',
+                                                                        open: true,
+                                                                    })
+                                                                }}
+                                                            />
+                                                        </Tooltip>
+                                                    </Box>
+                                                ) : (
+                                                    <Box>
                                                         <Avatar
                                                             name={
                                                                 this.state.user
@@ -363,11 +402,6 @@ class Profile extends React.Component {
                                                                 borderRadius:
                                                                     100 / 2,
                                                             }}
-                                                            cursor={'pointer'}
-                                                            _hover={{
-                                                                backgroundColor:
-                                                                    'darkturquoise',
-                                                            }}
                                                             onClick={() => {
                                                                 this.setState({
                                                                     section:
@@ -376,8 +410,8 @@ class Profile extends React.Component {
                                                                 })
                                                             }}
                                                         />
-                                                    </Tooltip>
-                                                </Box>
+                                                    </Box>
+                                                )}
                                                 <Box pl={'1vw'}>
                                                     <Stack direction={'column'}>
                                                         <Box>

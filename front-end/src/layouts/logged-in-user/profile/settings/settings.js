@@ -237,13 +237,13 @@ export default function Settings({ user, label, section }) {
                                                         </Stack>
                                                         <div
                                                             style={{
-                                                                flex: "0 0 40%",
+                                                                flex: "0 0 36.5%",
                                                                 display: "flex",
                                                                 justifyContent: "flex-end",
 
                                                             }}
                                                         >
-                                                            <Box >
+                                                            <Box>
                                                                 <Button width={'auto'} height={'auto'} bg={'white'}
                                                                     onClick={() => {
                                                                         if (editName) {
