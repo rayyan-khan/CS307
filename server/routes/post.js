@@ -551,8 +551,8 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
                     result[i].isLiked = `${isLiked.length}`
                     result[i].isDisliked = `${isDisLiked.length}`
                 } else {
-                    result[i].isLiked = 0
-                    result[i].isDisliked = 0
+                    result[i].isLiked = '0'
+                    result[i].isDisliked = '0'
                 }
             }
 
