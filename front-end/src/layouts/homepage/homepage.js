@@ -22,8 +22,7 @@ class Homepage extends React.Component {
 
     fetchPosts() {
         try {
-            axios.get("http://localhost:5000/api/getOrderedPost")
-                .then(res => {
+                .get('http://localhost:5000/api/getTimeline')
                     const posts = res.data
                     console.log(posts);
                     console.log("REACCCCCHED");
