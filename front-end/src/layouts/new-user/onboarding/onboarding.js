@@ -27,19 +27,13 @@ const Onboarding = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [tags, setTags] = useState([]);
-
     const [imageNextDisabled, setImageNextDisabled] = useState(true);
     const [imageSrc, setImageSrc] = useState();
-
     const [uploadDisabled, setUploadDisabled] = useState(false);
     const [newProfilePic, setNewProfilePic] = useState(null);
     const [uploading, setUploading] = useState(false);
-
     const [bio, setBio] = useState('');
-
     const [currentFrame, setCurrentFrame] = useState(0);
-
-    // TODO: Remove this and get auth header from backend
 
     useEffect(() => {
         if (currentFrame === 0) {
@@ -99,6 +93,8 @@ const Onboarding = () => {
                 setCurrentFrame(2);
                 return;
             })
+        } else {
+            setCurrentFrame(2);
         }
     }
 
@@ -119,54 +115,6 @@ const Onboarding = () => {
         window.location.href = url.substring(0, url.indexOf("/")) + "/homepage";
 
     }
-
-
-    let tagsFirstRow = [
-        {
-            name: '#brilliance',
-        },
-        {
-            name: '#breeze',
-        },
-        {
-            name: '#palace',
-        },
-        {
-            name: '#prospect',
-        },
-    ];
-
-    let tagsSecondRow = [
-        {
-            name: '#tradition',
-        },
-        {
-            name: '#skate',
-        },
-        {
-            name: '#article',
-        },
-        {
-            name: '#provision',
-        },
-    ];
-
-    let tagsThirdRow = [
-        {
-            name: '#spirit',
-        },
-        {
-            name: '#parachute',
-        },
-        {
-            name: '#corner',
-        },
-        {
-            name: '#notion',
-        },
-    ];
-
-
 
     function updateName(value) {
         console.log(value);
@@ -253,7 +201,10 @@ const Onboarding = () => {
                             <Text fontSize='xl' color={'var(--text-color)'}>{"Nice to meet you " + firstName}</Text>
                         </Center>
                         <Center pt={5}>
-                            <Text fontSize='xl' color={'var(--text-color)'}>Please upload an image to set as your profile picture.</Text>
+                            <Stack direction={'column'}>
+                                <Text fontSize='xl' color={'var(--text-color)'}>Please upload an image to set as your profile picture.</Text>
+                                <Text fontSize='md' color={'var(--text-color)'}>Don't worry, you can always change it later.</Text>
+                            </Stack>
                         </Center>
                         <Center>
                             <Stack direction={'column'}>
@@ -288,7 +239,7 @@ const Onboarding = () => {
 
                         <Stack pt={5} direction={"row"}>
                             <Center position={'relative'} left={'86%'}>
-                                <Button paddingX={10} backgroundColor={'var(--secondary-color)'} width={'4vw'} isDisabled={!uploadDisabled} onClick={handleImageSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}>Next</Button>
+                                <Button paddingX={10} backgroundColor={'var(--secondary-color)'} width={'4vw'} onClick={handleImageSubmit} rightIcon={<GrNext />} fontSize='inherit' color={'black'}> {uploadDisabled ? "Next" : "Skip"} </Button>
                             </Center>
                         </Stack>
                     </Stack>
