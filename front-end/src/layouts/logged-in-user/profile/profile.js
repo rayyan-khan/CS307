@@ -174,7 +174,9 @@ class Profile extends React.Component {
                         editedBio: res.data.bio,
                         firstName: res.data.firstName ? res.data.firstName : '',
                         lastName: res.data.lastName ? res.data.lastName : '',
-                        numTagsFollowing: this.formatNum(res.data.numTagsFollowing),
+                        numTagsFollowing: this.formatNum(
+                            res.data.numTagsFollowing
+                        ),
                         numFollowing: this.formatNum(res.data.numberFollowing),
                         numFollowers: res.data.numberFollowers,
                         email: res.data.email,
@@ -226,8 +228,8 @@ class Profile extends React.Component {
                 })
                 .then((res) => {
                     this.setState({ following: true })
-                    this.state.user.numFollowers += 1;
-                    this.forceUpdate();
+                    this.state.user.numFollowers += 1
+                    this.forceUpdate()
                 })
         } else {
             axios
@@ -236,8 +238,8 @@ class Profile extends React.Component {
                 })
                 .then(() => {
                     this.setState({ following: false })
-                    this.state.user.numFollowers -= 1;
-                    this.forceUpdate();
+                    this.state.user.numFollowers -= 1
+                    this.forceUpdate()
                 })
         }
     }
@@ -249,8 +251,9 @@ class Profile extends React.Component {
                     <Center>
                         <div style={{ display: 'flex' }}>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? 'select-title' : ''
-                                    }`}
+                                className={`toggle-title ${
+                                    this.state.showPosts ? 'select-title' : ''
+                                }`}
                                 onClick={this.toPosts}
                             >
                                 <Box>
@@ -263,8 +266,9 @@ class Profile extends React.Component {
                                 </Box>
                             </div>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? '' : 'select-title'
-                                    }`}
+                                className={`toggle-title ${
+                                    this.state.showPosts ? '' : 'select-title'
+                                }`}
                                 onClick={this.toInteractions}
                             >
                                 <Box>
@@ -282,8 +286,9 @@ class Profile extends React.Component {
 
                 <div className="slide-container">
                     <Box
-                        className={`slide ${this.state.showPosts ? 'right-hide' : 'show'
-                            }`}
+                        className={`slide ${
+                            this.state.showPosts ? 'right-hide' : 'show'
+                        }`}
                         style={{ paddingBottom: '80px' }}
                     >
                         <div style={{ textAlign: 'center' }}>
@@ -293,8 +298,9 @@ class Profile extends React.Component {
 
                     <Box
                         style={{ paddingBottom: '80px' }}
-                        className={`slide posts-container ${this.state.showPosts ? 'show' : 'left-hide'
-                            }`}
+                        className={`slide posts-container ${
+                            this.state.showPosts ? 'show' : 'left-hide'
+                        }`}
                     >
                         {this.postHandler()}
                     </Box>
@@ -457,11 +463,11 @@ class Profile extends React.Component {
                                                                     'var(--text-color)'
                                                                 }
                                                             >
-                                                                {
-                                                                    this.formatNum(this.state
+                                                                {this.formatNum(
+                                                                    this.state
                                                                         .user
-                                                                        .numFollowers)
-                                                                }
+                                                                        .numFollowers
+                                                                )}
                                                             </Text>
                                                             <Text color="var(--text-color)">
                                                                 {' '}
@@ -699,7 +705,9 @@ class Profile extends React.Component {
                                                                     }
                                                                 </Popup>
                                                             </Box>
-                                                        ) : (
+                                                        ) : localStorage.getItem(
+                                                              'token'
+                                                          ) ? (
                                                             <Stack
                                                                 direction={
                                                                     'row'
@@ -750,6 +758,8 @@ class Profile extends React.Component {
                                                                     </Button>
                                                                 </Box>
                                                             </Stack>
+                                                        ) : (
+                                                            <div />
                                                         )}
                                                     </Box>
                                                 </Box>
