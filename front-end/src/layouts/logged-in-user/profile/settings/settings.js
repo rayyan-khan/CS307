@@ -708,6 +708,9 @@ export default function Settings({ user, label, section }) {
                             setConfirmNewPasswordError('');
                             if (oldPassword === '') {
                                 setOldPasswordError('Plese enter your old password');
+                            } if (newPassword.length < 8) {
+                                setNewPasswordError('Password must be at least 8 characters');
+                                setConfirmNewPasswordError('Password must be at least 8 characters');
                             } if (newPassword !== confirmNewPassword) {
                                 setNewPasswordError('Passwords does not match');
                                 setConfirmNewPasswordError('Passwords does not match');
@@ -715,7 +718,7 @@ export default function Settings({ user, label, section }) {
                                 setNewPasswordError('Plese enter your new password');
                             } if (confirmNewPassword === '') {
                                 setConfirmNewPasswordError('Plese confirm your new password');
-                            } else if (oldPassword !== '' && newPassword === confirmNewPassword) {
+                            } else if (oldPassword !== '' && newPassword === confirmNewPassword && newPassword.length > 8 && confirmNewPassword.length > 8) {
                                 setOldPasswordError('');
                                 setNewPasswordError('');
                                 setConfirmNewPasswordError('');
