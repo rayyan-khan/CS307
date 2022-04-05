@@ -97,7 +97,7 @@ export default class App extends React.Component {
             <Box className={'color-switch'} h={'100vh'}>
                 <div className="App">
                     <Navbar />
-                    <Box height={'calc(100vh - 65px)'}>
+                    <Box height={'calc(100vh - 70px)'}>
                         <Router>
                             <Routes>
                                 <Route
