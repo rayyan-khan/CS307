@@ -34,7 +34,7 @@ export default function LargePost({ post }) {
     const [username, setUsername] = React.useState('');
     const [comments, setComments] = React.useState([]);
     const [updateComments, setUpdateComments] = React.useState(false);
-    const[render, setRender] = React.useState(false)
+    const [render, setRender] = React.useState(false)
     const [usernamePostID, setUsernamePostID] = React.useState({})
 
     useEffect(() => {
@@ -106,26 +106,29 @@ export default function LargePost({ post }) {
                 .then((res) => {
                     console.log(res.data.value)
 
-                    
+
 
                     if (res.data.value === 'Added') {
                         console.log('WORKS NOW')
 
                         post.likesCount += 1
+                        setIsLiked(true);
                         post.isLiked = "1"
                         setRender(!render)
 
                         if (post.isDisliked == "1") {
-                            
+
                             post.dislikeCount -= 1;
+                            setIsDisliked(false);
                             post.isDisliked = "0"
                             setRender(!render)
                         }
                     } else {
                         post.likesCount -= 1
+                        setIsLiked(false);
                         post.isLiked = "0"
                         setRender(!render)
-                       // usernamePostID['change'] = -1
+                        // usernamePostID['change'] = -1
                     }
                     console.log('FIRST HERE')
                     //setAPI(1)
@@ -181,11 +184,13 @@ export default function LargePost({ post }) {
                         console.log('WORKS NOW')
 
                         post.dislikeCount += 1
+                        setIsDisliked(true);
                         post.isDisliked = "1"
                         setRender(!render);
 
                         if (post.isLiked == "1") {
                             post.likesCount -= 1;
+                            setIsLiked(false);
                             post.isLiked = "0"
                             setRender(!render);
                         }
@@ -193,6 +198,7 @@ export default function LargePost({ post }) {
                         //usernamePostID['resetTable'] = 'UserLike';
                     } else {
                         post.dislikeCount -= 1
+                        setIsDisliked(false);
                         post.isDisliked = "0"
                         setRender(!render);
 
@@ -480,7 +486,7 @@ export default function LargePost({ post }) {
                                 >
                                     {post.likesCount}
                                 </Text>
-                                {post.isLiked == "1" ? <IconButton size={'lg'} onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton style={{ backgroundColor: "var(--secondary-color)", color: "black" }} size={'lg'} onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
+                                {isLiked ? <IconButton size={'lg'} onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton style={{ backgroundColor: "var(--secondary-color)", color: "black" }} size={'lg'} onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
                             </Stack>
                             <Stack direction={'column'}>
                                 <Text
@@ -491,7 +497,7 @@ export default function LargePost({ post }) {
                                 >
                                     {post.dislikeCount}
                                 </Text>
-                                {post.isDisliked == "1" ? <IconButton size={'lg'} onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton size={'lg'} style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
+                                {isLiked ? <IconButton size={'lg'} onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton size={'lg'} style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
                             </Stack>
                             <Stack direction={'row'}>
                                 {post.username === username ? (
