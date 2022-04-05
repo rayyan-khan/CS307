@@ -116,99 +116,22 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
                 req.params.username
             ))
 
-        var numberFollwersSQL = `Select Count(followed) FROM UserFollow Where followed=${con.escape(
-            req.params.username
-        )}`
+        let followersList = await query.getFollowersList(req.params.username)
+        let followingList = await query.getFollowingList(req.params.username)
+        let tagList = await query.getTagList(req.params.username)
+        let numberFollowers = followersList.length
+        let numberFollowing = followingList.length
+        let numTagsFollowing = tagList.length
 
-        con.query(numberFollwersSQL, function (err, userFollowersResult) {
-            if (err) {
-                console.log(err)
-                res.status(500).json(err)
-            } else {
-                let numberFollowers = userFollowersResult[0]['Count(followed)']
-                console.log(numberFollowers)
-
-                var numberFollowingSQL = `Select Count(follower) FROM UserFollow Where follower=${con.escape(
-                    req.params.username
-                )}`
-
-                con.query(
-                    numberFollowingSQL,
-                    function (err, userFollwoingResult) {
-                        if (err) {
-                            console.log(err)
-                            res.status(500).json(err)
-                        } else {
-                            let numberFollowing =
-                                userFollwoingResult[0]['Count(follower)']
-                            console.log(numberFollowing)
-
-                            let numTagsFollowingSQL = `SELECT * FROM TagFollow WHERE username = "${req.params.username}"`
-
-                            con.query(
-                                numTagsFollowingSQL,
-                                (err, tagFollowingResult) => {
-                                    let numTagsFollowing =
-                                        tagFollowingResult.length
-
-                                    let followersListQuery = `
-                                    SELECT follower as username, firstName, lastName, url
-                                    FROM UserFollow
-                                    JOIN User ON User.username = UserFollow.follower
-                                    WHERE UserFollow.followed = "${req.params.username}"
-                                    `
-
-                                    let followingListQuery = `
-                                    SELECT followed as username, firstName, lastName, url
-                                    FROM UserFollow
-                                    JOIN User ON User.username = UserFollow.followed
-                                    WHERE UserFollow.follower = "${req.params.username}"
-                                    `
-
-                                    let tagFollowingListQuery = `select tagID from TagFollow where username = "${req.params.username}"`
-
-                                    con.query(
-                                        followersListQuery,
-                                        (err, followersList) => {
-                                            con.query(
-                                                followingListQuery,
-                                                (err, followingList) => {
-                                                    con.query(
-                                                        tagFollowingListQuery,
-                                                        (err, tagListRes) => {
-                                                            let tagList =
-                                                                tagListRes.map(
-                                                                    (
-                                                                        tagObj
-                                                                    ) => {
-                                                                        return tagObj.tagID
-                                                                    }
-                                                                )
-
-                                                            res.status(
-                                                                200
-                                                            ).json({
-                                                                ...userResult,
-                                                                following,
-                                                                numberFollowers,
-                                                                numberFollowing,
-                                                                numTagsFollowing,
-                                                                followersList,
-                                                                followingList,
-                                                                tagList,
-                                                            })
-                                                        }
-                                                    )
-                                                }
-                                            )
-                                        }
-                                    )
-                                }
-                            )
-                        }
-                    }
-                )
-            }
+        return res.status(200).json({
+            ...userResult,
+            following,
+            numberFollowers,
+            numberFollowing,
+            numTagsFollowing,
+            followersList,
+            followingList,
+            tagList,
         })
     })
 })
