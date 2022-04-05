@@ -151,13 +151,58 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
                                     let numTagsFollowing =
                                         tagFollowingResult.length
 
-                                    res.status(200).json({
-                                        ...userResult,
-                                        following,
-                                        numberFollowers,
-                                        numberFollowing,
-                                        numTagsFollowing,
-                                    })
+                                    let followersListQuery = `
+                                    SELECT follower as username, firstName, lastName, url
+                                    FROM UserFollow
+                                    JOIN User ON User.username = UserFollow.follower
+                                    WHERE UserFollow.followed = "${req.params.username}"
+                                    `
+
+                                    let followingListQuery = `
+                                    SELECT followed as username, firstName, lastName, url
+                                    FROM UserFollow
+                                    JOIN User ON User.username = UserFollow.followed
+                                    WHERE UserFollow.follower = "${req.params.username}"
+                                    `
+
+                                    let tagFollowingListQuery = `select tagID from TagFollow where username = "${req.params.username}"`
+
+                                    con.query(
+                                        followersListQuery,
+                                        (err, followersList) => {
+                                            con.query(
+                                                followingListQuery,
+                                                (err, followingList) => {
+                                                    con.query(
+                                                        tagFollowingListQuery,
+                                                        (err, tagListRes) => {
+                                                            let tagList =
+                                                                tagListRes.map(
+                                                                    (
+                                                                        tagObj
+                                                                    ) => {
+                                                                        return tagObj.tagID
+                                                                    }
+                                                                )
+
+                                                            res.status(
+                                                                200
+                                                            ).json({
+                                                                ...userResult,
+                                                                following,
+                                                                numberFollowers,
+                                                                numberFollowing,
+                                                                numTagsFollowing,
+                                                                followersList,
+                                                                followingList,
+                                                                tagList,
+                                                            })
+                                                        }
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    )
                                 }
                             )
                         }
