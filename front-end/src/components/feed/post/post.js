@@ -523,7 +523,7 @@ export default function Post({ post, label }) {
                     >
                         {post.likesCount}
                     </Text>
-                    {post.isLiked ? (
+                    {isLiked ? (
                         <IconButton
                             onClick={handleLiked}
                             style={{
@@ -553,7 +553,7 @@ export default function Post({ post, label }) {
                     >
                         {post.dislikeCount}
                     </Text>
-                    {post.isDisliked ? (
+                    {isDisliked ? (
                         <IconButton
                             onClick={handleDisliked}
                             style={{
