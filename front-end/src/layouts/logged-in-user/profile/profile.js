@@ -12,6 +12,13 @@ import {
     IconButton,
     Avatar,
     Tooltip,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
 } from '@chakra-ui/react'
 import '../../layouts.css'
 import { IoSettingsOutline } from 'react-icons/io5'
@@ -51,7 +58,35 @@ class Profile extends React.Component {
             editMode: false,
             open: false,
             showPosts: true,
+            showFollowersList: false,
+            showFollowingList: false,
+            showTagList: false,
         }
+    }
+
+    showFollowers = () => {
+        this.setState({ showFollowersList: true })
+    }
+
+    showFollowing = () => {
+        this.setState({ showFollowingList: true })
+    }
+
+    showTags = () => {
+        console.log(this.state.tagList)
+        this.setState({ showTagList: true })
+    }
+
+    hideFollowers = () => {
+        this.setState({ showFollowersList: false })
+    }
+
+    hideFollowing = () => {
+        this.setState({ showFollowingList: false })
+    }
+
+    hideTagList = () => {
+        this.setState({ showTagList: false })
     }
 
     async fetchPosts() {
@@ -183,7 +218,12 @@ class Profile extends React.Component {
                         profilePic: res.data.url,
                     },
                     following: res.data.following,
+                    followersList: res.data.followersList,
+                    followingList: res.data.followingList,
+                    tagList: res.data.tagList,
                 })
+
+                console.log(res.data.followersList)
 
                 this.setState({
                     viewingSelf:
@@ -309,6 +349,134 @@ class Profile extends React.Component {
         )
     }
 
+    userPopup = ({ list, isOpen, onClose, modalTitle }) => {
+        return (
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>{modalTitle}</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <div className="container">
+                            <div className="row">
+                                {list ? (
+                                    list.map((user) => {
+                                        let url = `http://localhost:3000/profile/${user.username}`
+                                        return (
+                                            <a href={url}>
+                                                <Stack
+                                                    p={'10px'}
+                                                    direction="row"
+                                                >
+                                                    <Center>
+                                                        <Avatar
+                                                            borderRadius={
+                                                                'full'
+                                                            }
+                                                            src={user.url}
+                                                            boxSize="2vw"
+                                                        />
+                                                        <Text
+                                                            align={'left'}
+                                                            pl={'10px'}
+                                                            color={
+                                                                'darkturquoise'
+                                                            }
+                                                            fontSize={'lg'}
+                                                        >
+                                                            {user.username}
+                                                        </Text>
+                                                        <Text
+                                                            color={
+                                                                'var(--text-color)'
+                                                            }
+                                                            pl={'15px'}
+                                                            align={'left'}
+                                                            fontSize={'md'}
+                                                            width={'19vw'}
+                                                        >
+                                                            {user.firstName}{' '}
+                                                            {user.lastName}
+                                                        </Text>
+                                                    </Center>
+                                                </Stack>
+                                            </a>
+                                        )
+                                    })
+                                ) : (
+                                    <div>Nothing to show</div>
+                                )}
+                            </div>
+                        </div>
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button colorScheme="blue" mr={3} onClick={onClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        )
+    }
+
+    tagPopup = ({ list, isOpen, onClose }) => {
+        return (
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>
+                        {this.state.user.username} is following these tags
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <div className="container">
+                            <div className="row">
+                                {list ? (
+                                    list.map((tag) => {
+                                        let url = `http://localhost:3000/tag/${tag}`
+
+                                        return (
+                                            <a href={url}>
+                                                <Stack
+                                                    p={'10px'}
+                                                    direction="row"
+                                                >
+                                                    <Center>
+                                                        <Text
+                                                            color={
+                                                                'var(--text-color)'
+                                                            }
+                                                            pl={'15px'}
+                                                            align={'left'}
+                                                            fontSize={'md'}
+                                                            width={'19vw'}
+                                                            fontWeight={'bold'}
+                                                        >
+                                                            {tag}
+                                                        </Text>
+                                                    </Center>
+                                                </Stack>
+                                            </a>
+                                        )
+                                    })
+                                ) : (
+                                    <div>Nothing to show</div>
+                                )}
+                            </div>
+                        </div>
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button colorScheme="blue" mr={3} onClick={onClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        )
+    }
+
     render() {
         return (
             <div
@@ -320,6 +488,26 @@ class Profile extends React.Component {
                     height: '100%',
                 }}
             >
+                <this.userPopup
+                    list={this.state.followersList}
+                    isOpen={this.state.showFollowersList}
+                    onClose={this.hideFollowers}
+                    modalTitle={`${this.state.user.username} is being followed by these users`}
+                />
+
+                <this.userPopup
+                    list={this.state.followingList}
+                    isOpen={this.state.showFollowingList}
+                    onClose={this.hideFollowing}
+                    modalTitle={`${this.state.user.username} is following these users`}
+                />
+
+                <this.tagPopup
+                    list={this.state.tagList}
+                    isOpen={this.state.showTagList}
+                    onClose={this.hideTagList}
+                />
+
                 {this.state.loading ? (
                     <div></div>
                 ) : (
@@ -345,17 +533,20 @@ class Profile extends React.Component {
                                                         >
                                                             <Avatar
                                                                 name={
-                                                                    this.state.user
+                                                                    this.state
+                                                                        .user
                                                                         .firstName +
                                                                     ' ' +
-                                                                    this.state.user
+                                                                    this.state
+                                                                        .user
                                                                         .lastName
                                                                 }
                                                                 borderRadius={
                                                                     'full'
                                                                 }
                                                                 src={
-                                                                    this.state.user
+                                                                    this.state
+                                                                        .user
                                                                         .profilePic
                                                                 }
                                                                 style={{
@@ -364,17 +555,21 @@ class Profile extends React.Component {
                                                                     borderRadius:
                                                                         100 / 2,
                                                                 }}
-                                                                cursor={'pointer'}
+                                                                cursor={
+                                                                    'pointer'
+                                                                }
                                                                 _hover={{
                                                                     backgroundColor:
                                                                         'darkturquoise',
                                                                 }}
                                                                 onClick={() => {
-                                                                    this.setState({
-                                                                        section:
-                                                                            'profilePic',
-                                                                        open: true,
-                                                                    })
+                                                                    this.setState(
+                                                                        {
+                                                                            section:
+                                                                                'profilePic',
+                                                                            open: true,
+                                                                        }
+                                                                    )
                                                                 }}
                                                             />
                                                         </Tooltip>
@@ -468,66 +663,113 @@ class Profile extends React.Component {
                                                             direction={'row'}
                                                         >
                                                             <Text
-                                                                fontWeight={
-                                                                    'bold'
-                                                                }
-                                                                color={
-                                                                    'var(--text-color)'
+                                                                style={{
+                                                                    textDecoration:
+                                                                        'underline',
+                                                                    display:
+                                                                        'flex',
+                                                                    cursor: 'pointer',
+                                                                }}
+                                                                onClick={
+                                                                    this
+                                                                        .showTags
                                                                 }
                                                             >
-                                                                {
-                                                                    this.state
-                                                                        .user
-                                                                        .numTagsFollowing
-                                                                }
-                                                            </Text>
-                                                            <Text color="var(--text-color)">
-                                                                {' '}
-                                                                Tags
+                                                                <Text
+                                                                    fontWeight={
+                                                                        'bold'
+                                                                    }
+                                                                    color={
+                                                                        'var(--text-color)'
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        this
+                                                                            .state
+                                                                            .user
+                                                                            .numTagsFollowing
+                                                                    }
+                                                                </Text>
+                                                                &nbsp;
+                                                                <Text color="var(--text-color)">
+                                                                    {' '}
+                                                                    Tags
+                                                                </Text>
                                                             </Text>
                                                         </Stack>
                                                         <Stack
                                                             direction={'row'}
                                                         >
                                                             <Text
-                                                                fontWeight={
-                                                                    'bold'
-                                                                }
-                                                                color={
-                                                                    'var(--text-color)'
+                                                                style={{
+                                                                    textDecoration:
+                                                                        'underline',
+                                                                    display:
+                                                                        'flex',
+                                                                    cursor: 'pointer',
+                                                                }}
+                                                                onClick={
+                                                                    this
+                                                                        .showFollowers
                                                                 }
                                                             >
-                                                                {this.formatNum(
-                                                                    this.state
-                                                                        .user
-                                                                        .numFollowers
-                                                                )}
-                                                            </Text>
-                                                            <Text color="var(--text-color)">
-                                                                {' '}
-                                                                Followers
+                                                                <Text
+                                                                    fontWeight={
+                                                                        'bold'
+                                                                    }
+                                                                    color={
+                                                                        'var(--text-color)'
+                                                                    }
+                                                                >
+                                                                    {this.formatNum(
+                                                                        this
+                                                                            .state
+                                                                            .user
+                                                                            .numFollowers
+                                                                    )}
+                                                                    &nbsp;
+                                                                </Text>
+                                                                <Text color="var(--text-color)">
+                                                                    Followers
+                                                                </Text>
                                                             </Text>
                                                         </Stack>
                                                         <Stack
                                                             direction={'row'}
                                                         >
                                                             <Text
-                                                                fontWeight={
-                                                                    'bold'
-                                                                }
-                                                                color={
-                                                                    'var(--text-color)'
+                                                                style={{
+                                                                    textDecoration:
+                                                                        'underline',
+                                                                    display:
+                                                                        'flex',
+                                                                    cursor: 'pointer',
+                                                                }}
+                                                                onClick={
+                                                                    this
+                                                                        .showFollowing
                                                                 }
                                                             >
-                                                                {
-                                                                    this.state
-                                                                        .user
-                                                                        .numFollowing
-                                                                }
-                                                            </Text>
-                                                            <Text color="var(--text-color)">
-                                                                {' '}
-                                                                Following
+                                                                <Text
+                                                                    fontWeight={
+                                                                        'bold'
+                                                                    }
+                                                                    color={
+                                                                        'var(--text-color)'
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        this
+                                                                            .state
+                                                                            .user
+                                                                            .numFollowing
+                                                                    }
+                                                                </Text>
+                                                                &nbsp;
+                                                                <Text color="var(--text-color)">
+                                                                    {' '}
+                                                                    Following
+                                                                </Text>
                                                             </Text>
                                                         </Stack>
                                                     </Stack>
