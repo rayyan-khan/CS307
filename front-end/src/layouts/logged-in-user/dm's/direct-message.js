@@ -115,8 +115,6 @@ class DirectMessage extends React.Component {
                         rounded={'lg'}
                         _hover={{
                           boxShadow: '2xl',
-                          // backgroundColor: 'darkturquoise',
-                          // textColor: 'white',
                           borderColor: 'darkturquoise',
                           borderWidth: '2px',
                           transform: 'scale(1.05)',

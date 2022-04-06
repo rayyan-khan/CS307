@@ -65,10 +65,10 @@ export default function Post({ post, label }) {
     //                             setIsLiked(false);
     //                             usernamePostID['table'] = 'UserLike';
     //                         }
-                            
+
     //                         usernamePostID['change'] = -1;
-                            
-                            
+
+
     //                         setAPI(0);
     //                         setAPI(1);
     //                     }
@@ -125,7 +125,7 @@ export default function Post({ post, label }) {
                 .then((res) => {
                     console.log(res.data.value)
 
-                    
+
 
                     if (res.data.value === 'Added') {
                         console.log('WORKS NOW')
@@ -134,7 +134,7 @@ export default function Post({ post, label }) {
                         setIsLiked(true)
 
                         if (isDisliked === true) {
-                            
+
                             post.dislikeCount -= 1;
                             console.log(post.dislikeCount)
                             setIsDisliked(false)
@@ -154,7 +154,7 @@ export default function Post({ post, label }) {
                         post.likesCount -= 1
                         setIsLiked(false)
 
-                       // usernamePostID['change'] = -1
+                        // usernamePostID['change'] = -1
                     }
                     console.log('FIRST HERE')
                     //setAPI(1)
@@ -523,7 +523,7 @@ export default function Post({ post, label }) {
                     >
                         {post.likesCount}
                     </Text>
-                    {isLiked ? (
+                    {post.isLiked ? (
                         <IconButton
                             onClick={handleLiked}
                             style={{
@@ -553,7 +553,7 @@ export default function Post({ post, label }) {
                     >
                         {post.dislikeCount}
                     </Text>
-                    {isDisliked ? (
+                    {post.isDisliked ? (
                         <IconButton
                             onClick={handleDisliked}
                             style={{

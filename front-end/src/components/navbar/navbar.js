@@ -158,7 +158,7 @@ class Navbar extends React.Component {
                                             href="/createPost"
                                         >
                                             {this.state.currSection ===
-                                            'createPost' ? (
+                                                'createPost' ? (
                                                 <IconButton
                                                     style={{
                                                         backgroundColor:
@@ -185,7 +185,7 @@ class Navbar extends React.Component {
                                             href="/bookmarks"
                                         >
                                             {this.state.currSection ===
-                                            'bookmarks' ? (
+                                                'bookmarks' ? (
                                                 <IconButton
                                                     style={{
                                                         backgroundColor:
@@ -212,14 +212,14 @@ class Navbar extends React.Component {
                                             href="/dms"
                                         >
                                             {this.state.currSection ===
-                                            'dms' ? (
+                                                'dms' ? (
                                                 <IconButton
                                                     style={{
                                                         backgroundColor:
                                                             'darkturquoise',
                                                         color: 'white',
                                                     }}
-                                                    icon={<AiFillMessage />}
+                                                    icon={<AiOutlineMessage />}
                                                 />
                                             ) : (
                                                 <IconButton
@@ -242,14 +242,14 @@ class Navbar extends React.Component {
                                             }
                                         >
                                             {this.state.currSection ===
-                                            'profile' ? (
+                                                this.state.username ? (
                                                 <IconButton
                                                     style={{
                                                         backgroundColor:
                                                             'darkturquoise',
                                                         color: 'white',
                                                     }}
-                                                    icon={<RiProfileFill />}
+                                                    icon={<RiProfileLine />}
                                                 />
                                             ) : (
                                                 <IconButton
@@ -301,12 +301,12 @@ class Navbar extends React.Component {
                                         style={{
                                             backgroundColor:
                                                 this.state.currSection ===
-                                                'signup'
+                                                    'signup'
                                                     ? 'darkturquoise'
                                                     : 'var(--secondary-color)',
                                             color:
                                                 this.state.currSection ===
-                                                'signup'
+                                                    'signup'
                                                     ? '#ffffff'
                                                     : '#000000',
                                             right: '25px',
@@ -320,12 +320,12 @@ class Navbar extends React.Component {
                                         style={{
                                             backgroundColor:
                                                 this.state.currSection ===
-                                                'login'
+                                                    'login'
                                                     ? 'darkturquoise'
                                                     : 'var(--secondary-color)',
                                             color:
                                                 this.state.currSection ===
-                                                'login'
+                                                    'login'
                                                     ? '#ffffff'
                                                     : '#000000',
                                             right: '25px',
