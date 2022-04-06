@@ -32,7 +32,7 @@ class Homepage extends React.Component {
                 .get('http://localhost:5000/api/getTimeline')
                 .then((res) => {
                     const posts = res.data
-                    console.log(posts)
+                    console.log(res.data)
                     console.log('REACCCCCHED')
                     // if (localStorage.getItem('token') != null && localStorage.getItem('allPosts') != null && posts.length == JSON.parse(localStorage.getItem('allPosts')).length) {
                     //     console.log('using local storage');

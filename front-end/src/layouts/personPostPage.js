@@ -21,7 +21,7 @@ class PersonPostPage extends React.Component {
     fetchPosts() {
         console.log("test");
         try {
-            axios.get("http://localhost:5000/api/getOrderedPost")
+            axios.get("http://localhost:5000/api/getTimeLine/")
                 .then(res => {
                     const posts = res.data
                     console.log(posts);

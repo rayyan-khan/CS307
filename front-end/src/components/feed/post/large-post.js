@@ -10,6 +10,7 @@ import {
     Input,
     Grid,
     GridItem,
+    Spinner
 
 } from '@chakra-ui/react';
 
@@ -28,32 +29,47 @@ export default function LargePost({ post }) {
 
     // toggle state 
     console.log("Post: ", post);
-    const [isLiked, setIsLiked] = React.useState(false);
     var disliked = post.isDisliked == "1";
+    var liked = post.isLiked == "1";
+    const [isLiked, setIsLiked] = React.useState(liked);
+    const [loading, setLoading] = React.useState(0);
+    console.log(isLiked)
     const [isDisliked, setIsDisliked] = React.useState(disliked);
     const [username, setUsername] = React.useState('');
     const [comments, setComments] = React.useState([]);
     const [updateComments, setUpdateComments] = React.useState(false);
-    const[render, setRender] = React.useState(false)
+    const [render, setRender] = React.useState(false)
     const [usernamePostID, setUsernamePostID] = React.useState({})
 
     useEffect(() => {
-        try {
-            axios.get("http://localhost:5000/api/comments/" + post.postID).then((res) => {
-                console.log(post);
-                console.log(res.data);
-                setComments(res.data);
-            });
 
-        } catch (error) {
-            console.log(error);
-
-        }
     }, [updateComments]);
 
 
 
     useEffect(() => {
+        if (post.isLiked === '1') {
+            post.isLiked = true
+            setIsLiked(true);
+            console.log('CHECK ME')
+        } else {
+            post.isLiked = false
+            setIsLiked(false);
+            console.log('PRINT PLEASE')
+        }
+
+        if (post.isDisliked === '1') {
+            post.isDisliked = true
+            setIsDisliked(true);
+            console.log('Disliked is true at start')
+        } else {
+            post.isDisliked = false
+            setIsDisliked(false);
+            console.log('Disliked is False at start')
+        }
+
+        setLoading(1);
+
         if (localStorage.getItem('comment') != null) {
             let comment = JSON.parse(localStorage.getItem('comment'));
             console.log(comment);
@@ -66,11 +82,22 @@ export default function LargePost({ post }) {
                 axios.post("http://localhost:5000/api/createComment", jsonObj)
                     .then(function (response) {
                         console.log(response);
-                        setUpdateComments(!updateComments);
-                    }
-                    )
+                        try {
+                            axios.get("http://localhost:5000/api/comments/" + post.postID).then((res) => {
+                                console.log(post);
+                                console.log(res.data);
+                                setComments(res.data);
+                                setLoading(1);
+                            });
+
+                        } catch (error) {
+                            console.log(error);
+
+                        }
+                    })
                     .catch(function (error) {
                         console.log(error);
+                        setLoading(-1);
                     }
                     );
             } catch (error) {
@@ -80,6 +107,8 @@ export default function LargePost({ post }) {
         }
         setUpdateComments(!updateComments);
     }, [post]);
+
+
     console.log(comments);
 
     const handleLiked = (event) => {
@@ -106,26 +135,29 @@ export default function LargePost({ post }) {
                 .then((res) => {
                     console.log(res.data.value)
 
-                    
+
 
                     if (res.data.value === 'Added') {
                         console.log('WORKS NOW')
 
                         post.likesCount += 1
+                        setIsLiked(true);
                         post.isLiked = "1"
                         setRender(!render)
 
                         if (post.isDisliked == "1") {
-                            
+
                             post.dislikeCount -= 1;
+                            setIsDisliked(false);
                             post.isDisliked = "0"
                             setRender(!render)
                         }
                     } else {
                         post.likesCount -= 1
+                        setIsLiked(false);
                         post.isLiked = "0"
                         setRender(!render)
-                       // usernamePostID['change'] = -1
+                        // usernamePostID['change'] = -1
                     }
                     console.log('FIRST HERE')
                     //setAPI(1)
@@ -181,11 +213,13 @@ export default function LargePost({ post }) {
                         console.log('WORKS NOW')
 
                         post.dislikeCount += 1
+                        setIsDisliked(true);
                         post.isDisliked = "1"
                         setRender(!render);
 
                         if (post.isLiked == "1") {
                             post.likesCount -= 1;
+                            setIsLiked(false);
                             post.isLiked = "0"
                             setRender(!render);
                         }
@@ -193,6 +227,7 @@ export default function LargePost({ post }) {
                         //usernamePostID['resetTable'] = 'UserLike';
                     } else {
                         post.dislikeCount -= 1
+                        setIsDisliked(false);
                         post.isDisliked = "0"
                         setRender(!render);
 
@@ -253,23 +288,6 @@ export default function LargePost({ post }) {
             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
         } else {
             setIsBookmarked(!isBookmarked);
-        }
-    }
-    let linkPageBool = true;
-    if (post.postID == null) {
-        console.log(post);
-        if (post[0] != null) {
-            post = post[0];
-            linkPageBool = false;
-        } else {
-            console.log("post undefined");
-            return (
-                <Center pb={5}>
-                    <Text>
-                        No post found
-                    </Text>
-                </Center>
-            )
         }
     }
 
@@ -370,28 +388,43 @@ export default function LargePost({ post }) {
         }
     }
 
-    return (
-        <Box>
-            <Grid
-                templateColumns='repeat(2, 1fr)'
-                templateRows='repeat(2, 1fr)'
-                style={{ overflow: 'visible', position: 'relative', }}
-            >
-                <GridItem>
-                    <Box
-                        flex={1}
-                        minW={'820px'}
-                        maxW={'820px'}
-                        className={'color-switch'}
-                        w={'full'}
-                        h={'full'}
-                        boxShadow={'2xl'}
-                        rounded={'lg'}
-                        p={6}
-                        textAlign={'center'}
-                        position={'relative'}
-                    >
-                        {/* <Avatar
+
+
+    if (post.username == null) {
+        return (
+            <Center className="color-switch" pb={'100vh'}>
+                <Center
+                    fontSize={'4xl'}
+                    color={'var(--text-color)'}
+                    pt={'40vh'}
+                >
+                    <Spinner color="darkturquoise" size="xl" />
+                </Center>
+            </Center>
+        )
+    } else {
+        return (
+            <Box>
+                <Grid
+                    templateColumns='repeat(2, 1fr)'
+                    templateRows='repeat(2, 1fr)'
+                    style={{ overflow: 'visible', position: 'relative', }}
+                >
+                    <GridItem>
+                        <Box
+                            flex={1}
+                            minW={'820px'}
+                            maxW={'820px'}
+                            className={'color-switch'}
+                            w={'full'}
+                            h={'full'}
+                            boxShadow={'2xl'}
+                            rounded={'lg'}
+                            p={6}
+                            textAlign={'center'}
+                            position={'relative'}
+                        >
+                            {/* <Avatar
                             size={'xl'}
                             src={post.profilePicture}
                             alt={'Avatar Alt'}
@@ -400,217 +433,218 @@ export default function LargePost({ post }) {
                             style={linkPageBool ? { cursor: 'pointer' } : {}}
                         /> */}
 
-                        <Stack align={'center'} direction={'column'} spacing={4}>
-                            <Center>
-                                <Heading minW={"30px"} onClick={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    if (localStorage.getItem('token') == null) {
-                                        let url = window.location.href;
-                                        window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-                                    } else if (post.anonymous == 1) {
-
-                                    } else {
-                                        let url = window.location.href;
-                                        window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
-                                    }
-                                }} style={{ color: "darkturquoise", cursor: 'pointer' }} fontSize={'5xl'} fontFamily={'body'}>
-                                    {post.anonymous == 1 ? "Anonymous" : post.username}
-                                </Heading>
-                            </Center>
-                            <Text
-                                textAlign={'center'}
-                                color={"var(--text-color)"}
-                                pt={3}
-                                fontSize={'2xl'}
-                            >
-                                {post.postCaption}
-                            </Text>
-
-
-
-                            {post.url !== "undefined" ? <Center> <Box
-                                pt={5}
-                                w={"100%"}
-                            >
-                                <Image src={post.url} />
-                            </Box>  </Center> : <></>}
-
-
-                            {post.hyperlink !== "" ? <LinkPreview
-                                margin="30px auto"
-                                width="500px"
-                                url={post.hyperlink}
-                                backgroundColor='white'
-                            /> : <></>}
-                        </Stack>
-                        {post.tagID !== null ?
-                            <Stack align={'center'} justify={'center'} direction={'row'} mt={"13%"}>
-                                <Box
-                                    onClick={(event) => {
+                            <Stack align={'center'} direction={'column'} spacing={4}>
+                                <Center>
+                                    <Heading minW={"30px"} onClick={(event) => {
                                         event.preventDefault();
                                         event.stopPropagation();
                                         if (localStorage.getItem('token') == null) {
                                             let url = window.location.href;
                                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                                        } else if (post.anonymous == 1) {
+
                                         } else {
                                             let url = window.location.href;
-                                            window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
+                                            window.location.href = url.substring(0, url.indexOf("/")) + "/profile/" + post.username;
                                         }
-                                    }}
-                                    style={{ cursor: 'pointer' }}
-                                    px={5}
-                                    py={2}
-                                    bg={"#F2AF29"}
-                                    color={'--mainColor'}
-                                    rounded={'full'}
+                                    }} style={{ color: "darkturquoise", cursor: 'pointer' }} fontSize={'5xl'} fontFamily={'body'}>
+                                        {post.anonymous == 1 ? "Anonymous" : post.username}
+                                    </Heading>
+                                </Center>
+                                <Text
+                                    textAlign={'center'}
+                                    color={"var(--text-color)"}
+                                    pt={3}
                                     fontSize={'2xl'}
-                                    fontWeight={'300'}>
-                                    {"#" + post.tagID}
-                                </Box>
-                            </Stack>
-                            : <></>}
-                        <Stack mt={2} direction={'row'} spacing={4}>
-                            <Stack direction={'column'}>
-                                <Text
-                                    textAlign={'center'}
-                                    color={"var(--text-color)"}
-                                    fontSize={'xl'}
-                                    fontFamily={'body'}
                                 >
-                                    {post.likesCount}
+                                    {post.postCaption}
                                 </Text>
-                                {post.isLiked == "1" ? <IconButton size={'lg'} onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton style={{ backgroundColor: "var(--secondary-color)", color: "black" }} size={'lg'} onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
-                            </Stack>
-                            <Stack direction={'column'}>
-                                <Text
-                                    textAlign={'center'}
-                                    color={"var(--text-color)"}
-                                    fontSize={'xl'}
-                                    fontFamily={'body'}
+
+
+
+                                {post.url !== "undefined" ? <Center> <Box
+                                    pt={5}
+                                    w={"100%"}
                                 >
-                                    {post.dislikeCount}
-                                </Text>
-                                {post.isDisliked == "1" ? <IconButton size={'lg'} onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton size={'lg'} style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
+                                    <Image src={post.url} />
+                                </Box>  </Center> : <></>}
+
+
+                                {post.hyperlink !== "" ? <LinkPreview
+                                    margin="30px auto"
+                                    width="500px"
+                                    url={post.hyperlink}
+                                    backgroundColor='white'
+                                /> : <></>}
                             </Stack>
-                            <Stack direction={'row'}>
-                                {post.username === username ? (
-                                    <>
-                                        {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "550px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "550px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
-                                        <IconButton
-                                            size={'lg'}
-                                            left={"550px"}
-                                            onClick={handleDelete}
-                                            style={{
-                                                backgroundColor: 'red',
-                                                color: 'white',
-                                                top: '30px',
-                                            }}
-                                            icon={<AiOutlineDelete />}
-                                        />
-                                    </>
-                                ) : (
-                                    <>
-                                        {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "600px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
-                                    </>
-                                )}
+                            {post.tagID !== null ?
+                                <Stack align={'center'} justify={'center'} direction={'row'} mt={"13%"}>
+                                    <Box
+                                        onClick={(event) => {
+                                            event.preventDefault();
+                                            event.stopPropagation();
+                                            if (localStorage.getItem('token') == null) {
+                                                let url = window.location.href;
+                                                window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                                            } else {
+                                                let url = window.location.href;
+                                                window.location.href = url.substring(0, url.indexOf("/")) + "/tag/" + post.tag;
+                                            }
+                                        }}
+                                        style={{ cursor: 'pointer' }}
+                                        px={5}
+                                        py={2}
+                                        bg={"#F2AF29"}
+                                        color={'--mainColor'}
+                                        rounded={'full'}
+                                        fontSize={'2xl'}
+                                        fontWeight={'300'}>
+                                        {"#" + post.tagID}
+                                    </Box>
+                                </Stack>
+                                : <></>}
+                            <Stack mt={2} direction={'row'} spacing={4}>
+                                <Stack direction={'column'}>
+                                    <Text
+                                        textAlign={'center'}
+                                        color={"var(--text-color)"}
+                                        fontSize={'xl'}
+                                        fontFamily={'body'}
+                                    >
+                                        {post.likesCount}
+                                    </Text>
+                                    {isLiked ? <IconButton size={'lg'} onClick={handleLiked} style={{ backgroundColor: "darkturquoise", color: "white" }} aria-label='Like' icon={<AiOutlineLike />} /> : <IconButton style={{ backgroundColor: "var(--secondary-color)", color: "black" }} size={'lg'} onClick={handleLiked} aria-label='Like' icon={<AiOutlineLike />} />}
+                                </Stack>
+                                <Stack direction={'column'}>
+                                    <Text
+                                        textAlign={'center'}
+                                        color={"var(--text-color)"}
+                                        fontSize={'xl'}
+                                        fontFamily={'body'}
+                                    >
+                                        {post.dislikeCount}
+                                    </Text>
+                                    {isDisliked ? <IconButton size={'lg'} onClick={handleDisliked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Dislike' icon={<AiOutlineDislike />} /> : <IconButton size={'lg'} style={{ backgroundColor: "var(--secondary-color)", color: "black" }} onClick={handleDisliked} aria-label='Dislike' icon={<AiOutlineDislike />} />}
+                                </Stack>
+                                <Stack direction={'row'}>
+                                    {post.username === username ? (
+                                        <>
+                                            {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "550px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "550px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                                            <IconButton
+                                                size={'lg'}
+                                                left={"550px"}
+                                                onClick={handleDelete}
+                                                style={{
+                                                    backgroundColor: 'red',
+                                                    color: 'white',
+                                                    top: '30px',
+                                                }}
+                                                icon={<AiOutlineDelete />}
+                                            />
+                                        </>
+                                    ) : (
+                                        <>
+                                            {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "600px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                                        </>
+                                    )}
+                                </Stack>
                             </Stack>
-                        </Stack>
-                    </Box>
-                </GridItem>
-                <GridItem pl={40}>
-                    <Box overflowY={'scroll'}>
-                        <Box>
-                            {handleComments()}
                         </Box>
-                    </Box>
-                </GridItem>
-                <GridItem height={0}></GridItem>
-                <GridItem pt={10} pb={0} height={'30%'}>
-                    <Box style={{ paddingLeft: '200px' }} position={'relative'} p={5}>
-                        <Box
-                            minW={'500px'}
-                            maxW={'400px'}
-                            minH={'90px'}
-                            bg={"--mainColor"}
-                            boxShadow={'2xl'}
-                            rounded={'lg'}
-                            p={5}
-                            borderColor={'--secondary-color'}
-                            textAlign={'center'}
-                        >
-                            <Stack direction={'row'}>
-                                <Center>
-                                    <Avatar
-                                        borderRadius={'full'}
-                                        src={profilePic}
-                                        name={firstName + ' ' + lastName}
-                                        blockSize='50px'
-                                    />
-                                    <Stack direction={'column'} spacing={0}>
-                                        <Text
-                                            color={'darkturquoise'}
-                                            align={'left'}
-                                            pl={'10px'}
-                                        >
-                                            {username}
-                                        </Text>
-                                        <Box p={'10px'}>
-                                            <Input
-                                                width={'160%'}
-                                                placeholder='Write a comment'
-                                                autocomplete="off"
-                                                color={'var(--text-color)'}
-                                                value={comment}
-                                                onChange={(event) => { setComment(event.target.value) }}
-                                                onKeyPress={(event) => {
-                                                    if (event.key === 'Enter') {
-                                                        event.preventDefault();
-                                                        event.stopPropagation();
+                    </GridItem>
+                    <GridItem pl={40}>
+                        <Box overflowY={'scroll'}>
+                            <Box>
+                                {handleComments()}
+                            </Box>
+                        </Box>
+                    </GridItem>
+                    <GridItem height={0}></GridItem>
+                    <GridItem pt={10} pb={0} height={'30%'}>
+                        <Box style={{ paddingLeft: '200px' }} position={'relative'} p={5}>
+                            <Box
+                                minW={'500px'}
+                                maxW={'400px'}
+                                minH={'90px'}
+                                bg={"--mainColor"}
+                                boxShadow={'2xl'}
+                                rounded={'lg'}
+                                p={5}
+                                borderColor={'--secondary-color'}
+                                textAlign={'center'}
+                            >
+                                <Stack direction={'row'}>
+                                    <Center>
+                                        <Avatar
+                                            borderRadius={'full'}
+                                            src={profilePic}
+                                            name={firstName + ' ' + lastName}
+                                            blockSize='50px'
+                                        />
+                                        <Stack direction={'column'} spacing={0}>
+                                            <Text
+                                                color={'darkturquoise'}
+                                                align={'left'}
+                                                pl={'10px'}
+                                            >
+                                                {username}
+                                            </Text>
+                                            <Box p={'10px'}>
+                                                <Input
+                                                    width={'160%'}
+                                                    placeholder='Write a comment'
+                                                    autocomplete="off"
+                                                    color={'var(--text-color)'}
+                                                    value={comment}
+                                                    onChange={(event) => { setComment(event.target.value) }}
+                                                    onKeyPress={(event) => {
+                                                        if (event.key === 'Enter') {
+                                                            event.preventDefault();
+                                                            event.stopPropagation();
+                                                            if (localStorage.getItem('token') == null) {
+                                                                let url = window.location.href;
+                                                                window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
+                                                            } else {
+                                                                console.log(post.postID);
+                                                                let jsonObj = {}
+                                                                jsonObj['postID'] = post.postID;
+                                                                jsonObj['comment'] = comment;
+                                                                jsonObj['username'] = username;
+                                                                try {
+                                                                    axios.post("http://localhost:5000/api/createComment", jsonObj)
+                                                                        .then(function (response) {
+                                                                            console.log(response);
+                                                                            setUpdateComments(!updateComments);
+                                                                        }
+                                                                        )
+                                                                        .catch(function (error) {
+                                                                            console.log(error);
+                                                                        }
+                                                                        );
+                                                                } catch (error) {
+
+                                                                }
+                                                                setComment("");
+                                                            }
+                                                        }
+                                                    }}
+                                                    onBlur={(event) => {
                                                         if (localStorage.getItem('token') == null) {
                                                             let url = window.location.href;
                                                             window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-                                                        } else {
-                                                            console.log(post.postID);
-                                                            let jsonObj = {}
-                                                            jsonObj['postID'] = post.postID;
-                                                            jsonObj['comment'] = comment;
-                                                            jsonObj['username'] = username;
-                                                            try {
-                                                                axios.post("http://localhost:5000/api/createComment", jsonObj)
-                                                                    .then(function (response) {
-                                                                        console.log(response);
-                                                                        setUpdateComments(!updateComments);
-                                                                    }
-                                                                    )
-                                                                    .catch(function (error) {
-                                                                        console.log(error);
-                                                                    }
-                                                                    );
-                                                            } catch (error) {
-
-                                                            }
-                                                            setComment("");
                                                         }
-                                                    }
-                                                }}
-                                                onBlur={(event) => {
-                                                    if (localStorage.getItem('token') == null) {
-                                                        let url = window.location.href;
-                                                        window.location.href = url.substring(0, url.indexOf("/")) + "/signup";
-                                                    }
-                                                }}
-                                            />
-                                        </Box>
+                                                    }}
+                                                />
+                                            </Box>
 
-                                    </Stack>
-                                </Center>
-                            </Stack>
+                                        </Stack>
+                                    </Center>
+                                </Stack>
+                            </Box>
                         </Box>
-                    </Box>
-                </GridItem>
-            </Grid>
+                    </GridItem>
+                </Grid>
 
-        </Box >
-    );
+            </Box >
+        );
+    }
 }

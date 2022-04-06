@@ -16,7 +16,7 @@ import ResetPassword from './layouts/new-user/reset-password'
 import Recovery from './layouts/new-user/recovery'
 import Homepage from './layouts/homepage/homepage'
 import Profile from './layouts/logged-in-user/profile/profile'
-import DirectMessage from './layouts/logged-in-user/direct-message'
+import DirectMessage from './layouts/logged-in-user/dm\'s/direct-message'
 import Verification from './layouts/logged-in-user/verification-page'
 import SearchResult from './layouts/search-results'
 import ScreenTooSmall from './components/screenTooSmall'
@@ -61,6 +61,11 @@ export default class App extends React.Component {
             return <TagPage tag={params.tagId} />
         }
 
+        const DirectMessageWrapper = () => {
+            const params = useParams()
+            return <DirectMessage usernameToTalkWith={params.username} />
+        }
+
         const PrivateRoute = ({ loadComponent }) => {
             axios.defaults.headers.common['authorization'] =
                 localStorage.getItem('token')
@@ -92,7 +97,7 @@ export default class App extends React.Component {
             <Box className={'color-switch'} h={'100vh'}>
                 <div className="App">
                     <Navbar />
-                    <Box height={'calc(100vh - 65px)'}>
+                    <Box height={'calc(100vh - 70px)'}>
                         <Router>
                             <Routes>
                                 <Route
@@ -168,6 +173,10 @@ export default class App extends React.Component {
                                 <Route
                                     path="/dms"
                                     element={<DirectMessage />}
+                                />
+                                <Route
+                                    path="/dms/:username"
+                                    element={<DirectMessageWrapper />}
                                 />
                                 {/* <Route path="/createPost" element={<CreatePost />} /> */}
                                 <Route
