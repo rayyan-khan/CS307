@@ -1,3 +1,24 @@
+:root {
+  --main-color: white;
+  --secondary-color: #ebf0f5;
+  --tertiary-color: #ebf0f5;
+  --text-color: black;
+  --settings-background-color: #ebf0f5;
+  --settings-head-color: "black";
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --main-color: #151516;
+    --secondary-color: white;
+    --tertiary-color: "black";
+    --text-color: white;
+    --settings-background-color: #212123;
+    --settings-head-color: #5b5c62;
+  }
+}
+
+
 .profile-page-container {
   padding-top: 50px;
   text-align: left;

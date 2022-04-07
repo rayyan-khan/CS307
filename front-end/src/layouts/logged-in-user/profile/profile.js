@@ -351,9 +351,9 @@ class Profile extends React.Component {
         return (
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>{modalTitle}</ModalHeader>
-                    <ModalCloseButton />
+                <ModalContent bg={'var(--main-color)'}>
+                    <ModalHeader color={'var(--text-color)'}>{modalTitle}</ModalHeader>
+                    <ModalCloseButton color={'darkturquoise'} />
                     <ModalBody>
                         <div className="container">
                             <div className="row">
@@ -367,35 +367,42 @@ class Profile extends React.Component {
                                                     direction="row"
                                                 >
                                                     <Center>
-                                                        <Avatar
-                                                            borderRadius={
-                                                                'full'
-                                                            }
-                                                            src={user.url}
-                                                            boxSize="2vw"
-                                                        />
-                                                        <Text
-                                                            align={'left'}
-                                                            pl={'10px'}
-                                                            color={
-                                                                'darkturquoise'
-                                                            }
-                                                            fontSize={'lg'}
-                                                        >
-                                                            {user.username}
-                                                        </Text>
-                                                        <Text
-                                                            color={
-                                                                'var(--text-color)'
-                                                            }
-                                                            pl={'15px'}
-                                                            align={'left'}
-                                                            fontSize={'md'}
-                                                            width={'19vw'}
-                                                        >
-                                                            {user.firstName}{' '}
-                                                            {user.lastName}
-                                                        </Text>
+                                                        <Stack direction={'row'}>
+                                                            <Avatar
+                                                                borderRadius={
+                                                                    'full'
+                                                                }
+                                                                name={user.firstName + ' ' + user.lastName}
+                                                                src={user.url}
+                                                                boxSize="4vw"
+                                                            />
+                                                            <Stack direction={'column'}>
+                                                                <Text
+                                                                    align={'left'}
+                                                                    height={'15px'}
+                                                                    pl={'10px'}
+                                                                    color={
+                                                                        'darkturquoise'
+                                                                    }
+                                                                    fontSize={'lg'}
+                                                                >
+                                                                    {user.username}
+                                                                </Text>
+                                                                <Text
+                                                                    color={
+                                                                        'var(--text-color)'
+                                                                    }
+                                                                    pl={'15px'}
+                                                                    pt={'0px'}
+                                                                    align={'left'}
+                                                                    fontSize={'md'}
+                                                                    width={'19vw'}
+                                                                >
+                                                                    {user.firstName}{' '}
+                                                                    {user.lastName}
+                                                                </Text>
+                                                            </Stack>
+                                                        </Stack>
                                                     </Center>
                                                 </Stack>
                                             </a>
@@ -409,7 +416,7 @@ class Profile extends React.Component {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
+                        <Button colorScheme="blue" onClick={onClose}>
                             Close
                         </Button>
                     </ModalFooter>
@@ -422,11 +429,11 @@ class Profile extends React.Component {
         return (
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>
+                <ModalContent bg={'var(--main-color)'}>
+                    <ModalHeader color={'var(--text-color)'}>
                         {this.state.user.username} is following these tags
                     </ModalHeader>
-                    <ModalCloseButton />
+                    <ModalCloseButton color={'darkturquoise'} />
                     <ModalBody>
                         <div className="container">
                             <div className="row">
@@ -439,6 +446,14 @@ class Profile extends React.Component {
                                                 <Stack
                                                     p={'10px'}
                                                     direction="row"
+                                                // _before={{
+                                                //     content: '""',
+                                                //     bottom: '0px',
+                                                //     height: '1px',
+                                                //     width: '50%',
+                                                //     borderBottomWidth: '1px',
+                                                //     borderColor: 'darkturquoise',
+                                                // }}
                                                 >
                                                     <Center>
                                                         <Text
@@ -471,7 +486,7 @@ class Profile extends React.Component {
                         </Button>
                     </ModalFooter>
                 </ModalContent>
-            </Modal>
+            </Modal >
         )
     }
 
@@ -838,9 +853,6 @@ class Profile extends React.Component {
                                                                     .editMode ? (
                                                                     <>
                                                                         <Button
-                                                                            backgroundColor={
-                                                                                'red'
-                                                                            }
                                                                             color={
                                                                                 'white'
                                                                             }
