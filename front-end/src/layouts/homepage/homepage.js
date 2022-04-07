@@ -125,7 +125,7 @@ class Homepage extends React.Component {
                             height: '100%',
                         }}
                     >
-                        <Center bg={'--mainColor'} pb={20}>
+                        <Center ml={'10%'} bg={'var(--mainColor)'} pb={20} w={'80%'}>
                             <Stack pt={50}>{this.postHandler()}</Stack>
                         </Center>
                     </div>

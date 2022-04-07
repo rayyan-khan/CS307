@@ -343,7 +343,6 @@ export default function Post({ post, label }) {
     }
     return (
         <Box
-            minW={'620px'}
             maxW={'620px'}
             w={'full'}
             // bg={"#202124"}
@@ -574,7 +573,7 @@ export default function Post({ post, label }) {
                         />
                     )}
                 </Stack>
-                <Stack width={'30vw'} direction={'column'}>
+                <Stack width={'80%'} direction={'column'}>
                     <Text
                         textAlign={'center'}
                         color={'#DEDDDD'}

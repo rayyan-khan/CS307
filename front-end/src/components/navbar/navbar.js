@@ -140,7 +140,7 @@ class Navbar extends React.Component {
 
         if (this.state.validToken) {
             return (
-                <Box height={'70px'}>
+                <Box height={'70px'} width={'90%'}>
                     <div
                         style={{ height: '65px', position: 'sticky', top: '0' }}
                     >
@@ -289,9 +289,11 @@ class Navbar extends React.Component {
             return (
                 <div
                     className="color-switch"
+                    backgroundColor={'red'}
+                    width={'90%'}
                     style={{ height: '65px', position: 'sticky', top: '0' }}
                 >
-                    <MDBNavbar style={{ height: '100%' }} expand="sm">
+                    <MDBNavbar style={{ height: '100%' }} bg={'red'} width={'90%'} expand={"sm"}>
                         {barFront}
                         <div style={{ top: '100px' }}>
                             <MDBNavbarNav right>
