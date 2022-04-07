@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Post from '../../../components/feed/post/post'
 import SearchBar from './searchBar'
 import {
@@ -26,7 +26,7 @@ const tempConversations = [
         time: '20m',
     },
     {
-        username: 'Atharva',
+        username: 'atharva101',
         avatar: 'https://i.imgur.com/qJHvZ9x.png',
         lastMessage: 'Hey, how are you?',
         time: '1h',
@@ -80,11 +80,36 @@ class DirectMessage extends React.Component {
         super(props)
         this.state = {
             username: '',
+            conversations: [],
             talkingToUsername: this.props.usernameToTalkWith
                 ? this.props.usernameToTalkWith
                 : '',
         }
     }
+
+    componentDidUpdate() {
+        if (this.state.talkingToUsername) {
+            let userFound = false;
+            for (let i = 0; i < this.state.conversations.length; i++) {
+                if (this.state.conversations[i].username === this.state.talkingToUsername) {
+                    userFound = true;
+                }
+            }
+            if (!userFound) {
+                console.log('user not found')
+                this.setState({
+                    conversations: [{
+                        username: this.state.talkingToUsername,
+                        avatar: 'https://i.imgur.com/qJHvZ9x.png',
+                        lastMessage: 'Hey, how are you?',
+                        time: '20m',
+                    }, ...this.state.conversations]
+                })
+                console.log(this.state.conversations);
+            }
+        }
+    }
+
 
     componentDidMount() {
         if (axios.defaults.headers.common['authorization'] != null) {
@@ -94,6 +119,7 @@ class DirectMessage extends React.Component {
                     this.setState({ username: res.data.username })
                 })
         }
+        this.setState({ conversations: tempConversations })
     }
 
     render() {
@@ -131,11 +157,12 @@ class DirectMessage extends React.Component {
                                         }}
                                     />
                                 </div>
-                                {tempConversations.map((conversation, key) => {
+                                {this.state.conversations.map((conversation, key) => {
                                     return (
                                         <Box
                                             mb={8}
                                             ml={8}
+                                            backgroundColor={conversation.username == this.state.talkingToUsername ? 'darkturquoise' : 'var(--main-color)'}
                                             width={'80%'}
                                             maxWidth={'400px'}
                                             boxShadow={'2xl'}
@@ -164,7 +191,7 @@ class DirectMessage extends React.Component {
                                                 />
                                                 <Stack direction={'column'}>
                                                     <Text
-                                                        color={'darkturquoise'}
+                                                        color={conversation.username == this.state.talkingToUsername ? 'var(--main-color)' : 'darkturquoise'}
                                                         fontSize={'md'}
                                                     >
                                                         {conversation.username}
