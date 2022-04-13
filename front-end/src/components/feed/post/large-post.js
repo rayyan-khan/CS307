@@ -42,7 +42,17 @@ export default function LargePost({ post }) {
     const [usernamePostID, setUsernamePostID] = React.useState({})
 
     useEffect(() => {
+        try {
+            axios.get("http://localhost:5000/api/comments/" + post.postID).then((res) => {
+                console.log(post);
+                console.log(res.data);
+                setComments(res.data);
+            });
 
+        } catch (error) {
+            console.log(error);
+
+        }
     }, [updateComments]);
 
 
