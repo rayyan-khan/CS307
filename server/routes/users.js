@@ -112,12 +112,15 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
     } catch (err) {
         user = undefined
     }
-
+    var currentName;
     if (user != undefined) {
         const { email, username } = user
         if (username == req.params.username) {
             amUser = true
         }
+        currentName = username;
+    } else {
+        currentName = ""
     }
 
     var sql = `SELECT username, email, bio, private, firstName, lastName, url from User WHERE username = ${con.escape(
@@ -147,8 +150,8 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
                 req.params.username
             ))
 
-        let followersList = await query.getFollowersList(req.params.username)
-        let followingList = await query.getFollowingList(req.params.username)
+        let followersList = await query.getFollowersList(req.params.username,currentName)
+        let followingList = await query.getFollowingList(req.params.username, currentName)
         let tagList = await query.getTagList(req.params.username)
         let numberFollowers = followersList.length
         let numberFollowing = followingList.length
