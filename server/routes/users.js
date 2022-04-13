@@ -38,6 +38,8 @@ userRoutes.route('/deleteProfile').get(async (req, res) => {
     })
 })
 
+
+
 userRoutes.route('/getNumberFollowing').get(async (req, res) => {
     var user
     try {
@@ -71,6 +73,35 @@ userRoutes.route('/getNumberFollowers').get(async (req, res) => {
 
     const { email, username } = user
     //var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
+})
+
+userRoutes.route('/addBlock/:username').get(async (req, res) => {
+    var user
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+    var sql = `INSERT INTO Block VALUES (username,${con.escape(req.params.username)})`
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json('Successfully blocked')
+    })
+})
+userRoutes.route('/unBlock/:username').get(async (req, res) => {
+
+    var sql = `DELETE FROM Block WHERE userBlocking = ${con.escape(req.params.username)}`
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json('Successfully unblocked')
+    })
 })
 
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
