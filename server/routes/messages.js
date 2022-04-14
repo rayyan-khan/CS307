@@ -52,8 +52,9 @@ messageRoutes.route('/messages/deleteConvo').post(async (req, res) => {
     let result = await con.awaitQuery(sql)
 
 
-    let sql = `INSERT INTO DeleteConversations VALUES('${req.body.currentUser}', ${result[0].ConversationID})`
-    let result = await con.awaitQuery(sql)
+    sql = `INSERT INTO DeleteConversations VALUES('${req.body.currentUser}', ${result[0].ConversationID})`
+    result = await con.awaitQuery(sql)
+    res.json(result)
 
 })
 
@@ -63,6 +64,7 @@ messageRoutes.route('/messages/getConversations').post(async (req, res) => {
         MIN(timeStamp) FROM Messages GROUP BY(conversationID)) AND conversationID NOT IN (SELECT conversationID FROM DeletedConversations WHERE username = '${req.body.user}');`
 
     let result = await con.awaitQuery(sql)
+    res.json(result)
 })
 
 
