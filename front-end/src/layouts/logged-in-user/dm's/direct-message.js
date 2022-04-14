@@ -17,9 +17,16 @@ import {
     Tooltip,
     Grid,
     GridItem,
+    FormControl,
+    FormLabel,
+    InputGroup,
+    InputRightElement,
+    Tag,
+    VStack
 } from '@chakra-ui/react'
 import '../../layouts.css'
 import './direct-message.css'
+import { BsAlignBottom } from 'react-icons/bs';
 
 
 const tempConversations = [
@@ -55,12 +62,45 @@ const tempConversations = [
     },
 ]
 
+const tempTexts = [
+    {
+        side: 'right',
+        text: 'Hey Whats Up'
+    },
+    {
+        side: 'left',
+        text: 'Not much wbu'
+    },
+    {
+        side: 'right',
+        text: 'Im great thanks for asking'
+    },
+    {
+        side: 'left',
+        text: 'Me too thats great'
+    },
+    {
+        side: 'left',
+        text: 'What are you doing today'
+    },
+    {
+        side: 'right',
+        text: 'I am working on my CS252 lab'
+    },
+    {
+        side: 'left',
+        text: 'That does not sound like a fun time  '
+    }
+
+]
+
 class DirectMessage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             username: '',
             conversations: [],
+            texts: [],
             talkingToUsername: this.props.usernameToTalkWith
                 ? this.props.usernameToTalkWith
                 : '',
@@ -221,6 +261,53 @@ class DirectMessage extends React.Component {
                             {this.state.username} wants to talk with{' '}
                             {this.state.talkingToUsername}
                         </Text>
+                        <VStack spacing={4}>
+                            overflowX={'hidden'}
+                            overflowY={'scroll'}
+                            {tempTexts.map((text) => (
+                                text.side == "right" ?
+                                <Box w="full" position={'relative'}>
+                                    <Tag size={'lg'} display={'block'} ml={'auto'} height={'auto'} mr={'10'} minW={"10vw"} maxW={'20vw'} key={text} textAlign={'right'} variant='solid' colorScheme='teal'>
+                                        {text.text}
+                                    </Tag>
+                                </Box> : 
+                                <Box w="full" position={'relative'}>
+                                <Tag size={'lg'} display={'block'} mr={'auto'} height={'auto'} ml={'10'} minW={"10vw"} maxW={'20vw'} key={text} textAlign={'left'} variant='solid' colorScheme='teal'>
+                                    {text.text}
+                                </Tag>
+                            </Box>
+
+                            ))}
+
+                            <Box
+                                pt={10}
+                                width={'70vw'}
+                                overflowX={'hidden'}
+                                overflowY={'auto'}
+                            >
+                                {/* <TransitionGroup component="Tag">
+                                    {this.state.texts.map(())}
+                                </TransitionGroup> */}
+                            </Box>
+                        </VStack>
+                        <FormControl className='text-box' style={{position: 'absolute', bottom:0, padding:'2rem', left: 0}}>
+                            <FormLabel > </FormLabel>
+                            <InputGroup pl={'400px'} >
+                                <Input
+                                // w={'80%'}
+                                focusBorderColor='teal.200'
+                                placeholder='text'
+                                type="text"
+                                style={{ color: 'darkturquoise' }} />
+                                <InputRightElement width='4.5rem'>
+                                    <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm'> Send
+                                    </Button>
+                                </InputRightElement>
+                            </InputGroup>
+                            
+                        </FormControl>
+
+
                     </Box>
                 </GridItem>
             </Grid>
