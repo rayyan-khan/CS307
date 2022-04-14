@@ -19,6 +19,7 @@ app.use('/api', require('./routes/users'))
 app.use('/api', require('./routes/auth'))
 app.use('/api', require('./routes/post'))
 app.use('/api', require('./routes/tag'))
+app.use('/api', require('./routes/messages'))
 
 //Serve static assets if in production. DON'T DELETE
 if (process.env.NODE_ENV === 'production') {
