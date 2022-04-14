@@ -142,6 +142,10 @@ class DirectMessage extends React.Component {
         this.setState({ conversations: tempConversations })
     }
 
+    onSend = () => {
+        
+    }
+
     render() {
         return (
             <Grid templateColumns="repeat(2, 1fr)">
@@ -300,14 +304,14 @@ class DirectMessage extends React.Component {
                                 type="text"
                                 style={{ color: 'darkturquoise' }} />
                                 <InputRightElement width='4.5rem'>
-                                    <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm'> Send
+                                    <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.onSend}> Send
                                     </Button>
                                 </InputRightElement>
                             </InputGroup>
                             
                         </FormControl>
 
-
+z
                     </Box>
                 </GridItem>
             </Grid>
