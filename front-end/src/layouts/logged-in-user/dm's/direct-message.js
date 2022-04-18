@@ -26,8 +26,10 @@ import {
 } from '@chakra-ui/react'
 import '../../layouts.css'
 import './direct-message.css'
+import './direct-message.scss'
 import { BsAlignBottom } from 'react-icons/bs';
-
+import { RiContactsBookLine } from 'react-icons/ri';
+import moment from 'moment';
 
 const tempConversations = [
     {
@@ -111,7 +113,7 @@ class DirectMessage extends React.Component {
         if (this.state.talkingToUsername) {
             let userFound = false;
             for (let i = 0; i < this.state.conversations.length; i++) {
-                if (this.state.conversations[i].username === this.state.talkingToUsername) {
+                if ((this.state.conversations[i].toUser == this.state.username ? this.state.conversations[i].fromUser : this.state.conversations[i].toUser) === this.state.talkingToUsername) {
                     userFound = true;
                 }
             }
@@ -137,25 +139,54 @@ class DirectMessage extends React.Component {
                 .get('http://localhost:5000/api/getUserFromHeader')
                 .then((res) => {
                     this.setState({ username: res.data.username })
+                    try {
+                        const payload = {
+                            user: res.data.username,
+                        }
+                        axios
+                            .post('http://localhost:5000/api/messages/getConversations', payload)
+                            .then((res) => {
+                                console.log(res.data);
+                                this.setState({ conversations: res.data })
+                            })
+                    } catch (error) {
+                        console.log(error);
+                    }
                 })
         }
-        this.setState({ conversations: tempConversations })
+
+
     }
 
-    onSend = () => {
-        
+    handleTimeDifference(time) {
+        let minsAgo = Math.round(moment.duration(moment.utc().diff(time)).add(4, "hours").asMinutes());
+        if (minsAgo == 0) {
+            return "Just now";
+        }
+        if (minsAgo < 60) {
+            return minsAgo + "m";
+        } else if (minsAgo < 1440) {
+            return Math.round(minsAgo / 60) + "h";
+        } else if (minsAgo < 10080) {
+            return Math.round(minsAgo / 1440) + "d";
+        } else if (minsAgo < 43200) {
+            return Math.round(minsAgo / 10080) + "w";
+        }
     }
+
 
     render() {
         return (
-            <Grid templateColumns="repeat(2, 1fr)">
-                <GridItem height={'100vh'}>
+            <Grid templateColumns="repeat(5, 1fr)">
+                <GridItem colSpan={1} height={'100vh'} maxW={'500px'} >
                     <Box>
                         <Stack
                             borderRightWidth={'2px'}
                             overflowX={'hidden'}
                             overflowY={'scroll'}
                             width={'25vw'}
+                            maxWidth={'500px'}
+                            minWidth={'350px'}
                             ml={5}
                             direction={'column'}
                             height={'94vh'}
@@ -163,12 +194,14 @@ class DirectMessage extends React.Component {
                             <Box
                                 pt={10}
                                 width={'27vw'}
+                                maxWidth={'500px'}
+                                minWidth={'350px'}
                                 overflowX={'hidden'}
                                 overflowY={'auto'}
                             >
                                 <div
                                     style={{
-                                        width: '75%',
+                                        width: '78%',
                                         marginLeft: '8%',
                                         marginBottom: '10%',
                                     }}
@@ -184,11 +217,11 @@ class DirectMessage extends React.Component {
                                 <TransitionGroup component="Box">
                                     {this.state.conversations.map((conversation, key) => {
                                         return (
-                                            <CSSTransition key={conversation.username} timeout={700} classNames="conversation">
+                                            <CSSTransition key={(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser)} timeout={700} classNames="conversation">
                                                 <Box
                                                     mb={8}
                                                     ml={8}
-                                                    backgroundColor={conversation.username == this.state.talkingToUsername ? 'darkturquoise' : 'var(--main-color)'}
+                                                    backgroundColor={(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser) == this.state.talkingToUsername ? 'darkturquoise' : 'var(--main-color)'}
                                                     width={'80%'}
                                                     maxWidth={'400px'}
                                                     boxShadow={'xl'}
@@ -204,49 +237,55 @@ class DirectMessage extends React.Component {
                                                     onClick={() => {
                                                         this.setState({
                                                             talkingToUsername:
-                                                                conversation.username,
+                                                                (conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser),
                                                         })
                                                     }}
                                                 >
                                                     <Stack p={8} direction={'row'}>
                                                         <Avatar
-                                                            name={conversation.username}
+                                                            name={(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser)}
                                                             src={conversation.avatar}
                                                             size="md"
                                                             mr={2}
                                                         />
                                                         <Stack direction={'column'}>
                                                             <Text
-                                                                color={conversation.username == this.state.talkingToUsername ? 'var(--main-color)' : 'darkturquoise'}
+                                                                color={(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser) == this.state.talkingToUsername ? 'var(--main-color)' : 'darkturquoise'}
                                                                 fontSize={'md'}
                                                             >
-                                                                {conversation.username}
+                                                                {(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser)}
                                                             </Text>
-                                                            <Text
-                                                                overflow={'clip'}
-                                                                color={
-                                                                    'var(--text-color)'
-                                                                }
-                                                                fontSize={'md'}
-                                                            >
-                                                                {
-                                                                    conversation.lastMessage
-                                                                }
-                                                            </Text>
+                                                            <Box width={'10vw'}>
+                                                                <Text
+                                                                    overflow={'hidden'}
+                                                                    textOverflow={'ellipsis'}
+                                                                    whiteSpace={'nowrap'}
+                                                                    color={
+                                                                        'var(--text-color)'
+                                                                    }
+                                                                    fontSize={'md'}
+                                                                >
+                                                                    {
+                                                                        conversation.message
+                                                                    }
+                                                                </Text>
+                                                            </Box>
                                                         </Stack>
                                                         <Box
                                                             width={'100px'}
                                                             textAlign={'right'}
+                                                            display={'block'}
+                                                            mr={0}
+                                                            ml={"auto"}
                                                         >
                                                             <Text
                                                                 color={
                                                                     'var(--text-color)'
                                                                 }
-                                                                right={0}
-                                                                pl={6}
+
                                                                 pt={5}
                                                             >
-                                                                {conversation.time}
+                                                                {this.handleTimeDifference(conversation.timeStamp)}
                                                             </Text>
                                                         </Box>
                                                     </Stack>
@@ -259,29 +298,28 @@ class DirectMessage extends React.Component {
                         </Stack>
                     </Box>
                 </GridItem>
-                <GridItem>
+                <GridItem colSpan={4}>
                     <Box>
-                        <Text color={'var(--text-color)'} size={'4xl'}>
-                            {this.state.username} wants to talk with{' '}
-                            {this.state.talkingToUsername}
-                        </Text>
-                        <VStack spacing={4}>
+                        <VStack spacing={4} p={10}>
                             overflowX={'hidden'}
                             overflowY={'scroll'}
                             {tempTexts.map((text) => (
                                 text.side == "right" ?
-                                <Box w="full" position={'relative'}>
-                                    <Tag size={'lg'} display={'block'} ml={'auto'} height={'auto'} mr={'10'} minW={"10vw"} maxW={'20vw'} key={text} textAlign={'right'} variant='solid' colorScheme='teal'>
-                                        {text.text}
-                                    </Tag>
-                                </Box> : 
-                                <Box w="full" position={'relative'}>
-                                <Tag size={'lg'} display={'block'} mr={'auto'} height={'auto'} ml={'10'} minW={"10vw"} maxW={'20vw'} key={text} textAlign={'left'} variant='solid' colorScheme='teal'>
-                                    {text.text}
-                                </Tag>
-                            </Box>
+                                    <Box Box w="full" position={'relative'} >
+                                        <div class="from-me">
+                                            <p>{text.text}</p>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </Box> :
+                                    <Box w="full" position={'relative'}>
+                                        <div class="from-them">
+                                            <p>{text.text}</p>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </Box>
 
                             ))}
+
 
                             <Box
                                 pt={10}
@@ -289,32 +327,25 @@ class DirectMessage extends React.Component {
                                 overflowX={'hidden'}
                                 overflowY={'auto'}
                             >
-                                {/* <TransitionGroup component="Tag">
-                                    {this.state.texts.map(())}
-                                </TransitionGroup> */}
                             </Box>
                         </VStack>
-                        <FormControl className='text-box' style={{position: 'absolute', bottom:0, padding:'2rem', left: 0}}>
+                        <FormControl width={'90vw'} className='text-box' position={'absolute'} bottom={10} right={10}>
                             <FormLabel > </FormLabel>
                             <InputGroup pl={'400px'} >
                                 <Input
-                                // w={'80%'}
-                                focusBorderColor='teal.200'
-                                placeholder='text'
-                                type="text"
-                                style={{ color: 'darkturquoise' }} />
+                                    focusBorderColor='teal.200'
+                                    placeholder='Type a message...'
+                                    type="text"
+                                    style={{ color: 'darkturquoise' }} />
                                 <InputRightElement width='4.5rem'>
                                     <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.onSend}> Send
                                     </Button>
                                 </InputRightElement>
                             </InputGroup>
-                            
                         </FormControl>
-
-z
                     </Box>
-                </GridItem>
-            </Grid>
+                </GridItem >
+            </Grid >
         )
     }
 }

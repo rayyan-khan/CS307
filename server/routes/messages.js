@@ -36,15 +36,15 @@ messageRoutes.route('/messages/sendMessage').post(async (req, res) => {
         result = await con.awaitQuery(sql);
     }
 
-        sql = `INSERT INTO Messages VALUES('${req.body.fromUser}', '${req.body.toUser}', '${req.body.message}', ${result[0].ConversationID}, NOW()) `
-        result = await con.awaitQuery(sql)
+    sql = `INSERT INTO Messages VALUES('${req.body.fromUser}', '${req.body.toUser}', '${req.body.message}', ${result[0].ConversationID}, NOW()) `
+    result = await con.awaitQuery(sql)
 
-        res.json(result)
+    res.json(result)
 
 })
 
 messageRoutes.route('/messages/deleteConvo').post(async (req, res) => {
-   
+
     let arr = [req.body.currentUser, req.body.deletedUser]
     arr.sort()
 
@@ -59,9 +59,9 @@ messageRoutes.route('/messages/deleteConvo').post(async (req, res) => {
 })
 
 messageRoutes.route('/messages/getConversations').post(async (req, res) => {
-   
+
     let sql = `SELECT fromUser, toUser, message, timeStamp FROM Messages WHERE conversationID IN (SELECT ConversationID FROM Conversations WHERE (user1 = '${req.body.user}' OR user2 = '${req.body.user}')) AND (conversationID, timestamp) IN (SELECT conversationID,
-        MIN(timeStamp) FROM Messages GROUP BY(conversationID)) AND conversationID NOT IN (SELECT conversationID FROM DeletedConversations WHERE username = '${req.body.user}');`
+        MIN(timeStamp) FROM Messages GROUP BY(conversationID)) AND conversationID NOT IN (SELECT conversationID FROM DeletedConversations WHERE username = '${req.body.user}') ORDER BY timeStamp DESC;`
 
     let result = await con.awaitQuery(sql)
     res.json(result)

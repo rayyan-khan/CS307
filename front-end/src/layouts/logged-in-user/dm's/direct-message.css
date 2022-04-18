@@ -14,7 +14,4 @@
 .conversation-enter-active {
     animation: .5s ease-out 0s 1 slideInFromTop;
 }
-.conversation-exit {
-}
-.conversation-exit-active {
-}
+
