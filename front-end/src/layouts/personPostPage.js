@@ -21,14 +21,17 @@ class PersonPostPage extends React.Component {
     fetchPosts() {
         console.log("test");
         try {
-            axios.get("http://localhost:5000/api/getTimeLine/")
+            axios.get("http://localhost:5000/api/getOrderedPost/")
                 .then(res => {
+                    console.log('trying to fetch posts');
+                    console.log(res.data);
                     const posts = res.data
-                    console.log(posts);
+                    console.log('pots::: ', posts);
                     const post = posts.filter(post => post.postID == this.props.postid);
                     this.setState({ post: post[0] });
                 })
         } catch (error) {
+            console.log('oh')
             return (
                 <Center pb={5}>
                     Error

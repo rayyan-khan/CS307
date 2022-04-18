@@ -326,9 +326,8 @@ postRoutes.route('/getPostWithTag/:tagid').get(async function (req, res) {
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 and Post.username!=${con.escape(
             username
         )} THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${username}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
-        LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID WHERE Post.tagID = "${
-            req.params.tagid
-        }" Order BY Post.timeStamp DESC`
+        LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID WHERE Post.tagID = "${req.params.tagid
+            }" Order BY Post.timeStamp DESC`
     } catch (err) {
         user = undefined
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isLiked, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
@@ -499,6 +498,49 @@ postRoutes.route('/updateLikeCount').post((req, res) => {
         }
         console.log('FINAL')
         res.json('all good')
+    })
+})
+
+postRoutes.route('/getOrderedPost').get(async (req, res) => {
+    var user
+    var sql = ''
+
+    let loggedIn
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+        const { email, username } = user
+        sql = `SELECT * from Post ORDER BY timeStamp DESC`
+        loggedIn = true
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    con.query(sql, async (err, result) => {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else {
+            for (let i = 0; i < result.length; i++) {
+                if (loggedIn) {
+                    let isLiked = await con.awaitQuery(
+                        `Select * From UserLike where username = "${user.username}" and postID = ${result[i].postID}`
+                    )
+                    let isDisLiked = await con.awaitQuery(
+                        `Select * From UserDisLike where username = "${user.username}" and postID = ${result[i].postID}`
+                    )
+
+                    result[i].isLiked = `${isLiked.length}`
+                    result[i].isDisliked = `${isDisLiked.length}`
+                } else {
+                    result[i].isLiked = '0'
+                    result[i].isDisliked = '0'
+                }
+            }
+
+            res.json(result)
+        }
     })
 })
 
