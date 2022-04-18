@@ -102,6 +102,8 @@ class DirectMessage extends React.Component {
         this.state = {
             username: '',
             conversations: [],
+            profilePic: '',
+            currentConversation: [],
             texts: [],
             talkingToUsername: this.props.usernameToTalkWith
                 ? this.props.usernameToTalkWith
@@ -132,21 +134,47 @@ class DirectMessage extends React.Component {
         }
     }
 
-
     componentDidMount() {
+
         if (axios.defaults.headers.common['authorization'] != null) {
+            console.log('test')
             axios
                 .get('http://localhost:5000/api/getUserFromHeader')
                 .then((res) => {
+                    console.log(res)
                     this.setState({ username: res.data.username })
+                    try {
+                        axios.get('http://localhost:5000/api/getProfile/' + res.data.username).then((res) => {
+
+                            this.setState({ profilePic: res.data.url })
+                        })
+                    } catch (error) {
+                        console.log(error);
+                    }
                     try {
                         const payload = {
                             user: res.data.username,
                         }
+
                         axios
                             .post('http://localhost:5000/api/messages/getConversations', payload)
                             .then((res) => {
+
                                 console.log(res.data);
+                                let conversations = [];
+                                conversations = res.data;
+                                conversations.map((conversation) => {
+                                    try {
+                                        let user = (conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser)
+                                        axios.get('http://localhost:5000/api/getProfile/' + user).then((res) => {
+
+                                            conversation.url = res.data.url;
+                                            this.setState({ conversations: [...this.state.conversations, conversation] })
+                                        })
+                                    } catch (error) {
+                                        console.log(error);
+                                    }
+                                })
                                 this.setState({ conversations: res.data })
                             })
                     } catch (error) {
@@ -154,8 +182,6 @@ class DirectMessage extends React.Component {
                     }
                 })
         }
-
-
     }
 
     handleTimeDifference(time) {
@@ -216,6 +242,7 @@ class DirectMessage extends React.Component {
                                 </div>
                                 <TransitionGroup component="Box">
                                     {this.state.conversations.map((conversation, key) => {
+                                        console.log(conversation.profilePic)
                                         return (
                                             <CSSTransition key={(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser)} timeout={700} classNames="conversation">
                                                 <Box
@@ -238,13 +265,15 @@ class DirectMessage extends React.Component {
                                                         this.setState({
                                                             talkingToUsername:
                                                                 (conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser),
+                                                            currentConversation: conversation
                                                         })
+
                                                     }}
                                                 >
                                                     <Stack p={8} direction={'row'}>
                                                         <Avatar
                                                             name={(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser)}
-                                                            src={conversation.avatar}
+                                                            src={conversation.url}
                                                             size="md"
                                                             mr={2}
                                                         />
@@ -299,51 +328,84 @@ class DirectMessage extends React.Component {
                     </Box>
                 </GridItem>
                 <GridItem colSpan={4}>
-                    <Box>
-                        <VStack spacing={4} p={10}>
-                            overflowX={'hidden'}
-                            overflowY={'scroll'}
-                            {tempTexts.map((text) => (
-                                text.side == "right" ?
-                                    <Box Box w="full" position={'relative'} >
-                                        <div class="from-me">
-                                            <p>{text.text}</p>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </Box> :
-                                    <Box w="full" position={'relative'}>
-                                        <div class="from-them">
-                                            <p>{text.text}</p>
-                                        </div>
-                                        <div class="clear"></div>
+                    {
+                        this.state.talkingToUsername ?
+                            <Box>
+                                <VStack spacing={4} p={10}>
+                                    overflowX={'hidden'}
+                                    overflowY={'scroll'}
+                                    {tempTexts.map((text) => (
+                                        text.side == "right" ?
+                                            <Box w="full" position={'relative'} p={8}>
+                                                <Stack direction={'row'} pos={'absolute'} right={0}>
+                                                    <Box mr={3}>
+                                                        <div class="from-me">
+                                                            <p>{text.text}</p>
+                                                        </div>
+                                                        <div class="clear"></div>
+                                                    </Box>
+                                                    <Avatar
+                                                        name={this.state.username}
+                                                        src={this.state.profilePic}
+                                                        size="md"
+                                                        mr={5}
+                                                    />
+                                                </Stack>
+                                            </Box> :
+                                            <Box w="full" position={'relative'} p={10}>
+                                                <Stack direction={'row'} pos={'absolute'} left={0}>
+                                                    <Avatar
+                                                        name={(this.state.currentConversation.toUser == this.state.username ? this.state.currentConversation.fromUser : this.state.currentConversation.toUser)}
+                                                        src={this.state.currentConversation.url}
+                                                        size="md"
+                                                        mr={3}
+                                                    />
+                                                    <Box height={'auto'}>
+                                                        <div class="from-them">
+                                                            <p>{text.text}</p>
+                                                        </div>
+                                                        <div class="clear"></div>
+                                                    </Box>
+                                                </Stack>
+                                            </Box>
+
+                                    ))}
+
+
+                                    <Box
+                                        pt={10}
+                                        width={'70vw'}
+                                        overflowX={'hidden'}
+                                        overflowY={'auto'}
+                                    >
                                     </Box>
-
-                            ))}
-
-
-                            <Box
-                                pt={10}
-                                width={'70vw'}
-                                overflowX={'hidden'}
-                                overflowY={'auto'}
-                            >
+                                </VStack>
+                                <FormControl width={'90vw'} className='text-box' position={'absolute'} bottom={10} right={10}>
+                                    <FormLabel > </FormLabel>
+                                    <InputGroup pl={'400px'} >
+                                        <Input
+                                            focusBorderColor='teal.200'
+                                            placeholder='Type a message...'
+                                            type="text"
+                                            style={{ color: 'darkturquoise' }} />
+                                        <InputRightElement width='4.5rem'>
+                                            <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.onSend}> Send
+                                            </Button>
+                                        </InputRightElement>
+                                    </InputGroup>
+                                </FormControl>
                             </Box>
-                        </VStack>
-                        <FormControl width={'90vw'} className='text-box' position={'absolute'} bottom={10} right={10}>
-                            <FormLabel > </FormLabel>
-                            <InputGroup pl={'400px'} >
-                                <Input
-                                    focusBorderColor='teal.200'
-                                    placeholder='Type a message...'
-                                    type="text"
-                                    style={{ color: 'darkturquoise' }} />
-                                <InputRightElement width='4.5rem'>
-                                    <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.onSend}> Send
-                                    </Button>
-                                </InputRightElement>
-                            </InputGroup>
-                        </FormControl>
-                    </Box>
+                            :
+                            <Box height={'100vh'}>
+                                <Center>
+                                    <Box pt={'40vh'}>
+                                        <Text fontSize={'4xl'} color={'var(--text-color)'}>
+                                            Please select a conversation
+                                        </Text>
+                                    </Box>
+                                </Center>
+                            </Box>
+                    }
                 </GridItem >
             </Grid >
         )

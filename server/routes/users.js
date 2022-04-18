@@ -19,6 +19,18 @@ userRoutes.route('/getUserFromHeader').get(async (req, res) => {
     res.status(200).json(user)
 })
 
+userRoutes.route('/getUserProfilePic/:username').get(async (req, res) => {
+    let username = req.params.username
+    console.log(username)
+    var sql = `SELECT url FROM User WHERE username = ${con.escape(username)}`
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
 userRoutes.route('/deleteProfile').get(async (req, res) => {
     var user
     try {
@@ -150,7 +162,7 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
                 req.params.username
             ))
 
-        let followersList = await query.getFollowersList(req.params.username,currentName)
+        let followersList = await query.getFollowersList(req.params.username, currentName)
         let followingList = await query.getFollowingList(req.params.username, currentName)
         let tagList = await query.getTagList(req.params.username)
         let numberFollowers = followersList.length
@@ -305,6 +317,7 @@ userRoutes.route('/search/:query').get(async (req, res) => {
 
 userRoutes.route('/followUser').post(async (req, res) => {
     let { followed } = req.body
+
     if (!followed) {
         return res.status(400).json('Missing followed field')
     }
