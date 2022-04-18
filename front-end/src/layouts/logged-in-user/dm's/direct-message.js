@@ -29,40 +29,7 @@ import './direct-message.css'
 import './direct-message.scss'
 import { BsAlignBottom } from 'react-icons/bs';
 import { RiContactsBookLine } from 'react-icons/ri';
-import moment from 'moment';
-
-const tempConversations = [
-    {
-        username: 'Misha',
-        avatar: 'https://i.imgur.com/qJHvZ9x.png',
-        lastMessage: 'Hey, how are you?',
-        time: '20m',
-    },
-    {
-        username: 'atharva101',
-        avatar: 'https://i.imgur.com/qJHvZ9x.png',
-        lastMessage: 'Hey, how are you?',
-        time: '1h',
-    },
-    {
-        username: 'Rayyan',
-        avatar: 'https://i.imgur.com/qJHvZ9x.png',
-        lastMessage: 'Hey, how are you?',
-        time: '3h',
-    },
-    {
-        username: 'Max',
-        avatar: 'https://i.imgur.com/qJHvZ9x.png',
-        lastMessage: 'Hey, how are you?',
-        time: '3h',
-    },
-    {
-        username: 'Bhavey',
-        avatar: 'https://i.imgur.com/qJHvZ9x.png',
-        lastMessage: 'Hey, how are you?',
-        time: '3h',
-    },
-]
+import moment, { utc } from 'moment';
 
 const tempTexts = [
     {
@@ -123,10 +90,11 @@ class DirectMessage extends React.Component {
                 console.log('user not found')
                 this.setState({
                     conversations: [{
-                        username: this.state.talkingToUsername,
+                        toUser: this.state.talkingToUsername,
+                        fromUser: this.state.username,
                         avatar: 'https://i.imgur.com/qJHvZ9x.png',
-                        lastMessage: 'Hey, how are you?',
-                        time: '20m',
+                        lastMessage: '',
+                        timeStamp: moment.utc().add(4, 'hours'),
                     }, ...this.state.conversations]
                 })
                 console.log(this.state.conversations);
@@ -185,9 +153,9 @@ class DirectMessage extends React.Component {
     }
 
     handleTimeDifference(time) {
-        let minsAgo = Math.round(moment.duration(moment.utc().diff(time)).add(4, "hours").asMinutes());
+        let minsAgo = Math.round(moment.duration(moment.utc().add(4, 'hours').diff(time)).asMinutes());
         if (minsAgo == 0) {
-            return "Just now";
+            return "";
         }
         if (minsAgo < 60) {
             return minsAgo + "m";
@@ -398,8 +366,8 @@ class DirectMessage extends React.Component {
                             :
                             <Box height={'100vh'}>
                                 <Center>
-                                    <Box pt={'40vh'}>
-                                        <Text fontSize={'4xl'} color={'var(--text-color)'}>
+                                    <Box p={10} pt={'40vh'}>
+                                        <Text fontSize={'3vw'} color={'var(--text-color)'}>
                                             Please select a conversation
                                         </Text>
                                     </Box>
