@@ -59,6 +59,62 @@ const tempTexts = [
     {
         side: 'left',
         text: 'That does not sound like a fun time  '
+    },
+    {
+        side: 'right',
+        text: 'Hey Whats Up'
+    },
+    {
+        side: 'left',
+        text: 'Not much wbu'
+    },
+    {
+        side: 'right',
+        text: 'Im great thanks for asking'
+    },
+    {
+        side: 'left',
+        text: 'Me too thats great'
+    },
+    {
+        side: 'left',
+        text: 'What are you doing today'
+    },
+    {
+        side: 'right',
+        text: 'I am working on my CS252 lab'
+    },
+    {
+        side: 'left',
+        text: 'That does not sound like a fun time  '
+    },
+    {
+        side: 'right',
+        text: 'Hey Whats Up'
+    },
+    {
+        side: 'left',
+        text: 'Not much wbu'
+    },
+    {
+        side: 'right',
+        text: 'Im great thanks for asking'
+    },
+    {
+        side: 'left',
+        text: 'Me too thats great'
+    },
+    {
+        side: 'left',
+        text: 'What are you doing today'
+    },
+    {
+        side: 'right',
+        text: 'I am working on my CS252 lab'
+    },
+    {
+        side: 'left',
+        text: 'That does not sound like a fun time  '
     }
 
 ]
@@ -155,7 +211,7 @@ class DirectMessage extends React.Component {
     handleTimeDifference(time) {
         let minsAgo = Math.round(moment.duration(moment.utc().add(4, 'hours').diff(time)).asMinutes());
         if (minsAgo == 0) {
-            return "";
+            return "Now";
         }
         if (minsAgo < 60) {
             return minsAgo + "m";
@@ -298,71 +354,64 @@ class DirectMessage extends React.Component {
                 <GridItem colSpan={4}>
                     {
                         this.state.talkingToUsername ?
-                            <Box>
-                                <VStack spacing={4} p={10}>
-                                    overflowX={'hidden'}
-                                    overflowY={'scroll'}
-                                    {tempTexts.map((text) => (
-                                        text.side == "right" ?
-                                            <Box w="full" position={'relative'} p={8}>
-                                                <Stack direction={'row'} pos={'absolute'} right={0}>
-                                                    <Box mr={3}>
-                                                        <div class="from-me">
-                                                            <p>{text.text}</p>
-                                                        </div>
-                                                        <div class="clear"></div>
-                                                    </Box>
-                                                    <Avatar
-                                                        name={this.state.username}
-                                                        src={this.state.profilePic}
-                                                        size="md"
-                                                        mr={5}
-                                                    />
-                                                </Stack>
-                                            </Box> :
-                                            <Box w="full" position={'relative'} p={10}>
-                                                <Stack direction={'row'} pos={'absolute'} left={0}>
-                                                    <Avatar
-                                                        name={(this.state.currentConversation.toUser == this.state.username ? this.state.currentConversation.fromUser : this.state.currentConversation.toUser)}
-                                                        src={this.state.currentConversation.url}
-                                                        size="md"
-                                                        mr={3}
-                                                    />
-                                                    <Box height={'auto'}>
-                                                        <div class="from-them">
-                                                            <p>{text.text}</p>
-                                                        </div>
-                                                        <div class="clear"></div>
-                                                    </Box>
-                                                </Stack>
-                                            </Box>
+                            <>
+                                <Box overflowX={'hidden'} overflowY={'scroll'} height={'84vh'} maxHeight={'calc(100vh - 140px)'}>
+                                    <VStack spacing={4} p={5}>
+                                        {tempTexts.map((text) => (
+                                            text.side == "right" ?
+                                                <Box w="full" position={'relative'} p={8} zIndex={1}>
+                                                    <Stack direction={'row'} pos={'absolute'} right={0}>
+                                                        <Box mr={3}>
+                                                            <div class="from-me">
+                                                                <p>{text.text}</p>
+                                                            </div>
+                                                            <div class="clear"></div>
+                                                        </Box>
+                                                        <Avatar
+                                                            name={this.state.username}
+                                                            src={this.state.profilePic}
+                                                            size="md"
+                                                            mr={5}
+                                                        />
+                                                    </Stack>
+                                                </Box> :
+                                                <Box w="full" position={'relative'} p={10} zIndex={1}>
+                                                    <Stack direction={'row'} pos={'absolute'} left={0}>
+                                                        <Avatar
+                                                            name={(this.state.currentConversation.toUser == this.state.username ? this.state.currentConversation.fromUser : this.state.currentConversation.toUser)}
+                                                            src={this.state.currentConversation.url}
+                                                            size="md"
+                                                            mr={3}
+                                                        />
+                                                        <Box height={'auto'}>
+                                                            <div class="from-them">
+                                                                <p>{text.text}</p>
+                                                            </div>
+                                                            <div class="clear"></div>
+                                                        </Box>
+                                                    </Stack>
+                                                </Box>
 
-                                    ))}
-
-
-                                    <Box
-                                        pt={10}
-                                        width={'70vw'}
-                                        overflowX={'hidden'}
-                                        overflowY={'auto'}
-                                    >
-                                    </Box>
-                                </VStack>
-                                <FormControl width={'90vw'} className='text-box' position={'absolute'} bottom={10} right={10}>
-                                    <FormLabel > </FormLabel>
-                                    <InputGroup pl={'400px'} >
-                                        <Input
-                                            focusBorderColor='teal.200'
-                                            placeholder='Type a message...'
-                                            type="text"
-                                            style={{ color: 'darkturquoise' }} />
-                                        <InputRightElement width='4.5rem'>
-                                            <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.onSend}> Send
-                                            </Button>
-                                        </InputRightElement>
-                                    </InputGroup>
-                                </FormControl>
-                            </Box>
+                                        ))}
+                                    </VStack>
+                                </Box>
+                                <Box height={'20vh'} maxHeight={'80px'} position={'absolute'} bottom={-5} right={0}>
+                                    <FormControl width={'90vw'} height={'3vh'} className='text-box' position={'absolute'} right={10} zIndex={2}>
+                                        <FormLabel > </FormLabel>
+                                        <InputGroup pl={'400px'} >
+                                            <Input
+                                                focusBorderColor='teal.200'
+                                                placeholder='Type a message...'
+                                                type="text"
+                                                style={{ color: 'darkturquoise' }} />
+                                            <InputRightElement width='4.5rem'>
+                                                <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.onSend}> Send
+                                                </Button>
+                                            </InputRightElement>
+                                        </InputGroup>
+                                    </FormControl>
+                                </Box>
+                            </>
                             :
                             <Box height={'100vh'}>
                                 <Center>
