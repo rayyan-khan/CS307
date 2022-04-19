@@ -27,15 +27,15 @@ messageRoutes.route('/messages/sendMessage').post(async (req, res) => {
     let arr = [req.body.fromUser, req.body.toUser]
     arr.sort()
 
-    let sql = `SELECT userBlocked WHERE (userBlocked = '${arr[0]}' AND userBlocking = '${arr[1]}') OR  (userBlocked = '${arr[1]}' AND userBlocking = '${arr[0]}')`;
-    let result = await con.awaitQuery(sql);
+    //let sql = `SELECT userBlocked WHERE (userBlocked = '${arr[0]}' AND userBlocking = '${arr[1]}') OR  (userBlocked = '${arr[1]}' AND userBlocking = '${arr[0]}')`;
+    //let result = await con.awaitQuery(sql);
 
-    if (result.length !== 0) {
-        res.json(result);
-    }
+    //if (result.length !== 0) {
+    //    res.json(result);
+   // }
 
-    sql = `SELECT ConversationID FROM Conversations WHERE user1 = '${arr[0]}' AND user2 = '${arr[1]}'`
-    result = await con.awaitQuery(sql)
+    let sql = `SELECT ConversationID FROM Conversations WHERE user1 = '${arr[0]}' AND user2 = '${arr[1]}'`
+    let result = await con.awaitQuery(sql)
 
     if (result.length === 0) {
         insertQuery = `INSERT INTO Conversations(user1, user2) VALUES('${arr[0]}', '${arr[1]}');`
