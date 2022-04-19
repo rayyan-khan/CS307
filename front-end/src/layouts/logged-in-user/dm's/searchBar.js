@@ -67,6 +67,8 @@ class SearchBar extends Component {
                     onChange={this.onChange}
                     onInputChange={this.onInputChange}
                     placeholder="Search"
+                    menuPortalTarget={document.body}
+                    menuPosition={'fixed'}
                     styles={{
                         control: (base) => ({
                             ...base,
@@ -83,6 +85,7 @@ class SearchBar extends Component {
                             paddingTop: 7,
                             paddingBottom: 7,
                         }),
+                        zIndex: 9999,
                     }}
                 />
             </Fragment>
