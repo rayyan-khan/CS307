@@ -356,17 +356,11 @@ export default function Post({ post, label }) {
             onClick={(event) => {
                 if (linkPageBool) {
                     event.preventDefault()
-                    if (localStorage.getItem('token') == null) {
-                        let url = window.location.href
-                        window.location.href =
-                            url.substring(0, url.indexOf('/')) + '/signup'
-                    } else {
-                        let url = window.location.href
-                        window.location.href =
-                            url.substring(0, url.indexOf('/')) +
-                            '/personalPostPage/' +
-                            post.postID
-                    }
+                    let url = window.location.href
+                    window.location.href =
+                        url.substring(0, url.indexOf('/')) +
+                        '/personalPostPage/' +
+                        post.postID
                 }
             }}
         >
@@ -411,12 +405,7 @@ export default function Post({ post, label }) {
                         onClick={(event) => {
                             event.preventDefault()
                             event.stopPropagation()
-                            if (localStorage.getItem('token') == null) {
-                                let url = window.location.href
-                                window.location.href =
-                                    url.substring(0, url.indexOf('/')) +
-                                    '/signup'
-                            } else if (post.username == 'Anonymous') {
+                            if (post.username == 'Anonymous') {
                                 // do nothing
                             } else {
                                 let url = window.location.href
@@ -486,18 +475,11 @@ export default function Post({ post, label }) {
                         onClick={(event) => {
                             event.preventDefault()
                             event.stopPropagation()
-                            if (localStorage.getItem('token') == null) {
-                                let url = window.location.href
-                                window.location.href =
-                                    url.substring(0, url.indexOf('/')) +
-                                    '/signup'
-                            } else {
-                                let url = window.location.href
-                                window.location.href =
-                                    url.substring(0, url.indexOf('/')) +
-                                    '/tag/' +
-                                    post.tagID
-                            }
+                            let url = window.location.href
+                            window.location.href =
+                                url.substring(0, url.indexOf('/')) +
+                                '/tag/' +
+                                post.tagID
                         }}
                         style={{ cursor: 'pointer' }}
                         px={4}
