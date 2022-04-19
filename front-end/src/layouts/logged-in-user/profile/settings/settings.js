@@ -392,6 +392,28 @@ export default function Settings({ user, label, section }) {
                                                 </Flex>
                                             </Stack>
                                         </Box>
+
+                                        <Box>
+                                            <Stack direction={'row'}>
+                                                <Flex>
+                                                    <Text fontWeight={'semibold'} fontSize={'lg'} color={"var(--settings-head-color)"}>
+                                                        Private 
+                                                    </Text>
+                                                    <div
+                                                        style={{
+                                                            flex: "0 0 100%",
+                                                            display: "flex",
+                                                            justifyContent: "flex-end",
+
+                                                        }}
+                                                    >
+                                                        <Box position={'absolute'} right={'30%'}>
+                                                        <Switch size='md' />
+                                                        </Box>
+                                                    </div>
+                                                </Flex>
+                                            </Stack>
+                                        </Box>
                                     </Stack>
                                 </Box>
                             </Box>
