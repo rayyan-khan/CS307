@@ -17,6 +17,7 @@ import React, { useEffect, useState } from 'react'
 import ProfilePicture from "@dsalvagni/react-profile-picture"
 import "@dsalvagni/react-profile-picture/dist/ProfilePicture.css"
 import { ArrowLeftIcon } from '@chakra-ui/icons';
+import { Switch } from '@chakra-ui/react'
 
 export default function Settings({ user, label, section }) {
 
@@ -29,7 +30,7 @@ export default function Settings({ user, label, section }) {
 
     const [email, setEmail] = useState(user.email)
     const [password, setPassword] = useState('')
-
+    const [priv, setPriv] = useState(false)
 
 
 
@@ -58,6 +59,7 @@ export default function Settings({ user, label, section }) {
 
     const [showPassword, setShowPassword] = useState(false);
 
+    
     useEffect(() => {
         setOldPasswordError('');
         setNewPasswordError('');
@@ -66,6 +68,21 @@ export default function Settings({ user, label, section }) {
         setLastName(user.lastName);
 
     }, [editPassword])
+    
+    useEffect(() => {
+        axios.get("http://localhost:5000/api/getProfile/" + user.username).then((response) => {
+            console.log(response.data.private);
+            if (response.data.private == null || response.data.private == false) {
+                setPriv(false)
+            }
+            else {
+                setPriv(true)
+            }
+            
+            return;
+        })
+
+    }, [])
 
 
     function handleProfilePic() {
@@ -408,7 +425,15 @@ export default function Settings({ user, label, section }) {
                                                         }}
                                                     >
                                                         <Box position={'absolute'} right={'30%'}>
-                                                        <Switch size='md' />
+                                                        <Switch size='md' isChecked={priv} onChange={() => {
+                                                            console.log(!priv)
+                                                            var data = {'private':!priv}
+                                                            axios.put("http://localhost:5000/api/updateProfile", data).then((response) => {
+                                                                console.log(response);
+                                                                return;
+                                                            })
+                                                            setPriv(!priv);
+                                                            }}/>
                                                         </Box>
                                                     </div>
                                                 </Flex>
@@ -613,7 +638,7 @@ export default function Settings({ user, label, section }) {
                                                                     </Input>
                                                                     {
                                                                         (newPasswordError != '') ?
-                                                                            <Text color={'red'} fontSize={'15'}>
+                                                                            <Text color={'red'} fontSize={'15'}>fexaf22233@aikusy.com
                                                                                 {newPasswordError}
                                                                             </Text>
                                                                             :
