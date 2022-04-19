@@ -395,7 +395,7 @@ export default function Post({ post, label }) {
             ) : (
                 <div></div>
             )}
-            {post.username != "Anonymous" ? (
+            {/* {post.username != "Anonymous" ? (
                 <Avatar
                     size={'lg'}
                     src={post.profilePic}
@@ -403,7 +403,7 @@ export default function Post({ post, label }) {
                     mb={4}
                     pos={'relative'}
                     style={linkPageBool ? { cursor: 'pointer' } : {}}
-                />) : (<></>)}
+                />) : (<></>)} */}
             <Stack align={'center'} direction={'column'} spacing={4}>
                 <Center>
                     <Heading

@@ -78,14 +78,6 @@ class Homepage extends React.Component {
         console.log(this.state.allPosts)
         localStorage.setItem('allPosts', JSON.stringify(this.state.allPosts))
         return this.state.allPosts.map((post, key) => {
-            try {
-                axios.get('http://localhost:5000/api/getProfile/' + post.username).then((res) => {
-                    post.profilePic = res.data.url
-                    console.log(post.profilePic)
-                })
-            } catch (error) {
-                console.log(error);
-            }
             return (
                 <Center pb={5}>
                     <Post label={key} post={post} />
