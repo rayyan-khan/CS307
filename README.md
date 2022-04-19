@@ -53,12 +53,3 @@
 -   To install dependencies in the server from the root folder, run the following: `npm run i-server`
 
 ---
-
-## How to change website logged in state
-
--   Open the developer tools of your browswer
--   In the console tab
-    -   To sign in as a user, run the following command
-        -   `localStorage.setItem("username", "your_user_name");`
-    -   To sign out, run the following command
-        -   `localStorage.removeItem("username");`
