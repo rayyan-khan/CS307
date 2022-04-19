@@ -82,6 +82,7 @@ export default function Post({ post, label }) {
     // }, [runAPI])
 
     useEffect(() => {
+        console.log(post)
         try {
             axios.defaults.headers.common['authorization'] =
                 localStorage.getItem('token')
@@ -394,14 +395,15 @@ export default function Post({ post, label }) {
             ) : (
                 <div></div>
             )}
-            {/* <Avatar
-                size={'xl'}
-                src={post.profilePicture}
-                alt={'Avatar Alt'}
-                mb={4}
-                pos={'relative'}
-                style={linkPageBool ? { cursor: 'pointer' } : {}}
-            /> */}
+            {post.username != "Anonymous" ? (
+                <Avatar
+                    size={'lg'}
+                    src={post.profilePic}
+                    name={post.firstName + ' ' + post.lastName}
+                    mb={4}
+                    pos={'relative'}
+                    style={linkPageBool ? { cursor: 'pointer' } : {}}
+                />) : (<></>)}
             <Stack align={'center'} direction={'column'} spacing={4}>
                 <Center>
                     <Heading
