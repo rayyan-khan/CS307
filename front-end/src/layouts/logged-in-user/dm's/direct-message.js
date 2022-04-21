@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Post from '../../../components/feed/post/post'
 import SearchBar from './searchBar'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -125,6 +125,7 @@ const DirectMessage = (props) => {
     const [profilePic, setProfilePic] = React.useState('');
     const [currentConversation, setCurrentConversation] = React.useState([]);
     const [texts, setTexts] = React.useState([]);
+    const [message, setMessage] = React.useState('');
     const [showConversation, setShowConversation] = React.useState(false);
     const [currText, setCurrText] = React.useState('');
     const [talkingToUsername, setTalkingToUsername] = React.useState(props.usernameToTalkWith ? props.usernameToTalkWith : '');
@@ -133,17 +134,36 @@ const DirectMessage = (props) => {
         const value = e.target.value;
         console.log(e.target.value);
         setCurrText(value);
+        setMessage(value);
+    }
+
+    function handleScroll() {
+        window.scroll({
+            top: document.body.offsetHeight,
+            left: 0,
+            behavior: 'smooth',
+        });
     }
 
     const onSend = (e) => {
         console.log('why')
         const payload = {
+            message: currText,
             fromUser: username,
             toUser: talkingToUsername,
-            message: currText
         }
+        currentConversation.push(payload);
         axios.post("http://localhost:5000/api/messages/sendMessage", payload)
             .then((response) => {
+                const newTemp = {
+                    message: currText,
+                    fromUser: username,
+                    timeStamp: moment().format('YYYY-MM-DDThh:mm.ssss'),
+                }
+                setMessage('');
+                scrollToBottom();
+
+                console.log(currentConversation);
                 console.log("got a response");
                 console.log(response.data);
             })
@@ -152,14 +172,25 @@ const DirectMessage = (props) => {
             })
     }
 
+    const messagesEndRef = useRef(null)
+
+    const scrollToBottom = () => {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+
     useEffect(() => {
+        scrollToBottom();
+    }, [currentConversation])
+
+    useEffect(() => {
+        console.log()
         let userFound = false;
         for (let i = 0; i < conversations.length; i++) {
             if ((conversations[i].toUser == username ? conversations[i].fromUser : conversations[i].toUser) === talkingToUsername) {
                 userFound = true;
             }
         }
-        if (!userFound) {
+        if (!userFound && talkingToUsername !== '') {
             console.log('user not found')
             const payload = {
                 fromUser: username,
@@ -390,12 +421,12 @@ const DirectMessage = (props) => {
                     currentConversation ?
                         <>
                             <Box overflowX={'hidden'} overflowY={'scroll'} height={'84vh'} maxHeight={'calc(100vh - 140px)'}>
-                                <VStack spacing={4} p={5}>
+                                <Stack direction={'column'} spacing={4} p={5}>
                                     {console.log('-----')}
                                     {console.log(currentConversation)}
                                     {console.log('-----')}
                                     {
-                                        (currentConversation).map((text) => (
+                                        currentConversation.map((text) => (
                                             text.fromUser == username ?
                                                 <Box w="full" position={'relative'} p={8} zIndex={1}>
                                                     <Stack direction={'row'} pos={'absolute'} right={0}>
@@ -430,7 +461,8 @@ const DirectMessage = (props) => {
                                                     </Stack>
                                                 </Box>
                                         ))}
-                                </VStack>
+                                    <div ref={messagesEndRef} />
+                                </Stack>
                             </Box>
                             <Box height={'20vh'} maxHeight={'80px'} position={'absolute'} bottom={-5} right={0}>
                                 <FormControl width={'90vw'} height={'3vh'} className='text-box' position={'absolute'} right={10} zIndex={2}>
@@ -440,6 +472,7 @@ const DirectMessage = (props) => {
                                             focusBorderColor='teal.200'
                                             placeholder='Type a message...'
                                             type="text"
+                                            value={message}
                                             onChange={(e) => { onChange(e) }}
                                             style={{ color: 'darkturquoise' }} />
                                         <InputRightElement width='4.5rem'>

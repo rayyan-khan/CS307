@@ -117,7 +117,7 @@ userRoutes.route('/unBlock/:username').get(async (req, res) => {
 
     const { email, username } = user
 
-    var sql = `DELETE FROM Block WHERE userBlocking = ${username} and userBlocked = ${con.escape(req.params.username)}`
+    var sql = `DELETE FROM Block WHERE userBlocking = "${username}" and userBlocked = ${con.escape(req.params.username)}`
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
