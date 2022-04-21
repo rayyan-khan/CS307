@@ -119,83 +119,71 @@ const tempTexts = [
 
 ]
 
-class DirectMessage extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            username: '',
-            conversations: [],
-            profilePic: '',
-            currentConversation: [],
-            texts: [],
-            currText: '',
-            talkingToUsername: this.props.usernameToTalkWith
-                ? this.props.usernameToTalkWith
-                : '',
-        }
-    }
+const DirectMessage = (props) => {
+    const [username, setUsername] = React.useState('');
+    const [conversations, setConversations] = React.useState([]);
+    const [profilePic, setProfilePic] = React.useState('');
+    const [currentConversation, setCurrentConversation] = React.useState([]);
+    const [texts, setTexts] = React.useState([]);
+    const [showConversation, setShowConversation] = React.useState(false);
+    const [currText, setCurrText] = React.useState('');
+    const [talkingToUsername, setTalkingToUsername] = React.useState(props.usernameToTalkWith ? props.usernameToTalkWith : '');
 
-    onChange = (e) => {
+    const onChange = (e) => {
         const value = e.target.value;
         console.log(e.target.value);
-
-        this.setState({
-            currText : value
-        });
+        setCurrText(value);
     }
 
-    onSend = (e) => {
+    const onSend = (e) => {
         console.log('why')
         const payload = {
-            fromUser: this.state.username,
-            toUser: this.state.talkingToUsername,
-            message: this.state.currText
+            fromUser: username,
+            toUser: talkingToUsername,
+            message: currText
         }
-        axios.post("http://localhost:5000/api/messages/sendMessage", payload) 
-        .then((response) => {
-            console.log("got a response");
-            console.log(response.data);
-          })
-          .catch(({ response }) => {
-            console.log("got an error");
-          })
+        axios.post("http://localhost:5000/api/messages/sendMessage", payload)
+            .then((response) => {
+                console.log("got a response");
+                console.log(response.data);
+            })
+            .catch(({ response }) => {
+                console.log("got an error");
+            })
     }
 
-    componentDidUpdate() {
+    useEffect(() => {
         let userFound = false;
-        for (let i = 0; i < this.state.conversations.length; i++) {
-            if ((this.state.conversations[i].toUser == this.state.username ? this.state.conversations[i].fromUser : this.state.conversations[i].toUser) === this.state.talkingToUsername) {
+        for (let i = 0; i < conversations.length; i++) {
+            if ((conversations[i].toUser == username ? conversations[i].fromUser : conversations[i].toUser) === talkingToUsername) {
                 userFound = true;
             }
         }
         if (!userFound) {
             console.log('user not found')
-            this.setState({
-                conversations: [{
-                    toUser: this.state.talkingToUsername,
-                    fromUser: this.state.username,
-                    avatar: 'https://i.imgur.com/qJHvZ9x.png',
-                    lastMessage: '',
-                    timeStamp: moment.utc().add(4, 'hours'),
-                }, ...this.state.conversations]
-            })
-            console.log(this.state.conversations);
+            const payload = {
+                fromUser: username,
+                toUser: talkingToUsername
+            }
+            setConversations([...conversations, payload])
+            console.log(conversations);
+        } else {
+            handleGetConversation();
         }
-    }
+    }, [talkingToUsername])
 
-    componentDidMount() {
-
+    useEffect(() => {
         if (axios.defaults.headers.common['authorization'] != null) {
             console.log('test')
             axios
                 .get('http://localhost:5000/api/getUserFromHeader')
                 .then((res) => {
                     console.log(res)
-                    this.setState({ username: res.data.username })
+                    setUsername(res.data.username);
                     try {
                         axios.get('http://localhost:5000/api/getProfile/' + res.data.username).then((res) => {
 
-                            this.setState({ profilePic: res.data.url })
+                            setProfilePic(res.data.profilePic);
                         })
                     } catch (error) {
                         console.log(error);
@@ -214,39 +202,43 @@ class DirectMessage extends React.Component {
                                 conversations = res.data;
                                 conversations.map((conversation) => {
                                     try {
-                                        let user = (conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser)
+                                        let user = (conversation.toUser == username ? conversation.fromUser : conversation.toUser)
                                         axios.get('http://localhost:5000/api/getProfile/' + user).then((res) => {
 
                                             conversation.url = res.data.url;
-                                            this.setState({ conversations: [...this.state.conversations, conversation] })
+                                            setConversations([...conversations, conversation])
                                         })
                                     } catch (error) {
                                         console.log(error);
                                     }
                                 })
-                                this.setState({ conversations: res.data })
+                                setConversations(res.data);
                             })
                     } catch (error) {
                         console.log(error);
                     }
-                
+
                 })
         }
-    }
+    }, [])
 
-    handleGetConversation = () => {
-        if (this.state.talkingToUsername) {
+    const handleGetConversation = () => {
+        console.log('better')
+        if (talkingToUsername) {
             try {
                 const payload = {
-                    user1: this.state.username,
-                    user2: this.state.talkingToUsername,
+                    user1: username,
+                    user2: talkingToUsername,
                 }
 
                 axios
                     .post('http://localhost:5000/api/messages/getHistory', payload)
                     .then((res) => {
+                        console.log('lllll')
                         console.log(res.data);
-                        this.setState({ currentConversation: res.data })
+                        console.log('lllll')
+                        setCurrentConversation(res.data);
+                        setShowConversation(true);
                     })
             } catch (error) {
                 console.log(error);
@@ -254,7 +246,7 @@ class DirectMessage extends React.Component {
         }
     }
 
-    handleTimeDifference(time) {
+    const handleTimeDifference = (time) => {
         let minsAgo = Math.round(moment.duration(moment.utc().add(4, 'hours').diff(time)).asMinutes());
         if (minsAgo == 0) {
             return "Now";
@@ -271,216 +263,206 @@ class DirectMessage extends React.Component {
     }
 
 
-    render() {
-        return (
-            <Grid templateColumns="repeat(5, 1fr)">
-                <GridItem colSpan={1} height={'100vh'} maxW={'500px'} >
-                    <Box>
-                        <Stack
-                            borderRightWidth={'2px'}
-                            overflowX={'hidden'}
-                            overflowY={'scroll'}
-                            width={'25vw'}
+    return (
+        <Grid templateColumns="repeat(5, 1fr)">
+            <GridItem colSpan={1} height={'100vh'} maxW={'500px'} >
+                <Box>
+                    <Stack
+                        borderRightWidth={'2px'}
+                        overflowX={'hidden'}
+                        overflowY={'scroll'}
+                        width={'25vw'}
+                        maxWidth={'500px'}
+                        minWidth={'350px'}
+                        ml={5}
+                        direction={'column'}
+                        height={'94vh'}
+                    >
+                        <Box
+                            pt={10}
+                            width={'27vw'}
                             maxWidth={'500px'}
                             minWidth={'350px'}
-                            ml={5}
-                            direction={'column'}
-                            height={'94vh'}
+                            overflowX={'hidden'}
+                            overflowY={'auto'}
                         >
-                            <Box
-                                pt={10}
-                                width={'27vw'}
-                                maxWidth={'500px'}
-                                minWidth={'350px'}
-                                overflowX={'hidden'}
-                                overflowY={'auto'}
+                            <div
+                                style={{
+                                    width: '78%',
+                                    marginLeft: '8%',
+                                    marginBottom: '10%',
+                                }}
                             >
-                                <div
-                                    style={{
-                                        width: '78%',
-                                        marginLeft: '8%',
-                                        marginBottom: '10%',
+                                <SearchBar
+                                    updateConversation={(username) => {
+                                        setTalkingToUsername(username);
                                     }}
-                                >
-                                    <SearchBar
-                                        updateConversation={(username) => {
-                                            this.setState({
-                                                talkingToUsername: username,
-                                            })
-                                        }}
-                                    />
-                                </div>
-                                <TransitionGroup component="Box">
-                                    {this.state.conversations.map((conversation, key) => {
-                                        console.log(conversation.profilePic)
-                                        return (
-                                            <CSSTransition key={(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser)} timeout={700} classNames="conversation">
-                                                <Box
-                                                    mb={8}
-                                                    ml={8}
-                                                    backgroundColor={(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser) == this.state.talkingToUsername ? 'darkturquoise' : 'var(--main-color)'}
-                                                    width={'80%'}
-                                                    maxWidth={'400px'}
-                                                    boxShadow={'xl'}
-                                                    rounded={'lg'}
-                                                    _hover={{
-                                                        boxShadow: '2xl',
-                                                        borderColor: 'darkturquoise',
-                                                        borderWidth: '2px',
-                                                        transform: 'scale(1.05)',
-                                                        transition:
-                                                            'all 0.2s ease-in-out',
-                                                    }}
-                                                    onClick={() => {
-                                                        this.setState({
-                                                            talkingToUsername:
-                                                                (conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser),
-                                                            currentConversation: conversation
-                                                        })
+                                />
+                            </div>
+                            <TransitionGroup component="Box">
+                                {conversations.map((conversation, key) => {
+                                    console.log(conversation.profilePic)
+                                    return (
+                                        <CSSTransition key={(conversation.toUser == username ? conversation.fromUser : conversation.toUser)} timeout={700} classNames="conversation">
+                                            <Box
+                                                mb={8}
+                                                ml={8}
+                                                backgroundColor={(conversation.toUser == username ? conversation.fromUser : conversation.toUser) == talkingToUsername ? 'darkturquoise' : 'var(--main-color)'}
+                                                width={'80%'}
+                                                maxWidth={'400px'}
+                                                boxShadow={'xl'}
+                                                rounded={'lg'}
+                                                _hover={{
+                                                    boxShadow: '2xl',
+                                                    borderColor: 'darkturquoise',
+                                                    borderWidth: '2px',
+                                                    transform: 'scale(1.05)',
+                                                    transition:
+                                                        'all 0.2s ease-in-out',
+                                                }}
+                                                onClick={() => {
+                                                    setTalkingToUsername((conversation.toUser == username ? conversation.fromUser : conversation.toUser));
 
-                                                    }}
-                                                >
-                                                    <Stack p={8} direction={'row'}>
-                                                        <Avatar
-                                                            name={(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser)}
-                                                            src={conversation.url}
-                                                            size="md"
-                                                            mr={2}
-                                                        />
-                                                        <Stack direction={'column'}>
-                                                            <Text
-                                                                color={(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser) == this.state.talkingToUsername ? 'var(--main-color)' : 'darkturquoise'}
-                                                                fontSize={'md'}
-                                                            >
-                                                                {(conversation.toUser == this.state.username ? conversation.fromUser : conversation.toUser)}
-                                                            </Text>
-                                                            <Box width={'10vw'}>
-                                                                <Text
-                                                                    overflow={'hidden'}
-                                                                    textOverflow={'ellipsis'}
-                                                                    whiteSpace={'nowrap'}
-                                                                    color={
-                                                                        'var(--text-color)'
-                                                                    }
-                                                                    fontSize={'md'}
-                                                                >
-                                                                    {
-                                                                        conversation.message
-                                                                    }
-                                                                </Text>
-                                                            </Box>
-                                                        </Stack>
-                                                        <Box
-                                                            width={'100px'}
-                                                            textAlign={'right'}
-                                                            display={'block'}
-                                                            mr={0}
-                                                            ml={"auto"}
+                                                }}
+                                            >
+                                                <Stack p={8} direction={'row'}>
+                                                    <Avatar
+                                                        name={(conversation.toUser == username ? conversation.fromUser : conversation.toUser)}
+                                                        src={conversation.url}
+                                                        size="md"
+                                                        mr={2}
+                                                    />
+                                                    <Stack direction={'column'}>
+                                                        <Text
+                                                            color={(conversation.toUser == username ? conversation.fromUser : conversation.toUser) == talkingToUsername ? 'var(--main-color)' : 'darkturquoise'}
+                                                            fontSize={'md'}
                                                         >
+                                                            {(conversation.toUser == username ? conversation.fromUser : conversation.toUser)}
+                                                        </Text>
+                                                        <Box width={'10vw'}>
                                                             <Text
+                                                                overflow={'hidden'}
+                                                                textOverflow={'ellipsis'}
+                                                                whiteSpace={'nowrap'}
                                                                 color={
                                                                     'var(--text-color)'
                                                                 }
-
-                                                                pt={5}
+                                                                fontSize={'md'}
                                                             >
-                                                                {this.handleTimeDifference(conversation.timeStamp)}
+                                                                {
+                                                                    conversation.message
+                                                                }
                                                             </Text>
                                                         </Box>
                                                     </Stack>
-                                                </Box>
-                                            </CSSTransition>
-                                        )
-                                    })}
-                                </TransitionGroup>
-                            </Box>
-                        </Stack>
-                    </Box>
-                </GridItem>
-                <GridItem colSpan={4}>
-                {console.log("-----")}
-                {console.log(this.state.currentConversation)}
-                {console.log('-----')}
-                {this.handleGetConversation()}
-                        {
-                        this.state.currentConversation.length != 0 ?
-                            <>
-                                <Box overflowX={'hidden'} overflowY={'scroll'} height={'84vh'} maxHeight={'calc(100vh - 140px)'}>
-                                    <VStack spacing={4} p={5}>
-                                        {console.log('-----')}
-                                        {console.log(this.state.currentConversation)}
-                                        {console.log('-----')}
-                                        
-                                        {
-                                            (this.state.currentConversation).map((text) => (
-                                                text.fromUser == this.state.username ?
-                                                    <Box w="full" position={'relative'} p={8} zIndex={1}>
-                                                        <Stack direction={'row'} pos={'absolute'} right={0}>
-                                                            <Box mr={3}>
-                                                                <div class="from-me">
-                                                                    <p>{text.text}</p>
-                                                                </div>
-                                                                <div class="clear"></div>
-                                                            </Box>
-                                                            <Avatar
-                                                                name={this.state.username}
-                                                                src={this.state.profilePic}
-                                                                size="md"
-                                                                mr={5}
-                                                            />
-                                                        </Stack>
-                                                    </Box> :
-                                                    <Box w="full" position={'relative'} p={10} zIndex={1}>
-                                                        <Stack direction={'row'} pos={'absolute'} left={0}>
-                                                            <Avatar
-                                                                name={(text.toUser == this.state.username ? text.fromUser : text.toUser)}
-                                                                src={text.url}
-                                                                size="md"
-                                                                mr={3}
-                                                            />
-                                                            <Box height={'auto'}>
-                                                                <div class="from-them">
-                                                                    <p>{text.message}</p>
-                                                                </div>
-                                                                <div class="clear"></div>
-                                                            </Box>
-                                                        </Stack>
+                                                    <Box
+                                                        width={'100px'}
+                                                        textAlign={'right'}
+                                                        display={'block'}
+                                                        mr={0}
+                                                        ml={"auto"}
+                                                    >
+                                                        <Text
+                                                            color={
+                                                                'var(--text-color)'
+                                                            }
+
+                                                            pt={5}
+                                                        >
+                                                            {handleTimeDifference(conversation.timeStamp)}
+                                                        </Text>
                                                     </Box>
+                                                </Stack>
+                                            </Box>
+                                        </CSSTransition>
+                                    )
+                                })}
+                            </TransitionGroup>
+                        </Box>
+                    </Stack>
+                </Box>
+            </GridItem>
+            <GridItem colSpan={4}>
+                {console.log("-----")}
+                {console.log(currentConversation)}
+                {console.log('-----')}
+                {
+                    currentConversation ?
+                        <>
+                            <Box overflowX={'hidden'} overflowY={'scroll'} height={'84vh'} maxHeight={'calc(100vh - 140px)'}>
+                                <VStack spacing={4} p={5}>
+                                    {console.log('-----')}
+                                    {console.log(currentConversation)}
+                                    {console.log('-----')}
+                                    {
+                                        (currentConversation).map((text) => (
+                                            text.fromUser == username ?
+                                                <Box w="full" position={'relative'} p={8} zIndex={1}>
+                                                    <Stack direction={'row'} pos={'absolute'} right={0}>
+                                                        <Box mr={3}>
+                                                            <div class="from-me">
+                                                                <p>{text.message}</p>
+                                                            </div>
+                                                            <div class="clear"></div>
+                                                        </Box>
+                                                        <Avatar
+                                                            name={username}
+                                                            src={profilePic}
+                                                            size="md"
+                                                            mr={5}
+                                                        />
+                                                    </Stack>
+                                                </Box> :
+                                                <Box w="full" position={'relative'} p={10} zIndex={1}>
+                                                    <Stack direction={'row'} pos={'absolute'} left={0}>
+                                                        <Avatar
+                                                            name={(text.toUser == username ? text.fromUser : text.toUser)}
+                                                            src={text.url}
+                                                            size="md"
+                                                            mr={3}
+                                                        />
+                                                        <Box height={'auto'}>
+                                                            <div class="from-them">
+                                                                <p>{text.message}</p>
+                                                            </div>
+                                                            <div class="clear"></div>
+                                                        </Box>
+                                                    </Stack>
+                                                </Box>
                                         ))}
-                                    </VStack>
-                                </Box>
-                                <Box height={'20vh'} maxHeight={'80px'} position={'absolute'} bottom={-5} right={0}>
-                                    <FormControl width={'90vw'} height={'3vh'} className='text-box' position={'absolute'} right={10} zIndex={2}>
-                                        <FormLabel > </FormLabel>
-                                        <InputGroup pl={'400px'} >
-                                            <Input
-                                                focusBorderColor='teal.200'
-                                                placeholder='Type a message...'
-                                                type="text"
-                                                onChange={this.onChange}
-                                                style={{ color: 'darkturquoise' }} />
-                                            <InputRightElement width='4.5rem'>
-                                                <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.onSend}> Send
-                                                </Button>
-                                            </InputRightElement>
-                                        </InputGroup>
-                                    </FormControl>
-                                </Box>
-                            </>
-                            :
-                            <Box height={'100vh'}>
-                                <Center>
-                                    <Box p={10} pt={'40vh'}>
-                                        <Text fontSize={'3vw'} color={'var(--text-color)'}>
-                                            Please select a conversation
-                                        </Text>
-                                    </Box>
-                                </Center>
+                                </VStack>
                             </Box>
-                    }
-                </GridItem >
-            </Grid >
-        )
-    }
+                            <Box height={'20vh'} maxHeight={'80px'} position={'absolute'} bottom={-5} right={0}>
+                                <FormControl width={'90vw'} height={'3vh'} className='text-box' position={'absolute'} right={10} zIndex={2}>
+                                    <FormLabel > </FormLabel>
+                                    <InputGroup pl={'400px'} >
+                                        <Input
+                                            focusBorderColor='teal.200'
+                                            placeholder='Type a message...'
+                                            type="text"
+                                            onChange={(e) => { onChange(e) }}
+                                            style={{ color: 'darkturquoise' }} />
+                                        <InputRightElement width='4.5rem'>
+                                            <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={(e) => { onSend(e) }}> Send
+                                            </Button>
+                                        </InputRightElement>
+                                    </InputGroup>
+                                </FormControl>
+                            </Box>
+                        </>
+                        :
+                        <Box height={'100vh'}>
+                            <Center>
+                                <Box p={10} pt={'40vh'}>
+                                    <Text fontSize={'3vw'} color={'var(--text-color)'}>
+                                        Please select a conversation
+                                    </Text>
+                                </Box>
+                            </Center>
+                        </Box>
+                }
+            </GridItem >
+        </Grid >
+    )
 }
 export default DirectMessage
