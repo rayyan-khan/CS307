@@ -119,6 +119,7 @@ userRoutes.route('/unBlock/:username').get(async (req, res) => {
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var user
     var amUser = false
+    var cur;
     try {
         user = await decodeHeader.decodeAuthHeader(req)
     } catch (err) {
@@ -127,6 +128,7 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var currentName;
     if (user != undefined) {
         const { email, username } = user
+        cur = username;
         if (username == req.params.username) {
             amUser = true
         }
@@ -135,9 +137,11 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
         currentName = ""
     }
 
-    var sql = `SELECT username, email, bio, private, firstName, lastName, url from User WHERE username = ${con.escape(
+    var sql = `SELECT username, email, bio, private, firstName, lastName, url,CASE WHEN ${con.escape(cur)} IN (Select userBlocking FROM Block where userblocked=${con.escape(
         req.params.username
-    )}`
+    )}) Then "Block" Else "Unblock" END AS B from User WHERE username = ${con.escape(
+        req.params.username
+    )} `
     // var sql = `SELECT User.username, User.email, User.bio, User.private, User.firstName, User.lastName, User.url from User, UserFollow WHERE User.username = ${con.escape(
     //     req.params.username
     // )} and `
