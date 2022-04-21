@@ -15,7 +15,7 @@ messageRoutes.route('/messages/getHistory').post(async (req, res) => {
     if (result.length === 0) {
         res.json(result)
     } else {
-        sql = `SELECT message, fromUser FROM Messages WHERE ConversationID = ${result[0].ConversationID} ORDER BY timeStamp`;
+        sql = `SELECT message, fromUser, timeStamp FROM Messages WHERE ConversationID = ${result[0].ConversationID} ORDER BY timeStamp`;
         result = await con.awaitQuery(sql)
 
         res.json(result)

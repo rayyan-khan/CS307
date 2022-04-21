@@ -128,33 +128,58 @@ class DirectMessage extends React.Component {
             profilePic: '',
             currentConversation: [],
             texts: [],
+            currText: '',
             talkingToUsername: this.props.usernameToTalkWith
                 ? this.props.usernameToTalkWith
                 : '',
         }
     }
 
+    onChange = (e) => {
+        const value = e.target.value;
+        console.log(e.target.value);
+
+        this.setState({
+            currText : value
+        });
+    }
+
+    onSend = (e) => {
+        console.log('why')
+        const payload = {
+            fromUser: this.state.username,
+            toUser: this.state.talkingToUsername,
+            message: this.state.currText
+        }
+        axios.post("http://localhost:5000/api/messages/sendMessage", payload) 
+        .then((response) => {
+            console.log("got a response");
+            console.log(response.data);
+          })
+          .catch(({ response }) => {
+            console.log("got an error");
+          })
+    }
+
     componentDidUpdate() {
-        if (this.state.talkingToUsername) {
-            let userFound = false;
-            for (let i = 0; i < this.state.conversations.length; i++) {
-                if ((this.state.conversations[i].toUser == this.state.username ? this.state.conversations[i].fromUser : this.state.conversations[i].toUser) === this.state.talkingToUsername) {
-                    userFound = true;
-                }
+        let userFound = false;
+        for (let i = 0; i < this.state.conversations.length; i++) {
+            if ((this.state.conversations[i].toUser == this.state.username ? this.state.conversations[i].fromUser : this.state.conversations[i].toUser) === this.state.talkingToUsername) {
+                userFound = true;
             }
-            if (!userFound) {
-                console.log('user not found')
-                this.setState({
-                    conversations: [{
-                        toUser: this.state.talkingToUsername,
-                        fromUser: this.state.username,
-                        avatar: 'https://i.imgur.com/qJHvZ9x.png',
-                        lastMessage: '',
-                        timeStamp: moment.utc().add(4, 'hours'),
-                    }, ...this.state.conversations]
-                })
-                console.log(this.state.conversations);
-            }
+        }
+        if (!userFound) {
+            console.log('user not found')
+            this.setState({
+                conversations: [{
+                    toUser: this.state.talkingToUsername,
+                    fromUser: this.state.username,
+                    avatar: 'https://i.imgur.com/qJHvZ9x.png',
+                    lastMessage: '',
+                    timeStamp: moment.utc().add(4, 'hours'),
+                }, ...this.state.conversations]
+            })
+            console.log(this.state.conversations);
         }
     }
 
@@ -204,7 +229,28 @@ class DirectMessage extends React.Component {
                     } catch (error) {
                         console.log(error);
                     }
+                
                 })
+        }
+    }
+
+    handleGetConversation = () => {
+        if (this.state.talkingToUsername) {
+            try {
+                const payload = {
+                    user1: this.state.username,
+                    user2: this.state.talkingToUsername,
+                }
+
+                axios
+                    .post('http://localhost:5000/api/messages/getHistory', payload)
+                    .then((res) => {
+                        console.log(res.data);
+                        this.setState({ currentConversation: res.data })
+                    })
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 
@@ -352,46 +398,54 @@ class DirectMessage extends React.Component {
                     </Box>
                 </GridItem>
                 <GridItem colSpan={4}>
-                    {
-                        this.state.talkingToUsername ?
+                {console.log("-----")}
+                {console.log(this.state.currentConversation)}
+                {console.log('-----')}
+                {this.handleGetConversation()}
+                        {
+                        this.state.currentConversation.length != 0 ?
                             <>
                                 <Box overflowX={'hidden'} overflowY={'scroll'} height={'84vh'} maxHeight={'calc(100vh - 140px)'}>
                                     <VStack spacing={4} p={5}>
-                                        {tempTexts.map((text) => (
-                                            text.side == "right" ?
-                                                <Box w="full" position={'relative'} p={8} zIndex={1}>
-                                                    <Stack direction={'row'} pos={'absolute'} right={0}>
-                                                        <Box mr={3}>
-                                                            <div class="from-me">
-                                                                <p>{text.text}</p>
-                                                            </div>
-                                                            <div class="clear"></div>
-                                                        </Box>
-                                                        <Avatar
-                                                            name={this.state.username}
-                                                            src={this.state.profilePic}
-                                                            size="md"
-                                                            mr={5}
-                                                        />
-                                                    </Stack>
-                                                </Box> :
-                                                <Box w="full" position={'relative'} p={10} zIndex={1}>
-                                                    <Stack direction={'row'} pos={'absolute'} left={0}>
-                                                        <Avatar
-                                                            name={(this.state.currentConversation.toUser == this.state.username ? this.state.currentConversation.fromUser : this.state.currentConversation.toUser)}
-                                                            src={this.state.currentConversation.url}
-                                                            size="md"
-                                                            mr={3}
-                                                        />
-                                                        <Box height={'auto'}>
-                                                            <div class="from-them">
-                                                                <p>{text.text}</p>
-                                                            </div>
-                                                            <div class="clear"></div>
-                                                        </Box>
-                                                    </Stack>
-                                                </Box>
-
+                                        {console.log('-----')}
+                                        {console.log(this.state.currentConversation)}
+                                        {console.log('-----')}
+                                        
+                                        {
+                                            (this.state.currentConversation).map((text) => (
+                                                text.fromUser == this.state.username ?
+                                                    <Box w="full" position={'relative'} p={8} zIndex={1}>
+                                                        <Stack direction={'row'} pos={'absolute'} right={0}>
+                                                            <Box mr={3}>
+                                                                <div class="from-me">
+                                                                    <p>{text.text}</p>
+                                                                </div>
+                                                                <div class="clear"></div>
+                                                            </Box>
+                                                            <Avatar
+                                                                name={this.state.username}
+                                                                src={this.state.profilePic}
+                                                                size="md"
+                                                                mr={5}
+                                                            />
+                                                        </Stack>
+                                                    </Box> :
+                                                    <Box w="full" position={'relative'} p={10} zIndex={1}>
+                                                        <Stack direction={'row'} pos={'absolute'} left={0}>
+                                                            <Avatar
+                                                                name={(text.toUser == this.state.username ? text.fromUser : text.toUser)}
+                                                                src={text.url}
+                                                                size="md"
+                                                                mr={3}
+                                                            />
+                                                            <Box height={'auto'}>
+                                                                <div class="from-them">
+                                                                    <p>{text.message}</p>
+                                                                </div>
+                                                                <div class="clear"></div>
+                                                            </Box>
+                                                        </Stack>
+                                                    </Box>
                                         ))}
                                     </VStack>
                                 </Box>
@@ -403,6 +457,7 @@ class DirectMessage extends React.Component {
                                                 focusBorderColor='teal.200'
                                                 placeholder='Type a message...'
                                                 type="text"
+                                                onChange={this.onChange}
                                                 style={{ color: 'darkturquoise' }} />
                                             <InputRightElement width='4.5rem'>
                                                 <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={this.onSend}> Send
