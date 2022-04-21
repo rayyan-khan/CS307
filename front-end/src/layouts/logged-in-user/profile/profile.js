@@ -62,6 +62,7 @@ class Profile extends React.Component {
             showFollowersList: false,
             showFollowingList: false,
             showTagList: false,
+            blocked: false,
         }
     }
 
@@ -124,6 +125,8 @@ class Profile extends React.Component {
             let url =
                 'http://localhost:5000/api/postInteractions/' +
                 this.state.user.username
+
+            alert('post interactions')
             axios
                 .get(url)
                 .then((res) => {
@@ -133,9 +136,11 @@ class Profile extends React.Component {
                         }
                     )
                     this.setState({ postInteractions: postInteractions })
+                    alert('then')
                 })
                 .catch(function (error) {
                     console.log(error)
+                    alert('error')
                 })
         } catch (error) {
             console.log(error)
@@ -223,6 +228,7 @@ class Profile extends React.Component {
                     followersList: res.data.followersList,
                     followingList: res.data.followingList,
                     tagList: res.data.tagList,
+                    blocked: res.data.B === 'Block',
                 })
 
                 console.log(res.data.followersList)
@@ -286,6 +292,26 @@ class Profile extends React.Component {
         }
     }
 
+    toggleBlock = () => {
+        if (this.state.blocked) {
+            axios
+                .get(
+                    `http://localhost:5000/api/unblock/${this.state.user.username}`
+                )
+                .then(() => {
+                    this.setState({ blocked: false })
+                })
+        } else {
+            axios
+                .get(
+                    `http://localhost:5000/api/addBlock/${this.state.user.username}`
+                )
+                .then(() => {
+                    this.setState({ blocked: true })
+                })
+        }
+    }
+
     Userline = () => {
         return (
             <div>
@@ -293,8 +319,9 @@ class Profile extends React.Component {
                     <Center>
                         <div style={{ display: 'flex' }}>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? 'select-title' : ''
-                                    }`}
+                                className={`toggle-title ${
+                                    this.state.showPosts ? 'select-title' : ''
+                                }`}
                                 onClick={this.toPosts}
                             >
                                 <Box>
@@ -307,8 +334,9 @@ class Profile extends React.Component {
                                 </Box>
                             </div>
                             <div
-                                className={`toggle-title ${this.state.showPosts ? '' : 'select-title'
-                                    }`}
+                                className={`toggle-title ${
+                                    this.state.showPosts ? '' : 'select-title'
+                                }`}
                                 onClick={this.toInteractions}
                             >
                                 <Box>
@@ -326,8 +354,9 @@ class Profile extends React.Component {
 
                 <div className="slide-container">
                     <Box
-                        className={`slide ${this.state.showPosts ? 'right-hide' : 'show'
-                            }`}
+                        className={`slide ${
+                            this.state.showPosts ? 'right-hide' : 'show'
+                        }`}
                         style={{ paddingBottom: '80px' }}
                     >
                         <div style={{ textAlign: 'center' }}>
@@ -337,8 +366,9 @@ class Profile extends React.Component {
 
                     <Box
                         style={{ paddingBottom: '80px' }}
-                        className={`slide posts-container ${this.state.showPosts ? 'show' : 'left-hide'
-                            }`}
+                        className={`slide posts-container ${
+                            this.state.showPosts ? 'show' : 'left-hide'
+                        }`}
                     >
                         {this.postHandler()}
                     </Box>
@@ -352,7 +382,9 @@ class Profile extends React.Component {
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent bg={'var(--main-color)'}>
-                    <ModalHeader color={'var(--text-color)'}>{modalTitle}</ModalHeader>
+                    <ModalHeader color={'var(--text-color)'}>
+                        {modalTitle}
+                    </ModalHeader>
                     <ModalCloseButton color={'darkturquoise'} />
                     <ModalBody>
                         <div className="container">
@@ -367,26 +399,44 @@ class Profile extends React.Component {
                                                     direction="row"
                                                 >
                                                     <Center>
-                                                        <Stack direction={'row'}>
+                                                        <Stack
+                                                            direction={'row'}
+                                                        >
                                                             <Avatar
                                                                 borderRadius={
                                                                     'full'
                                                                 }
-                                                                name={user.firstName + ' ' + user.lastName}
+                                                                name={
+                                                                    user.firstName +
+                                                                    ' ' +
+                                                                    user.lastName
+                                                                }
                                                                 src={user.url}
                                                                 boxSize="4vw"
                                                             />
-                                                            <Stack direction={'column'}>
+                                                            <Stack
+                                                                direction={
+                                                                    'column'
+                                                                }
+                                                            >
                                                                 <Text
-                                                                    align={'left'}
-                                                                    height={'15px'}
+                                                                    align={
+                                                                        'left'
+                                                                    }
+                                                                    height={
+                                                                        '15px'
+                                                                    }
                                                                     pl={'10px'}
                                                                     color={
                                                                         'darkturquoise'
                                                                     }
-                                                                    fontSize={'lg'}
+                                                                    fontSize={
+                                                                        'lg'
+                                                                    }
                                                                 >
-                                                                    {user.username}
+                                                                    {
+                                                                        user.username
+                                                                    }
                                                                 </Text>
                                                                 <Text
                                                                     color={
@@ -394,12 +444,22 @@ class Profile extends React.Component {
                                                                     }
                                                                     pl={'15px'}
                                                                     pt={'0px'}
-                                                                    align={'left'}
-                                                                    fontSize={'md'}
-                                                                    width={'19vw'}
+                                                                    align={
+                                                                        'left'
+                                                                    }
+                                                                    fontSize={
+                                                                        'md'
+                                                                    }
+                                                                    width={
+                                                                        '19vw'
+                                                                    }
                                                                 >
-                                                                    {user.firstName}{' '}
-                                                                    {user.lastName}
+                                                                    {
+                                                                        user.firstName
+                                                                    }{' '}
+                                                                    {
+                                                                        user.lastName
+                                                                    }
                                                                 </Text>
                                                             </Stack>
                                                         </Stack>
@@ -446,14 +506,14 @@ class Profile extends React.Component {
                                                 <Stack
                                                     p={'10px'}
                                                     direction="row"
-                                                // _before={{
-                                                //     content: '""',
-                                                //     bottom: '0px',
-                                                //     height: '1px',
-                                                //     width: '50%',
-                                                //     borderBottomWidth: '1px',
-                                                //     borderColor: 'darkturquoise',
-                                                // }}
+                                                    // _before={{
+                                                    //     content: '""',
+                                                    //     bottom: '0px',
+                                                    //     height: '1px',
+                                                    //     width: '50%',
+                                                    //     borderBottomWidth: '1px',
+                                                    //     borderColor: 'darkturquoise',
+                                                    // }}
                                                 >
                                                     <Center>
                                                         <Text
@@ -486,7 +546,7 @@ class Profile extends React.Component {
                         </Button>
                     </ModalFooter>
                 </ModalContent>
-            </Modal >
+            </Modal>
         )
     }
 
@@ -992,8 +1052,8 @@ class Profile extends React.Component {
                                                                 </Popup>
                                                             </Box>
                                                         ) : localStorage.getItem(
-                                                            'token'
-                                                        ) ? (
+                                                              'token'
+                                                          ) ? (
                                                             <Stack
                                                                 direction={
                                                                     'row'
@@ -1028,8 +1088,22 @@ class Profile extends React.Component {
                                                                             'white'
                                                                         }
                                                                         onClick={() => {
-                                                                            let url = window.location.href
-                                                                            window.location.href = url.substring(0, url.indexOf('/')) + '/dms/' + this.state.user.username;
+                                                                            let url =
+                                                                                window
+                                                                                    .location
+                                                                                    .href
+                                                                            window.location.href =
+                                                                                url.substring(
+                                                                                    0,
+                                                                                    url.indexOf(
+                                                                                        '/'
+                                                                                    )
+                                                                                ) +
+                                                                                '/dms/' +
+                                                                                this
+                                                                                    .state
+                                                                                    .user
+                                                                                    .username
                                                                         }}
                                                                     >
                                                                         DM
@@ -1043,8 +1117,16 @@ class Profile extends React.Component {
                                                                         color={
                                                                             'white'
                                                                         }
+                                                                        onClick={
+                                                                            this
+                                                                                .toggleBlock
+                                                                        }
                                                                     >
-                                                                        Block
+                                                                        {this
+                                                                            .state
+                                                                            .blocked
+                                                                            ? 'Unblock'
+                                                                            : 'Block'}
                                                                     </Button>
                                                                 </Box>
                                                             </Stack>

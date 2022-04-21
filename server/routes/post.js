@@ -358,7 +358,7 @@ postRoutes.route('/comments/:postID').get(async function (req, res) {
         return res.status(300).json(err)
     }
     const { email, username } = user
-    console.log("hi there")
+    console.log('hi there')
 
     var sql = `SELECT * FROM Comments JOIN User ON User.username=Comments.username WHERE postId = ${con.escape(
         req.params.postID
@@ -396,36 +396,6 @@ postRoutes.route('/createComment').post(async function (req, res) {
             console.log(err)
             res.status(500).json(err)
         } else res.json(result)
-    })
-})
-
-postRoutes.route('/postInteractions').get((req, res) => {
-    var anony = 'Anonymous'
-    var sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 and username!=${con.escape(
-        username
-    )} THEN "Anonymous" ELSE username END AS username, timeStamp From Post Order BY timeStamp DESC`
-
-    const interaction1 = { liked: true, disliked: false, comment: '' }
-    const dumInteractions = [
-        { liked: true, disliked: false, comment: '' },
-        { liked: false, disliked: true, comment: '' },
-        { liked: false, disliked: false, comment: 'This is a comment' },
-    ]
-
-    con.query(sql, function (err, result) {
-        if (err) {
-            console.log(err)
-            res.status(500).json(err)
-        } else {
-            let postInteractions = result.map((postInteraction) => {
-                return {
-                    ...postInteraction,
-                    ...dumInteractions[Math.floor(Math.random() * 3)],
-                }
-            })
-
-            res.json(postInteractions)
-        }
     })
 })
 
@@ -529,9 +499,11 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
             username
         )} THEN "Anonymous" ELSE p.username END AS username, p.timeStamp
         FROM Post as p, TagFollow as t
-        WHERE t.username = ${con.escape(username)} and p.tagID = t.tagID and p.username NOT IN (Select userBlocking FROM Block WHERE userBlocked = ${con.escape(
-        username
-    )} )
+        WHERE t.username = ${con.escape(
+            username
+        )} and p.tagID = t.tagID and p.username NOT IN (Select userBlocking FROM Block WHERE userBlocked = ${con.escape(
+            username
+        )} )
         UNION
         SELECT p.postID,p.tagID,p.likesCount,p.dislikeCount,p.postCaption,p.numberOfComments, p.url, p.hyperlink,CASE WHEN p.anonymous=1 and p.username!=${con.escape(
             username
@@ -540,8 +512,8 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
         WHERE u.follower = ${con.escape(
             username
         )} and u.followed = p.username and p.anonymous = 0 and p.username NOT IN (Select userBlocking FROM Block WHERE userBlocked = ${con.escape(
-        username
-    )} )
+            username
+        )} )
         ORDER BY timeStamp DESC`
 
         loggedIn = true
