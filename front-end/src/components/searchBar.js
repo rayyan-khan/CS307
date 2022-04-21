@@ -59,6 +59,8 @@ class SearchBar extends Component {
                     isClearable
                     isSearchable
                     name="color"
+                    menuPortalTarget={document.body}
+                    menuPosition={'fixed'}
                     options={this.state.searchableNames}
                     getOptionLabel={(option) => {
                         console.log('here')

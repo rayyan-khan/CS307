@@ -82,6 +82,7 @@ export default function Post({ post, label }) {
     // }, [runAPI])
 
     useEffect(() => {
+        console.log(post)
         try {
             axios.defaults.headers.common['authorization'] =
                 localStorage.getItem('token')
@@ -355,17 +356,11 @@ export default function Post({ post, label }) {
             onClick={(event) => {
                 if (linkPageBool) {
                     event.preventDefault()
-                    if (localStorage.getItem('token') == null) {
-                        let url = window.location.href
-                        window.location.href =
-                            url.substring(0, url.indexOf('/')) + '/signup'
-                    } else {
-                        let url = window.location.href
-                        window.location.href =
-                            url.substring(0, url.indexOf('/')) +
-                            '/personalPostPage/' +
-                            post.postID
-                    }
+                    let url = window.location.href
+                    window.location.href =
+                        url.substring(0, url.indexOf('/')) +
+                        '/personalPostPage/' +
+                        post.postID
                 }
             }}
         >
@@ -394,14 +389,15 @@ export default function Post({ post, label }) {
             ) : (
                 <div></div>
             )}
-            {/* <Avatar
-                size={'xl'}
-                src={post.profilePicture}
-                alt={'Avatar Alt'}
-                mb={4}
-                pos={'relative'}
-                style={linkPageBool ? { cursor: 'pointer' } : {}}
-            /> */}
+            {/* {post.username != "Anonymous" ? (
+                <Avatar
+                    size={'lg'}
+                    src={post.profilePic}
+                    name={post.firstName + ' ' + post.lastName}
+                    mb={4}
+                    pos={'relative'}
+                    style={linkPageBool ? { cursor: 'pointer' } : {}}
+                />) : (<></>)} */}
             <Stack align={'center'} direction={'column'} spacing={4}>
                 <Center>
                     <Heading
@@ -409,12 +405,7 @@ export default function Post({ post, label }) {
                         onClick={(event) => {
                             event.preventDefault()
                             event.stopPropagation()
-                            if (localStorage.getItem('token') == null) {
-                                let url = window.location.href
-                                window.location.href =
-                                    url.substring(0, url.indexOf('/')) +
-                                    '/signup'
-                            } else if (post.username == 'Anonymous') {
+                            if (post.username == 'Anonymous') {
                                 // do nothing
                             } else {
                                 let url = window.location.href
@@ -484,18 +475,11 @@ export default function Post({ post, label }) {
                         onClick={(event) => {
                             event.preventDefault()
                             event.stopPropagation()
-                            if (localStorage.getItem('token') == null) {
-                                let url = window.location.href
-                                window.location.href =
-                                    url.substring(0, url.indexOf('/')) +
-                                    '/signup'
-                            } else {
-                                let url = window.location.href
-                                window.location.href =
-                                    url.substring(0, url.indexOf('/')) +
-                                    '/tag/' +
-                                    post.tagID
-                            }
+                            let url = window.location.href
+                            window.location.href =
+                                url.substring(0, url.indexOf('/')) +
+                                '/tag/' +
+                                post.tagID
                         }}
                         style={{ cursor: 'pointer' }}
                         px={4}

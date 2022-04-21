@@ -9,9 +9,9 @@ const isUser1FollowingUser2 = async (user1, user2) => {
     return res.length != 0
 }
 
-const getFollowersList = async (username) => {
+const getFollowersList = async (username, activeUser) => {
     return await con.awaitQuery(
-        `SELECT follower as username, firstName, lastName, url FROM UserFollow JOIN User ON User.username = UserFollow.follower WHERE UserFollow.followed = "${username}"`
+        `SELECT follower as username, firstName, lastName, url FROM UserFollow JOIN User ON User.username = UserFollow.follower WHERE UserFollow.followed = "${username}" and User.username not in (Select userBlocking From Block where userBlocked = "${activeUser}" )`
     )
 }
 

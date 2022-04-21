@@ -344,13 +344,26 @@ postRoutes.route('/getPostWithTag/:tagid').get(async function (req, res) {
     })
 })
 
-postRoutes.route('/comments/:postID').get(function (req, res) {
+postRoutes.route('/comments/:postID').get(async function (req, res) {
     // var sql = `SELECT * FROM Comments WHERE postId = ${con.escape(
     //     req.params.postID
     // )} Order BY timeStamp DESC`
-    var sql = `SELECT * FROM Comments JOIN User ON User.username=Comments.username  WHERE postId = ${con.escape(
+    var user
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(300).json(err)
+    }
+    const { email, username } = user
+    console.log("hi there")
+
+    var sql = `SELECT * FROM Comments JOIN User ON User.username=Comments.username WHERE postId = ${con.escape(
         req.params.postID
-    )} Order BY timeStamp DESC`
+    )} AND Comments.username NOT IN (Select userBlocking FROM Block WHERE userBlocked = ${con.escape(
+        username
+    )} ) Order BY timeStamp DESC`
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
@@ -558,7 +571,9 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
             username
         )} THEN "Anonymous" ELSE p.username END AS username, p.timeStamp
         FROM Post as p, TagFollow as t
-        WHERE t.username = ${con.escape(username)} and p.tagID = t.tagID
+        WHERE t.username = ${con.escape(username)} and p.tagID = t.tagID and p.username NOT IN (Select userBlocking FROM Block WHERE userBlocked = ${con.escape(
+        username
+    )} )
         UNION
         SELECT p.postID,p.tagID,p.likesCount,p.dislikeCount,p.postCaption,p.numberOfComments, p.url, p.hyperlink,CASE WHEN p.anonymous=1 and p.username!=${con.escape(
             username
@@ -566,7 +581,9 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
         From Post as p, UserFollow as u
         WHERE u.follower = ${con.escape(
             username
-        )} and u.followed = p.username and p.anonymous = 0
+        )} and u.followed = p.username and p.anonymous = 0 and p.username NOT IN (Select userBlocking FROM Block WHERE userBlocked = ${con.escape(
+        username
+    )} )
         ORDER BY timeStamp DESC`
 
         loggedIn = true

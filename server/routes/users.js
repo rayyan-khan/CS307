@@ -19,6 +19,18 @@ userRoutes.route('/getUserFromHeader').get(async (req, res) => {
     res.status(200).json(user)
 })
 
+userRoutes.route('/getUserProfilePic/:username').get(async (req, res) => {
+    let username = req.params.username
+    console.log(username)
+    var sql = `SELECT url FROM User WHERE username = ${con.escape(username)}`
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json(result)
+    })
+})
+
 userRoutes.route('/deleteProfile').get(async (req, res) => {
     var user
     try {
@@ -37,6 +49,8 @@ userRoutes.route('/deleteProfile').get(async (req, res) => {
         } else res.json('Successfully deleted user')
     })
 })
+
+
 
 userRoutes.route('/getNumberFollowing').get(async (req, res) => {
     var user
@@ -73,6 +87,35 @@ userRoutes.route('/getNumberFollowers').get(async (req, res) => {
     //var sql = `DELETE FROM User WHERE username = ${con.escape(username)}`
 })
 
+userRoutes.route('/addBlock/:username').get(async (req, res) => {
+    var user
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        user = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        return res.status(400).json(err)
+    }
+
+    const { email, username } = user
+    var sql = `INSERT INTO Block VALUES (username,${con.escape(req.params.username)})`
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json('Successfully blocked')
+    })
+})
+userRoutes.route('/unBlock/:username').get(async (req, res) => {
+
+    var sql = `DELETE FROM Block WHERE userBlocking = ${con.escape(req.params.username)}`
+    con.query(sql, function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json(err)
+        } else res.json('Successfully unblocked')
+    })
+})
+
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var user
     var amUser = false
@@ -81,12 +124,15 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
     } catch (err) {
         user = undefined
     }
-
+    var currentName;
     if (user != undefined) {
         const { email, username } = user
         if (username == req.params.username) {
             amUser = true
         }
+        currentName = username;
+    } else {
+        currentName = ""
     }
 
     var sql = `SELECT username, email, bio, private, firstName, lastName, url from User WHERE username = ${con.escape(
@@ -116,8 +162,8 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
                 req.params.username
             ))
 
-        let followersList = await query.getFollowersList(req.params.username)
-        let followingList = await query.getFollowingList(req.params.username)
+        let followersList = await query.getFollowersList(req.params.username, currentName)
+        let followingList = await query.getFollowingList(req.params.username, currentName)
         let tagList = await query.getTagList(req.params.username)
         let numberFollowers = followersList.length
         let numberFollowing = followingList.length
@@ -271,6 +317,7 @@ userRoutes.route('/search/:query').get(async (req, res) => {
 
 userRoutes.route('/followUser').post(async (req, res) => {
     let { followed } = req.body
+
     if (!followed) {
         return res.status(400).json('Missing followed field')
     }

@@ -53,7 +53,6 @@ export default function LargePost({ post }) {
             console.log(error);
 
         }
-
     }, [updateComments]);
 
 
