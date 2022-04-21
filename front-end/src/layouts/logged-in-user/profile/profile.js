@@ -126,7 +126,6 @@ class Profile extends React.Component {
                 'http://localhost:5000/api/postInteractions/' +
                 this.state.user.username
 
-            alert('post interactions')
             axios
                 .get(url)
                 .then((res) => {
@@ -136,11 +135,9 @@ class Profile extends React.Component {
                         }
                     )
                     this.setState({ postInteractions: postInteractions })
-                    alert('then')
                 })
                 .catch(function (error) {
                     console.log(error)
-                    alert('error')
                 })
         } catch (error) {
             console.log(error)
