@@ -134,12 +134,21 @@ const DirectMessage = (props) => {
     const [intervalID, setIntervalID] = React.useState(null);
 
     const onChange = (e) => {
+
         const value = e.target.value;
         setCurrText(value);
         setMessage(value);
     }
 
-    const onSend = (e) => {
+    const handleSubmit = (e) => {
+        if (e !== undefined) {
+            if (e.key === "Enter") {
+                onSend();
+            }
+        }
+    }
+
+    const onSend = () => {
         const payload = {
             message: currText,
             fromUser: username,
@@ -477,6 +486,7 @@ const DirectMessage = (props) => {
                                             type="text"
                                             value={message}
                                             onChange={(e) => { onChange(e) }}
+                                            onKeyPress={(e) => { handleSubmit(e) }}
                                             style={{ color: 'darkturquoise' }} />
                                         <InputRightElement width='4.5rem'>
                                             <Button colorScheme='black' bg='darkturquoise' h='1.75rem' size='sm' onClick={(e) => { onSend(e) }}> Send
