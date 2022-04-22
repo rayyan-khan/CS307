@@ -70,7 +70,7 @@ tagRoutes.route('/followTag').post(async (req, res) => {
     const { email, username } = user
 
     let isFollowing = await con.awaitQuery(
-        `SELECT * FROM TagFollow where username = "${username}" and tagID = "${tagID}"`
+        `SELECT * FROM TagFollow where username = "${con.escape(username)}" and tagID = "${con.escape(tagID)}"`
     )
 
     if (isFollowing.length != 0) {
@@ -127,7 +127,7 @@ tagRoutes.route('/unfollowTag').post(async (req, res) => {
     const { email, username } = user
 
     let isFollowing = await con.awaitQuery(
-        `SELECT * FROM TagFollow where username = "${username}" and tagID = "${tagID}"`
+        `SELECT * FROM TagFollow where username = "${con.escape(username)}" and tagID = "${con.escape(tagID)}"`
     )
 
     if (isFollowing.length == 0) {
