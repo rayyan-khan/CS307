@@ -127,26 +127,18 @@ const DirectMessage = (props) => {
     const [texts, setTexts] = React.useState([]);
     const [message, setMessage] = React.useState('');
     const [showConversation, setShowConversation] = React.useState(false);
+    const [profilePics, setProfilePics] = React.useState([]);
+    const [otherUserPic, setOtherUserPic] = React.useState('');
     const [currText, setCurrText] = React.useState('');
     const [talkingToUsername, setTalkingToUsername] = React.useState(props.usernameToTalkWith ? props.usernameToTalkWith : '');
 
     const onChange = (e) => {
         const value = e.target.value;
-        console.log(e.target.value);
         setCurrText(value);
         setMessage(value);
     }
 
-    function handleScroll() {
-        window.scroll({
-            top: document.body.offsetHeight,
-            left: 0,
-            behavior: 'smooth',
-        });
-    }
-
     const onSend = (e) => {
-        console.log('why')
         const payload = {
             message: currText,
             fromUser: username,
@@ -163,9 +155,6 @@ const DirectMessage = (props) => {
                 setMessage('');
                 scrollToBottom();
 
-                console.log(currentConversation);
-                console.log("got a response");
-                console.log(response.data);
             })
             .catch(({ response }) => {
                 console.log("got an error");
@@ -183,13 +172,26 @@ const DirectMessage = (props) => {
     }, [currentConversation])
 
     useEffect(() => {
-        console.log()
         let userFound = false;
         for (let i = 0; i < conversations.length; i++) {
             if ((conversations[i].toUser == username ? conversations[i].fromUser : conversations[i].toUser) === talkingToUsername) {
                 userFound = true;
             }
         }
+        if (talkingToUsername) {
+            console.log("trying to get profile pics");
+            try {
+                let user = talkingToUsername
+                axios.get('http://localhost:5000/api/getProfile/' + user).then((res) => {
+                    console.log(res.data)
+                    setOtherUserPic(res.data.url)
+                })
+            } catch (error) {
+                console.log(error);
+            }
+            console.log("got profile pics");
+        }
+
         if (!userFound && talkingToUsername !== '') {
             console.log('user not found')
             const payload = {
@@ -197,9 +199,9 @@ const DirectMessage = (props) => {
                 toUser: talkingToUsername
             }
             setConversations([...conversations, payload])
-            console.log(conversations);
-        } else {
+        } else if (talkingToUsername) {
             handleGetConversation();
+            setInterval(handleGetConversation, 3000);
         }
     }, [talkingToUsername])
 
@@ -213,7 +215,6 @@ const DirectMessage = (props) => {
                     setUsername(res.data.username);
                     try {
                         axios.get('http://localhost:5000/api/getProfile/' + res.data.username).then((res) => {
-
                             setProfilePic(res.data.profilePic);
                         })
                     } catch (error) {
@@ -224,26 +225,31 @@ const DirectMessage = (props) => {
                             user: res.data.username,
                         }
 
+                        setUsername(res.data.username);
+
                         axios
                             .post('http://localhost:5000/api/messages/getConversations', payload)
                             .then((res) => {
 
-                                console.log(res.data);
                                 let conversations = [];
                                 conversations = res.data;
                                 conversations.map((conversation) => {
+                                    console.log("trying to get profile pics");
                                     try {
                                         let user = (conversation.toUser == username ? conversation.fromUser : conversation.toUser)
                                         axios.get('http://localhost:5000/api/getProfile/' + user).then((res) => {
-
                                             conversation.url = res.data.url;
+                                            let payload = { user: user, url: res.data.url }
                                             setConversations([...conversations, conversation])
+                                            console.log(payload);
+                                            setProfilePics(payload)
+                                            console.log(profilePics);
                                         })
                                     } catch (error) {
                                         console.log(error);
                                     }
+                                    console.log("got profile pics");
                                 })
-                                setConversations(res.data);
                             })
                     } catch (error) {
                         console.log(error);
@@ -253,23 +259,20 @@ const DirectMessage = (props) => {
         }
     }, [])
 
-    const handleGetConversation = () => {
-        console.log('better')
+    const handleGetConversation = async () => {
+        console.log(talkingToUsername);
         if (talkingToUsername) {
+            console.log('updating');
             try {
                 const payload = {
                     user1: username,
                     user2: talkingToUsername,
                 }
 
-                axios
+                await axios
                     .post('http://localhost:5000/api/messages/getHistory', payload)
                     .then((res) => {
-                        console.log('lllll')
-                        console.log(res.data);
-                        console.log('lllll')
                         setCurrentConversation(res.data);
-                        setShowConversation(true);
                     })
             } catch (error) {
                 console.log(error);
@@ -332,7 +335,6 @@ const DirectMessage = (props) => {
                             </div>
                             <TransitionGroup component="Box">
                                 {conversations.map((conversation, key) => {
-                                    console.log(conversation.profilePic)
                                     return (
                                         <CSSTransition key={(conversation.toUser == username ? conversation.fromUser : conversation.toUser)} timeout={700} classNames="conversation">
                                             <Box
@@ -414,17 +416,11 @@ const DirectMessage = (props) => {
                 </Box>
             </GridItem>
             <GridItem colSpan={4}>
-                {console.log("-----")}
-                {console.log(currentConversation)}
-                {console.log('-----')}
                 {
                     currentConversation ?
                         <>
                             <Box overflowX={'hidden'} overflowY={'scroll'} height={'84vh'} maxHeight={'calc(100vh - 140px)'}>
                                 <Stack direction={'column'} spacing={4} p={5}>
-                                    {console.log('-----')}
-                                    {console.log(currentConversation)}
-                                    {console.log('-----')}
                                     {
                                         currentConversation.map((text) => (
                                             text.fromUser == username ?
@@ -448,8 +444,9 @@ const DirectMessage = (props) => {
                                                     <Stack direction={'row'} pos={'absolute'} left={0}>
                                                         <Avatar
                                                             name={(text.toUser == username ? text.fromUser : text.toUser)}
-                                                            src={text.url}
+                                                            src={otherUserPic}
                                                             size="md"
+
                                                             mr={3}
                                                         />
                                                         <Box height={'auto'}>
