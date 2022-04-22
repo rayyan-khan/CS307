@@ -3,23 +3,23 @@ var con = getCon.getConObject()
 
 const allUnverifiedUsersByEmail = async (email) => {
     return await con.awaitQuery(
-        `SELECT * FROM UnverifiedUser WHERE email='${email}'`
+        `SELECT * FROM UnverifiedUser WHERE email='${con.escape(email)}'`
     )
 }
 
 const allVerifiedUsersByEmail = async (email) => {
-    return await con.awaitQuery(`SELECT * FROM User WHERE email='${email}'`)
+    return await con.awaitQuery(`SELECT * FROM User WHERE email='${con.escape(email)}'`)
 }
 
 const allUnverifiedUsersByUsername = async (username) => {
     return await con.awaitQuery(
-        `SELECT * FROM UnverifiedUser WHERE username='${username}'`
+        `SELECT * FROM UnverifiedUser WHERE username='${con.escape(username)}'`
     )
 }
 
 const allVerifiedUsersByUsername = async (username) => {
     return await con.awaitQuery(
-        `SELECT * FROM User WHERE username='${username}'`
+        `SELECT * FROM User WHERE username='${con.escape(username)}'`
     )
 }
 
@@ -31,39 +31,39 @@ const createUnverifiedUser = async (
 ) => {
     return await con.awaitQuery(
         `INSERT INTO UnverifiedUser (username, email, password, confirmationCode) VALUES ` +
-            `('${username}', '${email}', '${password}', '${confirmationCode}')`
+            `('${con.escape(username)}', '${con.escape(email)}', '${con.escape(password)}', '${con.escape(confirmationCode)}')`
     )
 }
 
 const verifyConfirmationCode = async (email, confirmationCode) => {
     return await con.awaitQuery(
-        `SELECT * FROM UnverifiedUser WHERE email='${email}' ` +
-            `AND confirmationCode='${confirmationCode}'`
+        `SELECT * FROM UnverifiedUser WHERE email='${con.escape(email)}' ` +
+            `AND confirmationCode='${con.escape(confirmationCode)}'`
     )
 }
 
 const createVerifiedUser = async (username, email, password) => {
     return await con.awaitQuery(
         `INSERT INTO User (email, username, password) ` +
-            `VALUES ('${email}', '${username}', '${password}')`
+            `VALUES ('${con.escape(email)}', '${con.escape(username)}', '${con.escape(password)}')`
     )
 }
 
 const deleteUnverifiedUser = async (username) => {
     return await con.awaitQuery(
-        `DELETE FROM UnverifiedUser WHERE username='${username}'`
+        `DELETE FROM UnverifiedUser WHERE username='${con.escape(username)}'`
     )
 }
 
 const getConfirmationCode = async (email) => {
     return await con.awaitQuery(
-        `SELECT * FROM UnverifiedUser WHERE email='${email}'`
+        `SELECT * FROM UnverifiedUser WHERE email='${con.escape(email)}'`
     )
 }
 
 const updatePassword = async (email, newPassword) => {
     return await con.awaitQuery(
-        `UPDATE User SET password='${newPassword}' WHERE email='${email}'`
+        `UPDATE User SET password='${con.escape(newPassword)}' WHERE email='${con.escape(email)}'`
     )
 }
 
@@ -101,7 +101,7 @@ const accountExistsUsername = async (username) => {
 
 const getCurPassword = async (email) => {
     var res = await con.awaitQuery(
-        `SELECT password FROM User WHERE email="${email}"`
+        `SELECT password FROM User WHERE email="${con.escape(email)}"`
     )
 
     return res[0].password

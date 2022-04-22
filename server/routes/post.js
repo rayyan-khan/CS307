@@ -36,12 +36,7 @@ postRoutes
 
             //url = "https://cs307.s3.amazonaws.com/" + req.file.path.substring(8)
             console.log(url)
-            var sql =
-                "UPDATE User Set url = '" +
-                url +
-                "' WHERE username= '" +
-                username +
-                "'"
+            var sql = `UPDATE User Set url = "${con.escape(url)}" WHERE username= "${con.escape(username)}"`
 
             //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
             con.query(sql, function (err, results) {
@@ -99,12 +94,12 @@ postRoutes
                 }
 
                 var sql = `INSERT INTO Post Values (${Is}, ${checkEmpty(
-                    req.body.tag
+                    con.escape(req.body.tag)
                 )}, ${con.escape(username)}, 0, 0, ${checkEmpty(
-                    req.body.caption
-                )}, NOW(), 12, ${checkEmpty(req.body.anonymous)}, ${checkEmpty(
-                    url
-                )}, ${checkEmpty(req.body.hyperlink)})`
+                    con.escape(req.body.caption)
+                )}, NOW(), 12, ${checkEmpty(con.escape(req.body.anonymous))}, ${checkEmpty(
+                    con.escape(url)
+                )}, ${checkEmpty(con.escape(req.body.hyperlink))})`
 
                 //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
                 con.query(sql, function (err, results) {
@@ -136,9 +131,9 @@ postRoutes.route('/getPostsByUser/:viewingUser').get(async (req, res) => {
     let sql
 
     if (thisUser && thisUser === viewingUser) {
-        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username, anonymous From Post WHERE username='${viewingUser}' Order BY timeStamp DESC`
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username, anonymous From Post WHERE username='${con.escape(viewingUser)}' Order BY timeStamp DESC`
     } else {
-        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username, anonymous From Post WHERE username='${viewingUser}' AND anonymous=0 Order BY timeStamp DESC`
+        sql = `SELECT postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink, username, anonymous From Post WHERE username='${con.escape(viewingUser)}' AND anonymous=0 Order BY timeStamp DESC`
     }
 
     con.query(sql, function (err, result) {
@@ -206,11 +201,11 @@ postRoutes.route('/posts/postNoImage').post(async function (req, res) {
             }
         }
         var sql = `INSERT INTO Post Values (${Is}, ${checkEmpty(
-            req.body.tag
+            con.escape(req.body.tag)
         )}, ${con.escape(username)}, 0, 0, ${checkEmpty(
-            req.body.caption
-        )}, NOW(), 12, ${checkEmpty(req.body.anonymous)}, null, ${checkEmpty(
-            req.body.hyperlink
+            con.escape(req.body.caption)
+        )}, NOW(), 12, ${checkEmpty(con.escape(req.body.anonymous))}, null, ${checkEmpty(
+            con.escape(req.body.hyperlink)
         )})`
         //    var sql = "INSERT INTO Post Values (20,12,'ak',12,'12','12',NOW(),'12','1');"
         con.query(sql, function (err, results) {
@@ -296,7 +291,7 @@ postRoutes.route('/getOrderedPost').get(async function (req, res) {
         const { email, username } = user
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 and Post.username!=${con.escape(
             username
-        )} THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${username}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
+        )} THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${con.escape(username)}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${con.escape(username)}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
         LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID Order BY Post.timeStamp DESC`
     } catch (err) {
         user = undefined
@@ -325,14 +320,14 @@ postRoutes.route('/getPostWithTag/:tagid').get(async function (req, res) {
         const { email, username } = user
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 and Post.username!=${con.escape(
             username
-        )} THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${username}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${username}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
+        )} THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN UserLike.username = "${con.escape(username)}" THEN "1" ELSE "0" END AS isLiked, CASE WHEN UserDisLike.username = "${con.escape(username)}" THEN "1" ELSE "0" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
         LEFT JOIN UserDisLike ON Post.postID = UserDisLike.postID WHERE Post.tagID = "${
-            req.params.tagid
-        }" and Post.username NOT IN (Select userBlocking FROM Block where userBlocked = "${username}")  Order BY Post.timeStamp DESC`
+            con.escape(req.params.tagid)
+        }" and Post.username NOT IN (Select userBlocking FROM Block where userBlocked = "${con.escape(username)}")  Order BY Post.timeStamp DESC`
     } catch (err) {
         user = undefined
         sql = `SELECT Post.postID,tagID,likesCount,dislikeCount,postCaption,numberOfComments, url, hyperlink,CASE WHEN anonymous=1 THEN "Anonymous" ELSE Post.username END AS username, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isLiked, CASE WHEN Post.username = Post.username THEN "0" ELSE "1" END AS isDisliked From Post LEFT JOIN UserLike ON Post.postID = UserLike.postID 
-        WHERE Post.tagID = "${req.params.tagid}" Order BY Post.timeStamp DESC`
+        WHERE Post.tagID = "${con.escape(req.params.tagid)}" Order BY Post.timeStamp DESC`
     }
 
     var anony = 'Anonymous'
@@ -401,7 +396,7 @@ postRoutes.route('/createComment').post(async function (req, res) {
 
 postRoutes.route('/likeupdate').post(async (req, res) => {
     // var sql = `SELECT COUNT(*) AS NUM FROM UserLike WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
-    var sql = `SELECT COUNT(*) AS NUM FROM ${req.body.table} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+    var sql = `SELECT COUNT(*) AS NUM FROM ${con.escape(req.body.table)} WHERE username = '${con.escape(req.body.username)}' AND postID = ${con.escape(req.body.postID)}`
     var ans = -1
     var userExists = 'why'
     con.query(sql, async (err, result) => {
@@ -419,10 +414,10 @@ postRoutes.route('/likeupdate').post(async (req, res) => {
             var val = ''
 
             if (userExists === 'false') {
-                insert = `INSERT INTO ${req.body.table} VALUES('${req.body.username}', ${req.body.postID}, NOW())`
+                insert = `INSERT INTO ${con.escape(req.body.table)} VALUES('${con.escape(req.body.username)}', ${con.escape(req.body.postID)}, NOW())`
                 val = 'Added'
             } else {
-                insert = `DELETE FROM ${req.body.table} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+                insert = `DELETE FROM ${con.escape(req.body.table)} WHERE username = '${con.escape(req.body.username)}' AND postID = ${con.escape(req.body.postID)}`
                 val = 'Deleted'
             }
 
@@ -435,20 +430,20 @@ postRoutes.route('/likeupdate').post(async (req, res) => {
                 } else {
                     otherTable = 'UserLike'
                 }
-                insert = `DELETE FROM ${otherTable} WHERE username = '${req.body.username}' AND postID = ${req.body.postID}`
+                insert = `DELETE FROM ${con.escape(otherTable)} WHERE username = '${con.escape(req.body.username)}' AND postID = ${con.escape(req.body.postID)}`
             }
             await con.awaitQuery(insert)
 
             //Update like count
             let likeCount = await con.awaitQuery(
-                `SELECT * FROM UserLike WHERE postID = "${req.body.postID}"`
+                `SELECT * FROM UserLike WHERE postID = "${con.escape(req.body.postID)}"`
             )
             let dislikeCount = await con.awaitQuery(
-                `SELECT * FROM UserDisLike WHERE postID = "${req.body.postID}"`
+                `SELECT * FROM UserDisLike WHERE postID = "${con.escape(req.body.postID)}"`
             )
 
             await con.awaitQuery(
-                `UPDATE Post set likesCount= ${likeCount.length}, dislikeCount = ${dislikeCount.length} where postID = ${req.body.postID};`
+                `UPDATE Post set likesCount= ${likeCount.length}, dislikeCount = ${dislikeCount.length} where postID = ${con.escape(req.body.postID)};`
             )
 
             return res.json({ value: val })
@@ -463,7 +458,7 @@ postRoutes.route('/checkUserLike').get((req, res) => {
 })
 
 postRoutes.route('/updateLikeCount').post((req, res) => {
-    console.log(`${req.body.change}`)
+    console.log(`${con.escape(req.body.change)}`)
 
     var count = ''
 
@@ -473,7 +468,7 @@ postRoutes.route('/updateLikeCount').post((req, res) => {
         count = 'dislikeCount'
     }
 
-    var sql = `UPDATE Post SET ${count} = ${count} + ${req.body.change} WHERE postID = ${req.body.postID}`
+    var sql = `UPDATE Post SET ${count} = ${count} + ${con.escape(req.body.change)} WHERE postID = ${con.escape(req.body.postID)}`
 
     con.query(sql, function (err, result) {
         if (err) {
@@ -531,10 +526,10 @@ postRoutes.route('/getTimeline').get(async (req, res) => {
             for (let i = 0; i < result.length; i++) {
                 if (loggedIn) {
                     let isLiked = await con.awaitQuery(
-                        `Select * From UserLike where username = "${user.username}" and postID = ${result[i].postID}`
+                        `Select * From UserLike where username = "${con.escape(user.username)}" and postID = ${con.escape(result[i].postID)}`
                     )
                     let isDisLiked = await con.awaitQuery(
-                        `Select * From UserDisLike where username = "${user.username}" and postID = ${result[i].postID}`
+                        `Select * From UserDisLike where username = "${con.escape(user.username)}" and postID = ${con.escape(result[i].postID)}`
                     )
 
                     result[i].isLiked = `${isLiked.length}`
@@ -581,7 +576,7 @@ postRoutes.route('/deletePost').post(async (req, res) => {
 
     const { email, username } = user
 
-    let checkAuthor = `SELECT * FROM Post WHERE postID = "${postID}" AND username = "${username}"`
+    let checkAuthor = `SELECT * FROM Post WHERE postID = "${con.escape(postID)}" AND username = "${con.escape(username)}"`
 
     let isAuthor = await con.awaitQuery(checkAuthor)
     if (isAuthor.length == 0) {
