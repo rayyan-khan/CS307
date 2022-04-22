@@ -131,6 +131,7 @@ const DirectMessage = (props) => {
     const [otherUserPic, setOtherUserPic] = React.useState('');
     const [currText, setCurrText] = React.useState('');
     const [talkingToUsername, setTalkingToUsername] = React.useState(props.usernameToTalkWith ? props.usernameToTalkWith : '');
+    const [intervalID, setIntervalID] = React.useState(null);
 
     const onChange = (e) => {
         const value = e.target.value;
@@ -172,6 +173,10 @@ const DirectMessage = (props) => {
     }, [currentConversation])
 
     useEffect(() => {
+        console.log(intervalID);
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
         let userFound = false;
         for (let i = 0; i < conversations.length; i++) {
             if ((conversations[i].toUser == username ? conversations[i].fromUser : conversations[i].toUser) === talkingToUsername) {
@@ -201,7 +206,8 @@ const DirectMessage = (props) => {
             setConversations([...conversations, payload])
         } else if (talkingToUsername) {
             handleGetConversation();
-            setInterval(handleGetConversation, 3000);
+            let intervalID = setInterval(handleGetConversation, 3000);
+            setIntervalID(intervalID);
         }
     }, [talkingToUsername])
 
@@ -211,11 +217,11 @@ const DirectMessage = (props) => {
             axios
                 .get('http://localhost:5000/api/getUserFromHeader')
                 .then((res) => {
-                    console.log(res)
+                    console.log(res.data)
                     setUsername(res.data.username);
                     try {
                         axios.get('http://localhost:5000/api/getProfile/' + res.data.username).then((res) => {
-                            setProfilePic(res.data.profilePic);
+                            setProfilePic(res.data.url);
                         })
                     } catch (error) {
                         console.log(error);
