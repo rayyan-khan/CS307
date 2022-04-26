@@ -27,7 +27,7 @@ import {
 import '../../layouts.css'
 import './direct-message.css'
 import './direct-message.scss'
-import { BsAlignBottom } from 'react-icons/bs';
+import { BsAlignBottom, BsTrash } from 'react-icons/bs';
 import { RiContactsBookLine } from 'react-icons/ri';
 import moment, { utc } from 'moment';
 
@@ -169,6 +169,25 @@ const DirectMessage = (props) => {
             .catch(({ response }) => {
                 console.log("got an error");
             })
+    }
+
+    const deleteConversation = (usernameToDelete) => {
+        const payload = {
+            currentUser: username,
+            deletedUser: usernameToDelete
+        }
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
+        console.log("tried to delete convo between " + username + " and " + usernameToDelete); // i dont think talkingtoUsername is right, but not sure how to identify the person you're clicking the trash button for
+        axios.post("http://localhost:5000/api/messages/deleteConvo", payload)
+            .then((response) => {
+                console.log("deleted convo between " + username + " and " + usernameToDelete);
+            })
+            .catch(({ response }) => {
+                console.log("got an error");
+        })
+
     }
 
     const messagesEndRef = useRef(null)
@@ -419,6 +438,19 @@ const DirectMessage = (props) => {
                                                         >
                                                             {handleTimeDifference(conversation.timeStamp)}
                                                         </Text>
+                                                        <IconButton
+                                                            style={{
+                                                                color: 'darkturquoise',
+                                                                backgroundColor:
+                                                                    'white',
+                                                            }}
+                                                            icon={<BsTrash />}
+                                                            onClick={(e) => { 
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                deleteConversation((conversation.toUser == username ? conversation.fromUser : conversation.toUser)) 
+                                                            }}
+                                                        />
                                                     </Box>
                                                 </Stack>
                                             </Box>
