@@ -117,7 +117,7 @@ userRoutes.route('/unBlock/:username').get(async (req, res) => {
 
     const { email, username } = user
 
-    var sql = `DELETE FROM Block WHERE userBlocking = "${username}" and userBlocked = ${con.escape(req.params.username)}`
+    var sql = `DELETE FROM Block WHERE userBlocking = "${con.escape(username)}" and userBlocked = ${con.escape(req.params.username)}`
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
@@ -210,44 +210,44 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
     var set = 'SET'
 
     if (req.body['bio'] != undefined) {
-        var bio = req.body.bio
+        var bio = con.escape(req.body.bio)
         if (bio.length > 200 || bio.length < 0) {
             return res.status(400).json('Bad bio')
         }
         if (set != 'SET') {
             set += `,`
         }
-        set += ` bio = ${con.escape(bio)}`
+        set += ` bio = ${bio}`
     }
     if (req.body['private'] != undefined) {
-        var private = req.body.private
+        var private = con.escape(req.body.private)
         if (private != 0 && private != 1) {
             return res.status(400).json('Bad private')
         }
         if (set != 'SET') {
             set += `,`
         }
-        set += ` private = ${con.escape(private)}`
+        set += ` private = ${private}`
     }
     if (req.body['firstName'] != undefined) {
-        var firstName = req.body.firstName
+        var firstName = con.escape(req.body.firstName)
         if (firstName.length > 30 || firstName.length < 0) {
             return res.status(400).json('Bad firstName')
         }
         if (set != 'SET') {
             set += `,`
         }
-        set += ` firstName = ${con.escape(firstName)}`
+        set += ` firstName = ${firstName}`
     }
     if (req.body['lastName'] != undefined) {
-        var lastName = req.body.lastName
+        var lastName = con.escape(req.body.lastName)
         if (lastName.length > 30 || lastName.length < 0) {
             return res.status(400).json('Bad lastName')
         }
         if (set != 'SET') {
             set += `,`
         }
-        set += ` lastName = ${con.escape(lastName)}`
+        set += ` lastName = ${lastName}`
     }
 
     if (set != 'SET') {
