@@ -50,8 +50,6 @@ userRoutes.route('/deleteProfile').get(async (req, res) => {
     })
 })
 
-
-
 userRoutes.route('/getNumberFollowing').get(async (req, res) => {
     var user
     try {
@@ -97,7 +95,13 @@ userRoutes.route('/addBlock/:username').get(async (req, res) => {
     }
 
     const { email, username } = user
+<<<<<<< HEAD
     var sql = `INSERT INTO Block VALUES (${con.escape(username)},${con.escape(req.params.username)})`
+=======
+    var sql = `INSERT INTO Block VALUES (username,${con.escape(
+        req.params.username
+    )})`
+>>>>>>> d9f036382dccfdb362f1469f71a2847a07e98db2
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
@@ -106,7 +110,6 @@ userRoutes.route('/addBlock/:username').get(async (req, res) => {
     })
 })
 userRoutes.route('/unBlock/:username').get(async (req, res) => {
-
     var user
     try {
         //Use decodeHeader to extract user info from header or throw an error
@@ -117,7 +120,13 @@ userRoutes.route('/unBlock/:username').get(async (req, res) => {
 
     const { email, username } = user
 
+<<<<<<< HEAD
     var sql = `DELETE FROM Block WHERE userBlocking = ${con.escape(username)} and userBlocked = ${con.escape(req.params.username)}`
+=======
+    var sql = `DELETE FROM Block WHERE userBlocking = "${con.escape(
+        username
+    )}" and userBlocked = ${con.escape(req.params.username)}`
+>>>>>>> d9f036382dccfdb362f1469f71a2847a07e98db2
     con.query(sql, function (err, result) {
         console.log(sql);
         if (err) {
@@ -130,25 +139,27 @@ userRoutes.route('/unBlock/:username').get(async (req, res) => {
 userRoutes.route('/getProfile/:username').get(async (req, res) => {
     var user
     var amUser = false
-    var cur;
+    var cur
     try {
         user = await decodeHeader.decodeAuthHeader(req)
     } catch (err) {
         user = undefined
     }
-    var currentName;
+    var currentName
     if (user != undefined) {
         const { email, username } = user
-        cur = username;
+        cur = username
         if (username == req.params.username) {
             amUser = true
         }
-        currentName = username;
+        currentName = username
     } else {
-        currentName = ""
+        currentName = ''
     }
 
-    var sql = `SELECT username, email, bio, private, firstName, lastName, url,CASE WHEN ${con.escape(cur)} IN (Select userBlocking FROM Block where userblocked=${con.escape(
+    var sql = `SELECT username, email, bio, private, firstName, lastName, url,CASE WHEN ${con.escape(
+        cur
+    )} IN (Select userBlocking FROM Block where userblocked=${con.escape(
         req.params.username
     )}) Then "Block" Else "Unblock" END AS B from User WHERE username = ${con.escape(
         req.params.username
@@ -157,42 +168,56 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
     //     req.params.username
     // )} and `
 
-    con.query(sql, async (err, fullResponse) => {
-        if (fullResponse.length === 0)
+    let isBlocked = `SELECT * FROM Block WHERE userBlocking="${req.params.username}" AND userBlocked="${cur}"`
+
+    con.query(isBlocked, async (err, blockRes) => {
+        if (blockRes.length > 0) {
             return res.status(400).json("User doesn't exist")
-        let userResult = fullResponse[0]
-        console.log(userResult)
-        if (err) {
+        }
+
+        con.query(sql, async (err, fullResponse) => {
+            if (fullResponse.length === 0)
+                return res.status(400).json("User doesn't exist")
+            let userResult = fullResponse[0]
             console.log(userResult)
-            return res.status(500).json(err)
-        }
-        if (userResult.private == 1 && !amUser) {
-            delete userResult.email
-        }
+            if (err) {
+                console.log(userResult)
+                return res.status(500).json(err)
+            }
+            if (userResult.private == 1 && !amUser) {
+                delete userResult.email
+            }
 
-        let following =
-            user &&
-            (await query.isUser1FollowingUser2(
-                user.username,
-                req.params.username
-            ))
+            let following =
+                user &&
+                (await query.isUser1FollowingUser2(
+                    user.username,
+                    req.params.username
+                ))
 
-        let followersList = await query.getFollowersList(req.params.username, currentName)
-        let followingList = await query.getFollowingList(req.params.username, currentName)
-        let tagList = await query.getTagList(req.params.username)
-        let numberFollowers = followersList.length
-        let numberFollowing = followingList.length
-        let numTagsFollowing = tagList.length
+            let followersList = await query.getFollowersList(
+                req.params.username,
+                currentName
+            )
+            let followingList = await query.getFollowingList(
+                req.params.username,
+                currentName
+            )
+            let tagList = await query.getTagList(req.params.username)
+            let numberFollowers = followersList.length
+            let numberFollowing = followingList.length
+            let numTagsFollowing = tagList.length
 
-        return res.status(200).json({
-            ...userResult,
-            following,
-            numberFollowers,
-            numberFollowing,
-            numTagsFollowing,
-            followersList,
-            followingList,
-            tagList,
+            return res.status(200).json({
+                ...userResult,
+                following,
+                numberFollowers,
+                numberFollowing,
+                numTagsFollowing,
+                followersList,
+                followingList,
+                tagList,
+            })
         })
     })
 })
