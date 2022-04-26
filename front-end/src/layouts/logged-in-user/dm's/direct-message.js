@@ -176,14 +176,17 @@ const DirectMessage = (props) => {
             currentUser: username,
             deletedUser: talkingToUsername
         }
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
         console.log("tried to delete convo between " + username + " and " + talkingToUsername); // i dont think talkingtoUsername is right, but not sure how to identify the person you're clicking the trash button for
-        // axios.post("http://localhost:5000/api/messages/deleteConvo", payload)
-        //     .then((response) => {
-        //         console.log("deleted convo between " + username + " and " + talkingToUsername);
-        //     })
-        //     .catch(({ response }) => {
-        //         console.log("got an error");
-        // })
+        axios.post("http://localhost:5000/api/messages/deleteConvo", payload)
+            .then((response) => {
+                console.log("deleted convo between " + username + " and " + talkingToUsername);
+            })
+            .catch(({ response }) => {
+                console.log("got an error");
+        })
 
     }
 

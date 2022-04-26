@@ -59,7 +59,7 @@ messageRoutes.route('/messages/deleteConvo').post(async (req, res) => {
     let result = await con.awaitQuery(sql)
 
 
-    sql = `INSERT INTO DeleteConversations VALUES('${req.body.currentUser}', ${result[0].ConversationID})`
+    sql = `INSERT INTO DeletedConversations VALUES('${req.body.currentUser}', ${result[0].ConversationID})`
     result = await con.awaitQuery(sql)
     res.json(result)
 
