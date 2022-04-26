@@ -269,17 +269,31 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
 })
 
 userRoutes.route('/search/:query').get(async (req, res) => {
-    var sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
+    var userf
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        userf = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        userf = undefined
+    }
+
+    var sql = `SELECT username, firstName, lastName FROM User, Block WHERE (locate(${con.escape(
         req.params.query
     )}, username) > 0 OR locate(${con.escape(
         req.params.query
-    )}, firstName) > 0 OR locate(${con.escape(req.params.query)}, lastName) > 0`
+    )}, firstName) > 0 OR locate(${con.escape(req.params.query)}, lastName) > 0) AND NOT (userBlocked = username AND userBlocking = "testing")`
 
     const name = req.params.query.split(' ')
     if (name.length > 1) {
-        sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
+        sql = `SELECT username, firstName, lastName FROM User, Block WHERE (locate(${con.escape(
             name[0]
-        )}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0`
+        )}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0)`
+    }
+
+    if (userf != undefined) {
+        console.log(userf.username)
+
     }
 
     var sql1 = `SELECT * FROM Tag WHERE locate(${con.escape(
