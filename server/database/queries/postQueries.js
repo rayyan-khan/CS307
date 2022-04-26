@@ -3,7 +3,7 @@ var con = getCon.getConObject()
 
 const isUser1FollowingUser2 = async (user1, user2) => {
     res = await con.awaitQuery(
-        `SELECT * FROM UserFollow WHERE follower="${con.escape(user1)}" AND followed="${con.escape(user2)}"`
+        `SELECT * FROM UserFollow WHERE follower='${user1}' AND followed='${user2}'`
     )
 
     return res.length != 0
@@ -16,21 +16,21 @@ const getUserInteractions = async (username) => {
         UserLike.timestamp
         FROM UserLike
         JOIN Post ON UserLike.postID = Post.postID
-        WHERE UserLike.username="${con.escape(username)}"
+        WHERE UserLike.username="${username}"
         UNION
         SELECT IF (Post.anonymous = 1, "Anonymous", Post.username) AS username, UserDisLike.postID, tagID, likesCount, dislikeCount, 
         postCaption, numberOfComments, url, hyperlink, NULL as comment, false as liked, true as disliked,
         UserDisLike.timeStamp
         FROM UserDisLike
         JOIN Post ON UserDisLike.postID = Post.postID
-        WHERE UserDisLike.username = "${con.escape(username)}"
+        WHERE UserDisLike.username = "${username}"
         UNION
         SELECT IF (Post.anonymous = 1, "Anonymous", Post.username) AS username, Comments.postID, tagID, likesCount, dislikeCount,
         postCaption, numberOfComments, url, hyperlink, comment, false as liked, false as disliked,
         Comments.timestamp
         FROM Comments
         JOIN Post ON Comments.postID = Post.postID
-        WHERE Comments.username = "${con.escape(username)}"
+        WHERE Comments.username = "${username}"
         ORDER BY timestamp DESC;
     `)
 
@@ -39,31 +39,31 @@ const getUserInteractions = async (username) => {
 
 const bookmarkPost = async (username, postID) => {
     return await con.awaitQuery(
-        `INSERT INTO Bookmark (username, postID, timestamp) VALUES ("${con.escape(username)}", ${con.escape(postID)}, NOW())`
+        `INSERT INTO Bookmark (username, postID, timestamp) VALUES ("${username}", ${postID}, NOW())`
     )
 }
 
 const unbookmarkPost = async (username, postID) => {
     return await con.awaitQuery(
-        `DELETE FROM Bookmark WHERE username = "${con.escape(username)}" AND postID = "${con.escape(postID)}"`
+        `DELETE FROM Bookmark WHERE username = "${username}" AND postID = "${postID}"`
     )
 }
 
 const getBookmarks = async (username) => {
     return await con.awaitQuery(`
         SELECT IF (Post.anonymous = 1, 
-        IF (Post.username = "${con.escape(username)}", Post.username, "Anonymous"), Post.username) as username, 
+        IF (Post.username = "${username}", Post.username, "Anonymous"), Post.username) as username, 
         Bookmark.postID, tagId, likesCount, dislikeCount, postCaption, numberOfComments, url, hyperlink 
         FROM Bookmark
         JOIN Post ON Bookmark.postID = Post.postID
-        WHERE Bookmark.username="${con.escape(username)}"
+        WHERE Bookmark.username="${username}"
         ;
         `)
 }
 
 const postExists = async (postID) => {
     let res = await con.awaitQuery(
-        `SELECT * FROM Post WHERE postID = "${con.escape(postID)}"`
+        `SELECT * FROM Post WHERE postID = "${postID}"`
     )
 
     return res.length != 0
@@ -71,7 +71,7 @@ const postExists = async (postID) => {
 
 const postBookmarked = async (username, postID) => {
     let res = await con.awaitQuery(
-        `SELECT * FROM Bookmark WHERE username = "${con.escape(username)}" AND postID = "${con.escape(postID)}"`
+        `SELECT * FROM Bookmark WHERE username = "${username}" AND postID = "${postID}"`
     )
 
     return res.length != 0
