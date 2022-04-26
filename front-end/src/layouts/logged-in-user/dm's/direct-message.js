@@ -171,18 +171,18 @@ const DirectMessage = (props) => {
             })
     }
 
-    const deleteConversation = () => {
+    const deleteConversation = (usernameToDelete) => {
         const payload = {
             currentUser: username,
-            deletedUser: talkingToUsername
+            deletedUser: usernameToDelete
         }
         if (intervalID) {
             clearInterval(intervalID);
         }
-        console.log("tried to delete convo between " + username + " and " + talkingToUsername); // i dont think talkingtoUsername is right, but not sure how to identify the person you're clicking the trash button for
+        console.log("tried to delete convo between " + username + " and " + usernameToDelete); // i dont think talkingtoUsername is right, but not sure how to identify the person you're clicking the trash button for
         axios.post("http://localhost:5000/api/messages/deleteConvo", payload)
             .then((response) => {
-                console.log("deleted convo between " + username + " and " + talkingToUsername);
+                console.log("deleted convo between " + username + " and " + usernameToDelete);
             })
             .catch(({ response }) => {
                 console.log("got an error");
@@ -445,7 +445,11 @@ const DirectMessage = (props) => {
                                                                     'white',
                                                             }}
                                                             icon={<BsTrash />}
-                                                            onClick={(e) => { deleteConversation(e) }}
+                                                            onClick={(e) => { 
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                deleteConversation((conversation.toUser == username ? conversation.fromUser : conversation.toUser)) 
+                                                            }}
                                                         />
                                                     </Box>
                                                 </Stack>
