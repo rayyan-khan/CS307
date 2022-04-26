@@ -97,7 +97,7 @@ userRoutes.route('/addBlock/:username').get(async (req, res) => {
     }
 
     const { email, username } = user
-    var sql = `INSERT INTO Block VALUES (username,${con.escape(req.params.username)})`
+    var sql = `INSERT INTO Block VALUES (${con.escape(username)},${con.escape(req.params.username)})`
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
@@ -117,8 +117,9 @@ userRoutes.route('/unBlock/:username').get(async (req, res) => {
 
     const { email, username } = user
 
-    var sql = `DELETE FROM Block WHERE userBlocking = "${con.escape(username)}" and userBlocked = ${con.escape(req.params.username)}`
+    var sql = `DELETE FROM Block WHERE userBlocking = ${con.escape(username)} and userBlocked = ${con.escape(req.params.username)}`
     con.query(sql, function (err, result) {
+        console.log(sql);
         if (err) {
             console.log(err)
             res.status(500).json(err)
