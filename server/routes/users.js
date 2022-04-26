@@ -292,22 +292,23 @@ userRoutes.route('/search/:query').get(async (req, res) => {
         userf = undefined
     }
 
-    var sql = `SELECT u.username, u.firstName, u.lastName FROM User as u WHERE locate(${con.escape(
+    var sql = `SELECT u.username, u.firstName, u.lastName FROM User as u WHERE (locate(${con.escape(
         req.params.query
     )}, u.username) > 0 OR locate(${con.escape(
         req.params.query
-    )}, u.firstName) > 0 OR locate(${con.escape(req.params.query)}, u.lastName) > 0`
+    )}, u.firstName) > 0 OR locate(${con.escape(req.params.query)}, u.lastName) > 0)`
 
     const name = req.params.query.split(' ')
     if (name.length > 1) {
-        sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
+        sql = `SELECT username, firstName, lastName FROM User as u WHERE (locate(${con.escape(
             name[0]
-        )}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0`
+        )}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0)`
     }
 
     if (userf != undefined) {
         console.log(userf.username)
         sql += ` AND u.username not in (Select userBlocking From Block where userBlocked = '${userf.username}')`
+        console.log(sql)
     }
 
     var sql1 = `SELECT * FROM Tag WHERE locate(${con.escape(
