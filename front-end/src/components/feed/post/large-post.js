@@ -307,7 +307,7 @@ export default function LargePost({ post }) {
                 <GridItem pt={10} pb={0} height={'30%'}>
                     <Box style={{ paddingLeft: '200px' }} position={'relative'} p={5}>
                         <Box
-                            minW={'500px'}
+                            minW={'200px'}
                             maxW={'400px'}
                             minH={'90px'}
                             bg={"--mainColor"}
@@ -394,7 +394,7 @@ export default function LargePost({ post }) {
                 <GridItem pos={'relative'} top={0} pr={40} height={'20%'}>
                     <Box style={{ paddingLeft: '200px' }} position={'relative'} p={5}>
                         <Box
-                            minW={'500px'}
+                            minW={'200px'}
                             maxW={'400px'}
                             minH={'90px'}
                             bg={"--mainColor"}
@@ -621,23 +621,24 @@ export default function LargePost({ post }) {
                                     <Stack direction={'row'}>
                                         {post.username === username ? (
                                             <>
-                                                {isBookmarked ? <IconButton mt={'1vh'} ml={'30vw'} size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} />
-                                                    : <IconButton mt={'3.98vh'} ml={'30vw'} size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                                                {isBookmarked ? <IconButton mt={'1vh'} size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', backgroundColor: "darkturquoise", color: "white", position: 'absolute', right: '20px', bottom: "27px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />
+                                                    : <IconButton mt={'3.98vh'} size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", position: 'absolute', right: '80px', bottom: "27px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
                                                 <IconButton
                                                     size={'lg'}
-                                                    top={'3.98vh'}
-                                                    left={1}
                                                     onClick={handleDelete}
                                                     style={{
                                                         backgroundColor: 'red',
                                                         color: 'white',
+                                                        position: 'absolute',
+                                                        right: '20px',
+                                                        bottom: "27px"
                                                     }}
                                                     icon={<AiOutlineDelete />}
                                                 />
                                             </>
                                         ) : (
                                             <>
-                                                {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "600px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                                                {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", backgroundColor: "darkturquoise", color: "white", position: 'absolute', right: '20px', bottom: "27px" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", position: 'absolute', right: '20px', bottom: "27px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
                                             </>
                                         )}
                                     </Stack>
@@ -874,22 +875,23 @@ export default function LargePost({ post }) {
                                     <Stack direction={'row'}>
                                         {post.username === username ? (
                                             <>
-                                                {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "550px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "550px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                                                {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', position: 'absolute', right: '20px', bottom: "27px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", position: 'absolute', right: '80px', bottom: "27px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
                                                 <IconButton
                                                     size={'lg'}
-                                                    left={"550px"}
                                                     onClick={handleDelete}
                                                     style={{
                                                         backgroundColor: 'red',
                                                         color: 'white',
-                                                        top: '30px',
+                                                        position: 'absolute',
+                                                        right: '20px',
+                                                        bottom: "27px"
                                                     }}
                                                     icon={<AiOutlineDelete />}
                                                 />
                                             </>
                                         ) : (
                                             <>
-                                                {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', top: "30px", left: "600px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", top: "30px", left: "600px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
+                                                {isBookmarked ? <IconButton size={'lg'} onClick={handleBookmarked} style={{ cursor: 'pointer', position: 'absolute', right: '20px', bottom: "27px", backgroundColor: "darkturquoise", color: "white" }} aria-label='Bookmark' icon={<FaRegBookmark />} /> : <IconButton size={'lg'} onClick={handleBookmarked} style={{ backgroundColor: "var(--secondary-color)", color: "black", position: 'absolute', right: '20px', bottom: "27px" }} aria-label='Bookmark' icon={<FaRegBookmark />} />}
                                             </>
                                         )}
                                     </Stack>
