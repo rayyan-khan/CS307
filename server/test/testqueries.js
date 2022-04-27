@@ -25,6 +25,8 @@ const cleanDatabase = async () => {
         'userdislike',
         'userfollow',
         'tagFollow',
+        'messages',
+        'conversations',
     ]
 
     await con.awaitQuery('SET FOREIGN_KEY_CHECKS = 0;')

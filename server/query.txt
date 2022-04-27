@@ -89,3 +89,23 @@ tagID VARCHAR(30),
 timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE
 );
+
+CREATE TABLE Block (
+    userBlocking varchar(20),
+    userBlocked varchar(20)
+);
+
+CREATE TABLE Messages (
+    fromUser varchar(20),
+    toUser varchar(20),
+    message varchar(500),
+	conversationID int,
+    timeStamp datetime
+);
+
+create table Conversations (
+	conversationID int NOT NULL auto_increment,
+    user1 varchar(20),
+    user2 varchar(20),
+    PRIMARY KEY (conversationID)
+);

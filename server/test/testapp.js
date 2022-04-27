@@ -13,5 +13,6 @@ app.use('/api', require('../routes/auth'))
 app.use('/api', require('../routes/post'))
 app.use('/api', require('../routes/users'))
 app.use('/api', require('../routes/tag'))
+app.use('/api', require('../routes/messages'))
 
 module.exports = app
