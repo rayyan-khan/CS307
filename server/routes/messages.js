@@ -33,6 +33,11 @@ messageRoutes.route('/messages/sendMessage').post(async (req, res) => {
     //if (result.length !== 0) {
     //    res.json(result);
     // }
+    let follow = `SELECT * FROM UserFollow WHERE followed = '${arr[0]}' AND follower = '${arr[1]}'`
+    let follow_result = await con.awaitQuery(follow);
+    if (follow_result.length === 0) {
+        return res.status(500).json('User is not following you!')
+    }
 
     let sql = `SELECT ConversationID FROM Conversations WHERE user1 = '${arr[0]}' AND user2 = '${arr[1]}'`
     let result = await con.awaitQuery(sql)

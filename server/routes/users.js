@@ -95,9 +95,7 @@ userRoutes.route('/addBlock/:username').get(async (req, res) => {
     }
 
     const { email, username } = user
-    var sql = `INSERT INTO Block VALUES (username,${con.escape(
-        req.params.username
-    )})`
+    var sql = `INSERT INTO Block VALUES (${con.escape(username)},${con.escape(req.params.username)})`
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err)
@@ -116,10 +114,9 @@ userRoutes.route('/unBlock/:username').get(async (req, res) => {
 
     const { email, username } = user
 
-    var sql = `DELETE FROM Block WHERE userBlocking = "${con.escape(
-        username
-    )}" and userBlocked = ${con.escape(req.params.username)}`
+    var sql = `DELETE FROM Block WHERE userBlocking = ${con.escape(username)} and userBlocked = ${con.escape(req.params.username)}`
     con.query(sql, function (err, result) {
+        console.log(sql);
         if (err) {
             console.log(err)
             res.status(500).json(err)
@@ -286,17 +283,32 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
 })
 
 userRoutes.route('/search/:query').get(async (req, res) => {
-    var sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
+    var userf
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        userf = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        userf = undefined
+    }
+
+    var sql = `SELECT u.username, u.firstName, u.lastName FROM User as u WHERE (locate(${con.escape(
         req.params.query
-    )}, username) > 0 OR locate(${con.escape(
+    )}, u.username) > 0 OR locate(${con.escape(
         req.params.query
-    )}, firstName) > 0 OR locate(${con.escape(req.params.query)}, lastName) > 0`
+    )}, u.firstName) > 0 OR locate(${con.escape(req.params.query)}, u.lastName) > 0)`
 
     const name = req.params.query.split(' ')
     if (name.length > 1) {
-        sql = `SELECT username, firstName, lastName FROM User WHERE locate(${con.escape(
+        sql = `SELECT username, firstName, lastName FROM User as u WHERE (locate(${con.escape(
             name[0]
-        )}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0`
+        )}, firstName) > 0 and locate(${con.escape(name[1])}, lastName) > 0)`
+    }
+
+    if (userf != undefined) {
+        console.log(userf.username)
+        sql += ` AND u.username not in (Select userBlocking From Block where userBlocked = '${userf.username}')`
+        console.log(sql)
     }
 
     var sql1 = `SELECT * FROM Tag WHERE locate(${con.escape(

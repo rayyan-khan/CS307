@@ -8,6 +8,10 @@ import {
     MDBNavbarNav,
     MDBNavbarItem,
     MDBNavbarLink,
+    MDBCollapse,
+    MDBNavbarToggler,
+    MDBIcon,
+    MDBFormInline
 } from 'mdb-react-ui-kit'
 
 import { Button, IconButton, Stack, Box } from '@chakra-ui/react'
@@ -35,10 +39,15 @@ class Navbar extends React.Component {
             currSection: 'homepage',
             validToken: false,
             username: '',
+            isOpen: false,
         }
 
         this.handleChange = this.handleChange.bind(this)
         this.submitForm = this.submitForm.bind(this)
+    }
+
+    toggleCollapse = () => {
+        this.setState({ isOpen: !this.state.isOpen });
     }
 
     handleChange(event) {
@@ -124,178 +133,237 @@ class Navbar extends React.Component {
                         </MDBNavbarBrand>
                     </MDBContainer>
                 </div>
-                <div
-                    className="position-absolute"
-                    style={{
-                        top: '15px',
-                        left: '40%',
-                        width: '20%',
-                        textAlign: 'left',
-                    }}
-                >
-                    <SearchBar />
-                </div>
+                <MDBNavbarItem>
+                    <div
+                        className="position-absolute"
+                        style={{
+                            top: '15px',
+                            left: '40%',
+                            width: '20%',
+                            textAlign: 'left',
+                        }}
+                    >
+                        <SearchBar />
+                    </div>
+                </MDBNavbarItem>
             </MDBNavbarNav>
         )
 
         if (this.state.validToken) {
             return (
-                <Box height={'70px'}>
-                    <div
-                        style={{ height: '65px', position: 'sticky', top: '0' }}
-                    >
-                        <MDBNavbar
-                            className="color-switch"
-                            style={{ height: '100%' }}
-                            expand="sm"
-                        >
-                            {barFront}
-                            <div>
-                                <MDBNavbarNav>
-                                    <MDBNavbarItem>
-                                        <MDBNavbarLink
-                                            style={{ color: '#ffffff' }}
-                                            href="/createPost"
-                                        >
-                                            {this.state.currSection ===
-                                                'createPost' ? (
-                                                <IconButton
-                                                    style={{
-                                                        backgroundColor:
-                                                            'darkturquoise',
-                                                        color: 'white',
-                                                    }}
-                                                    icon={<BsPlusSquareFill />}
-                                                />
-                                            ) : (
-                                                <IconButton
-                                                    style={{
-                                                        color: 'black',
-                                                        backgroundColor:
-                                                            'var(--secondary-color)',
-                                                    }}
-                                                    icon={<BsPlusSquare />}
-                                                />
-                                            )}
-                                        </MDBNavbarLink>
-                                    </MDBNavbarItem>
-                                    <MDBNavbarItem>
-                                        <MDBNavbarLink
-                                            style={{ color: '#ffffff' }}
-                                            href="/bookmarks"
-                                        >
-                                            {this.state.currSection ===
-                                                'bookmarks' ? (
-                                                <IconButton
-                                                    style={{
-                                                        backgroundColor:
-                                                            'darkturquoise',
-                                                        color: 'white',
-                                                    }}
-                                                    icon={<FaRegBookmark />}
-                                                />
-                                            ) : (
-                                                <IconButton
-                                                    style={{
-                                                        color: 'black',
-                                                        backgroundColor:
-                                                            'var(--secondary-color)',
-                                                    }}
-                                                    icon={<FaRegBookmark />}
-                                                />
-                                            )}
-                                        </MDBNavbarLink>
-                                    </MDBNavbarItem>
-                                    <MDBNavbarItem>
-                                        <MDBNavbarLink
-                                            style={{ color: '#ffffff' }}
-                                            href="/dms"
-                                        >
-                                            {this.state.currSection ===
-                                                'dms' ? (
-                                                <IconButton
-                                                    style={{
-                                                        backgroundColor:
-                                                            'darkturquoise',
-                                                        color: 'white',
-                                                    }}
-                                                    icon={<AiOutlineMessage />}
-                                                />
-                                            ) : (
-                                                <IconButton
-                                                    style={{
-                                                        color: 'black',
-                                                        backgroundColor:
-                                                            'var(--secondary-color)',
-                                                    }}
-                                                    icon={<AiOutlineMessage />}
-                                                />
-                                            )}
-                                        </MDBNavbarLink>
-                                    </MDBNavbarItem>
-                                    <MDBNavbarItem>
-                                        <MDBNavbarLink
-                                            style={{ color: '#ffffff' }}
-                                            href={
-                                                '/profile/' +
-                                                this.state.username
-                                            }
-                                        >
-                                            {this.state.currSection ===
-                                                this.state.username ? (
-                                                <IconButton
-                                                    style={{
-                                                        backgroundColor:
-                                                            'darkturquoise',
-                                                        color: 'white',
-                                                    }}
-                                                    icon={<RiProfileLine />}
-                                                />
-                                            ) : (
-                                                <IconButton
-                                                    style={{
-                                                        color: 'black',
-                                                        backgroundColor:
-                                                            'var(--secondary-color)',
-                                                    }}
-                                                    icon={<RiProfileLine />}
-                                                />
-                                            )}
-                                        </MDBNavbarLink>
-                                    </MDBNavbarItem>
-                                    <MDBNavbarItem>
-                                        <MDBNavbarLink
-                                            style={{ color: '#ffffff' }}
-                                            href="/homepage"
-                                        >
+                <div
+                    className="color-switch"
+                    style={{ height: '65px', position: 'sticky', top: '0' }}
+                >
+                    <MDBNavbar color="indigo" dark expand="sm" >
+                        <MDBNavbarBrand href="/homepage">
+                            <IconButton
+                                style={{
+                                    backgroundColor:
+                                        this.state.currSection === 'homepage'
+                                            ? 'darkturquoise'
+                                            : 'var(--secondary-color)',
+                                    color:
+                                        this.state.currSection === 'homepage'
+                                            ? '#ffffff'
+                                            : '#000000',
+                                }}
+                                icon={<AiOutlineHome />}
+                            />
+                        </MDBNavbarBrand>
+                        <MDBNavbarNav left>
+                            <MDBNavbarItem>
+                                <div
+                                    className="position-absolute"
+                                    style={{
+                                        top: '15px',
+                                        left: '40%',
+                                        width: '20%',
+                                        textAlign: 'left',
+                                    }}
+                                >
+                                    <SearchBar />
+                                </div>
+                            </MDBNavbarItem>
+                        </MDBNavbarNav>
+                        <MDBNavbarToggler onClick={this.toggleCollapse} />
+                        <MDBCollapse id="navbarCollapse3" style={{ height: '40px' }} show={this.state.isOpen} navbar>
+                            <MDBNavbarNav right>
+                                <MDBNavbarItem>
+                                    <MDBNavbarLink
+                                        style={{ color: '#ffffff' }}
+                                        href="/createPost"
+                                    >
+                                        {this.state.currSection ===
+                                            'createPost' ? (
+                                            <IconButton
+                                                style={{
+                                                    backgroundColor:
+                                                        'darkturquoise',
+                                                    color: 'white',
+                                                }}
+                                                marginLeft="10px"
+                                                icon={<BsPlusSquareFill />}
+                                            />
+                                        ) : (
                                             <IconButton
                                                 style={{
                                                     color: 'black',
                                                     backgroundColor:
                                                         'var(--secondary-color)',
                                                 }}
-                                                icon={<AiOutlineLogout />}
-                                                onClick={this.logout}
+                                                marginLeft="10px"
+                                                icon={<BsPlusSquare />}
                                             />
-                                        </MDBNavbarLink>
-                                    </MDBNavbarItem>
-                                </MDBNavbarNav>
-                            </div>
-                        </MDBNavbar>
-                    </div>
-                </Box>
+                                        )}
+                                    </MDBNavbarLink>
+                                </MDBNavbarItem>
+                                <MDBNavbarItem>
+                                    <MDBNavbarLink
+                                        style={{ color: '#ffffff' }}
+                                        href="/bookmarks"
+                                    >
+                                        {this.state.currSection ===
+                                            'bookmarks' ? (
+                                            <IconButton
+                                                style={{
+                                                    backgroundColor:
+                                                        'darkturquoise',
+                                                    color: 'white',
+                                                }}
+                                                icon={<FaRegBookmark />}
+                                            />
+                                        ) : (
+                                            <IconButton
+                                                style={{
+                                                    color: 'black',
+                                                    backgroundColor:
+                                                        'var(--secondary-color)',
+                                                }}
+                                                icon={<FaRegBookmark />}
+                                            />
+                                        )}
+                                    </MDBNavbarLink>
+                                </MDBNavbarItem>
+                                <MDBNavbarItem>
+                                    <MDBNavbarLink
+                                        style={{ color: '#ffffff' }}
+                                        href="/dms"
+                                    >
+                                        {this.state.currSection ===
+                                            'dms' ? (
+                                            <IconButton
+                                                style={{
+                                                    backgroundColor:
+                                                        'darkturquoise',
+                                                    color: 'white',
+                                                }}
+                                                icon={<AiOutlineMessage />}
+                                            />
+                                        ) : (
+                                            <IconButton
+                                                style={{
+                                                    color: 'black',
+                                                    backgroundColor:
+                                                        'var(--secondary-color)',
+                                                }}
+                                                icon={<AiOutlineMessage />}
+                                            />
+                                        )}
+                                    </MDBNavbarLink>
+                                </MDBNavbarItem>
+                                <MDBNavbarItem>
+                                    <MDBNavbarLink
+                                        style={{ color: '#ffffff' }}
+                                        href={
+                                            '/profile/' +
+                                            this.state.username
+                                        }
+                                    >
+                                        {this.state.currSection ===
+                                            this.state.username ? (
+                                            <IconButton
+                                                style={{
+                                                    backgroundColor:
+                                                        'darkturquoise',
+                                                    color: 'white',
+                                                }}
+                                                icon={<RiProfileLine />}
+                                            />
+                                        ) : (
+                                            <IconButton
+                                                style={{
+                                                    color: 'black',
+                                                    backgroundColor:
+                                                        'var(--secondary-color)',
+                                                }}
+                                                icon={<RiProfileLine />}
+                                            />
+                                        )}
+                                    </MDBNavbarLink>
+                                </MDBNavbarItem>
+                                <MDBNavbarItem>
+                                    <MDBNavbarLink
+                                        style={{ color: '#ffffff' }}
+                                        href="/homepage"
+                                    >
+                                        <IconButton
+                                            style={{
+                                                color: 'black',
+                                                backgroundColor:
+                                                    'var(--secondary-color)',
+                                            }}
+                                            icon={<AiOutlineLogout />}
+                                            onClick={this.logout}
+                                        />
+                                    </MDBNavbarLink>
+                                </MDBNavbarItem>
+                            </MDBNavbarNav>
+                        </MDBCollapse>
+                    </MDBNavbar>
+                </div>
             )
         } else {
             return (
                 <div
                     className="color-switch"
-                    style={{ height: '65px', position: 'sticky', top: '0' }}
+                    style={{ height: '65px', position: 'sticky', top: '0', paddingLeft: '10px' }}
                 >
-                    <MDBNavbar style={{ height: '100%' }} bg={'red'} width={'90%'} expand={"sm"}>
-                        {barFront}
-                        <div style={{ top: '100px' }}>
+                    <MDBNavbar color="indigo" dark expand="sm">
+                        <MDBNavbarBrand href="/homepage">
+                            <IconButton
+                                style={{
+                                    backgroundColor:
+                                        this.state.currSection === 'homepage'
+                                            ? 'darkturquoise'
+                                            : 'var(--secondary-color)',
+                                    color:
+                                        this.state.currSection === 'homepage'
+                                            ? '#ffffff'
+                                            : '#000000',
+                                }}
+                                icon={<AiOutlineHome />}
+                            />
+                        </MDBNavbarBrand>
+                        <MDBNavbarNav left>
+                            <MDBNavbarItem>
+                                <div
+                                    className="position-absolute"
+                                    style={{
+                                        top: '15px',
+                                        left: '40%',
+                                        width: '20%',
+                                        textAlign: 'left',
+                                    }}
+                                >
+                                    <SearchBar />
+                                </div>
+                            </MDBNavbarItem>
+                        </MDBNavbarNav>
+                        <MDBNavbarToggler onClick={this.toggleCollapse} />
+                        <MDBCollapse id="navbarCollapse3" style={{ height: '40px' }} show={this.state.isOpen} navbar>
                             <MDBNavbarNav right>
-                                <Stack direction="row" spacing={4}>
+                                <MDBNavbarItem>
                                     <Button
                                         onClick={this.goToSignup}
                                         style={{
@@ -309,12 +377,14 @@ class Navbar extends React.Component {
                                                     'signup'
                                                     ? '#ffffff'
                                                     : '#000000',
-                                            right: '25px',
                                         }}
                                         variant="solid"
+                                        marginRight={'10px'}
                                     >
                                         Signup
                                     </Button>
+                                </MDBNavbarItem>
+                                <MDBNavbarItem>
                                     <Button
                                         onClick={this.goToLogin}
                                         style={{
@@ -328,15 +398,15 @@ class Navbar extends React.Component {
                                                     'login'
                                                     ? '#ffffff'
                                                     : '#000000',
-                                            right: '25px',
                                         }}
                                         variant="solid"
+                                        marginRight={'10px'}
                                     >
                                         Login
                                     </Button>
-                                </Stack>
+                                </MDBNavbarItem>
                             </MDBNavbarNav>
-                        </div>
+                        </MDBCollapse>
                     </MDBNavbar>
                 </div>
             )

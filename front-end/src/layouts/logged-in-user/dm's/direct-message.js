@@ -31,94 +31,6 @@ import { BsAlignBottom, BsTrash } from 'react-icons/bs';
 import { RiContactsBookLine } from 'react-icons/ri';
 import moment, { utc } from 'moment';
 
-const tempTexts = [
-    {
-        side: 'right',
-        text: 'Hey Whats Up'
-    },
-    {
-        side: 'left',
-        text: 'Not much wbu'
-    },
-    {
-        side: 'right',
-        text: 'Im great thanks for asking'
-    },
-    {
-        side: 'left',
-        text: 'Me too thats great'
-    },
-    {
-        side: 'left',
-        text: 'What are you doing today'
-    },
-    {
-        side: 'right',
-        text: 'I am working on my CS252 lab'
-    },
-    {
-        side: 'left',
-        text: 'That does not sound like a fun time  '
-    },
-    {
-        side: 'right',
-        text: 'Hey Whats Up'
-    },
-    {
-        side: 'left',
-        text: 'Not much wbu'
-    },
-    {
-        side: 'right',
-        text: 'Im great thanks for asking'
-    },
-    {
-        side: 'left',
-        text: 'Me too thats great'
-    },
-    {
-        side: 'left',
-        text: 'What are you doing today'
-    },
-    {
-        side: 'right',
-        text: 'I am working on my CS252 lab'
-    },
-    {
-        side: 'left',
-        text: 'That does not sound like a fun time  '
-    },
-    {
-        side: 'right',
-        text: 'Hey Whats Up'
-    },
-    {
-        side: 'left',
-        text: 'Not much wbu'
-    },
-    {
-        side: 'right',
-        text: 'Im great thanks for asking'
-    },
-    {
-        side: 'left',
-        text: 'Me too thats great'
-    },
-    {
-        side: 'left',
-        text: 'What are you doing today'
-    },
-    {
-        side: 'right',
-        text: 'I am working on my CS252 lab'
-    },
-    {
-        side: 'left',
-        text: 'That does not sound like a fun time  '
-    }
-
-]
-
 const DirectMessage = (props) => {
     const [username, setUsername] = React.useState('');
     const [conversations, setConversations] = React.useState([]);
@@ -186,7 +98,7 @@ const DirectMessage = (props) => {
             })
             .catch(({ response }) => {
                 console.log("got an error");
-        })
+            })
 
     }
 
@@ -231,7 +143,8 @@ const DirectMessage = (props) => {
                 fromUser: username,
                 toUser: talkingToUsername
             }
-            setConversations([...conversations, payload])
+            setConversations([payload, ...conversations])
+            setCurrentConversation([])
         } else if (talkingToUsername) {
             handleGetConversation();
             let intervalID = setInterval(handleGetConversation, 3000);
@@ -315,18 +228,23 @@ const DirectMessage = (props) => {
     }
 
     const handleTimeDifference = (time) => {
-        let minsAgo = Math.round(moment.duration(moment.utc().add(4, 'hours').diff(time)).asMinutes());
-        if (minsAgo == 0) {
+        console.log(time);
+        if (time != undefined) {
+            let minsAgo = Math.round(moment.duration(moment.utc().add(4, 'hours').diff(time)).asMinutes());
+            if (minsAgo == 0) {
+                return "Now";
+            }
+            if (minsAgo < 60) {
+                return minsAgo + "m";
+            } else if (minsAgo < 1440) {
+                return Math.round(minsAgo / 60) + "h";
+            } else if (minsAgo < 10080) {
+                return Math.round(minsAgo / 1440) + "d";
+            } else if (minsAgo < 43200) {
+                return Math.round(minsAgo / 10080) + "w";
+            }
+        } else {
             return "Now";
-        }
-        if (minsAgo < 60) {
-            return minsAgo + "m";
-        } else if (minsAgo < 1440) {
-            return Math.round(minsAgo / 60) + "h";
-        } else if (minsAgo < 10080) {
-            return Math.round(minsAgo / 1440) + "d";
-        } else if (minsAgo < 43200) {
-            return Math.round(minsAgo / 10080) + "w";
         }
     }
 
@@ -445,10 +363,10 @@ const DirectMessage = (props) => {
                                                                     'white',
                                                             }}
                                                             icon={<BsTrash />}
-                                                            onClick={(e) => { 
+                                                            onClick={(e) => {
                                                                 e.preventDefault();
                                                                 e.stopPropagation();
-                                                                deleteConversation((conversation.toUser == username ? conversation.fromUser : conversation.toUser)) 
+                                                                deleteConversation((conversation.toUser == username ? conversation.fromUser : conversation.toUser))
                                                             }}
                                                         />
                                                     </Box>
