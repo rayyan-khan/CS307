@@ -327,9 +327,9 @@ class Navbar extends React.Component {
             return (
                 <div
                     className="color-switch"
-                    style={{ height: '65px', position: 'sticky', top: '0' }}
+                    style={{ height: '65px', position: 'sticky', top: '0', paddingLeft: '10px' }}
                 >
-                    <MDBNavbar color="indigo" dark expand="sm" >
+                    <MDBNavbar color="indigo" dark expand="sm">
                         <MDBNavbarBrand href="/homepage">
                             <IconButton
                                 style={{
