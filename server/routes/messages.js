@@ -26,22 +26,14 @@ messageRoutes.route('/messages/sendMessage').post(async (req, res) => {
     let arr = [req.body.fromUser, req.body.toUser]
     arr.sort()
 
-    //let sql = `SELECT userBlocked WHERE (userBlocked = '${arr[0]}' AND userBlocking = '${arr[1]}') OR  (userBlocked = '${arr[1]}' AND userBlocking = '${arr[0]}')`;
-    //let result = await con.awaitQuery(sql);
-
-    //if (result.length !== 0) {
-    //    res.json(result);
-    // }
     let private = `SELECT private, username FROM User WHERE username='${req.body.toUser}'`
     let private_result = await con.awaitQuery(private)
     let { private_var } = private_result
     if (private_result[0].private === 1) {
         let follow = `SELECT * FROM UserFollow WHERE followed = '${req.body.fromUser}' AND follower = '${req.body.toUser}'`
-        console.log(follow)
         let follow_result = await con.awaitQuery(follow)
         if (follow_result.length === 0) {
-            console.log('Test this now please')
-            return res.status(500).json('User is not following you!')
+            return res.status(400).json('User is not following you!')
         }
     }
 

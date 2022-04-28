@@ -1866,7 +1866,7 @@ describe('Password Reset', () => {
     })
 })
 
-//Sprint 3 User Story 3
+//Sprint 3 User Story 2
 describe('Private Profile', () => {
     it('Setting profile to private relfected in database', (done) => {
         const password = 'password123'
@@ -1899,6 +1899,156 @@ describe('Private Profile', () => {
 
                             return done()
                         })
+                    })
+            }
+        )
+    })
+
+    it('Cant send a message to a private person', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .put(`/api/updateProfile`)
+                    .set('authorization', token)
+                    .send({
+                        private: 1,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        jwt.sign(
+                            { email: email, username: username2 },
+                            process.env.TOKEN_SECRET,
+                            { expiresIn: 3600 },
+                            (err, notPrivateToken) => {
+                                request(app)
+                                    .post(`/api/messages/sendMessage`)
+                                    .set('authorization', notPrivateToken)
+                                    .send({
+                                        fromUser: username2,
+                                        toUser: username,
+                                        message: message,
+                                    })
+                                    .expect(400)
+                                    .expect('"User is not following you!"')
+                                    .end((err, res) => {
+                                        if (err) return done(err)
+
+                                        let sql = `select * from Messages where fromUser='${username2}' and toUser='${username}'`
+
+                                        testCon.query(sql, (err, res) => {
+                                            if (err) return done(err)
+
+                                            assert.equal(res.length, 0)
+
+                                            return done()
+                                        })
+                                    })
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('A user can send a message to a private user they are followed by', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .put(`/api/updateProfile`)
+                    .set('authorization', token)
+                    .send({
+                        private: 1,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        request(app)
+                            .post(`/api/followUser`)
+                            .set('authorization', token)
+                            .send({
+                                followed: username2,
+                            })
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
+
+                                jwt.sign(
+                                    { email: email, username: username2 },
+                                    process.env.TOKEN_SECRET,
+                                    { expiresIn: 3600 },
+                                    (err, notPrivateToken) => {
+                                        request(app)
+                                            .post(`/api/messages/sendMessage`)
+                                            .set(
+                                                'authorization',
+                                                notPrivateToken
+                                            )
+                                            .send({
+                                                fromUser: username2,
+                                                toUser: username,
+                                                message: message,
+                                            })
+                                            .expect(200)
+                                            .end((err, res) => {
+                                                if (err) return done(err)
+
+                                                let sql = `select * from Messages where fromUser='${username2}' and toUser='${username}'`
+
+                                                testCon.query(
+                                                    sql,
+                                                    (err, res) => {
+                                                        if (err)
+                                                            return done(err)
+
+                                                        assert.equal(
+                                                            res.length,
+                                                            1
+                                                        )
+
+                                                        return done()
+                                                    }
+                                                )
+                                            })
+                                    }
+                                )
+                            })
                     })
             }
         )
