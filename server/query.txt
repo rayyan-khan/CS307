@@ -100,12 +100,23 @@ CREATE TABLE Messages (
     toUser varchar(20),
     message varchar(500),
 	conversationID int,
-    timeStamp datetime
+    timeStamp datetime,
+    FOREIGN KEY(fromUser) REFERENCES User(username) ON DELETE CASCADE,
+    FOREIGN KEY (toUser) REFERENCES User(username) ON DELETE CASCADE
 );
 
 create table Conversations (
 	conversationID int NOT NULL auto_increment,
     user1 varchar(20),
     user2 varchar(20),
-    PRIMARY KEY (conversationID)
+    PRIMARY KEY (conversationID),
+    foreign key (user1) references User(username) on delete cascade,
+    foreign key (user2) references User(username) on delete cascade
+);
+
+CREATE TABLE DeletedConversations (
+    username VARCHAR(20) not null,
+    conversationID INT,
+    FOREIGN KEY(username) REFERENCES User(username) ON DELETE CASCADE,
+    FOREIGN KEY (conversationID) REFERENCES Conversations(conversationID) ON DELETE CASCADE
 );

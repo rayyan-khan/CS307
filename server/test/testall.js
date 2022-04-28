@@ -1866,8 +1866,198 @@ describe('Password Reset', () => {
     })
 })
 
-describe('Messaging', () => {
-    it('Can send message', (done) => {
+//Sprint 3 User Story 2
+describe('Private Profile', () => {
+    it('Setting profile to private relfected in database', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .put(`/api/updateProfile`)
+                    .set('authorization', token)
+                    .send({
+                        private: 1,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        const sql = `Select * from User where username="${username}" and private=1`
+
+                        testCon.query(sql, (err, result) => {
+                            if (err) return done(err)
+
+                            assert.equal(result.length, 1)
+
+                            return done()
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Cant send a message to a private person', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .put(`/api/updateProfile`)
+                    .set('authorization', token)
+                    .send({
+                        private: 1,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        jwt.sign(
+                            { email: email, username: username2 },
+                            process.env.TOKEN_SECRET,
+                            { expiresIn: 3600 },
+                            (err, notPrivateToken) => {
+                                request(app)
+                                    .post(`/api/messages/sendMessage`)
+                                    .set('authorization', notPrivateToken)
+                                    .send({
+                                        fromUser: username2,
+                                        toUser: username,
+                                        message: message,
+                                    })
+                                    .expect(400)
+                                    .expect('"User is not following you!"')
+                                    .end((err, res) => {
+                                        if (err) return done(err)
+
+                                        let sql = `select * from Messages where fromUser='${username2}' and toUser='${username}'`
+
+                                        testCon.query(sql, (err, res) => {
+                                            if (err) return done(err)
+
+                                            assert.equal(res.length, 0)
+
+                                            return done()
+                                        })
+                                    })
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('A user can send a message to a private user they are followed by', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .put(`/api/updateProfile`)
+                    .set('authorization', token)
+                    .send({
+                        private: 1,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        request(app)
+                            .post(`/api/followUser`)
+                            .set('authorization', token)
+                            .send({
+                                followed: username2,
+                            })
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
+
+                                jwt.sign(
+                                    { email: email, username: username2 },
+                                    process.env.TOKEN_SECRET,
+                                    { expiresIn: 3600 },
+                                    (err, notPrivateToken) => {
+                                        request(app)
+                                            .post(`/api/messages/sendMessage`)
+                                            .set(
+                                                'authorization',
+                                                notPrivateToken
+                                            )
+                                            .send({
+                                                fromUser: username2,
+                                                toUser: username,
+                                                message: message,
+                                            })
+                                            .expect(200)
+                                            .end((err, res) => {
+                                                if (err) return done(err)
+
+                                                let sql = `select * from Messages where fromUser='${username2}' and toUser='${username}'`
+
+                                                testCon.query(
+                                                    sql,
+                                                    (err, res) => {
+                                                        if (err)
+                                                            return done(err)
+
+                                                        assert.equal(
+                                                            res.length,
+                                                            1
+                                                        )
+
+                                                        return done()
+                                                    }
+                                                )
+                                            })
+                                    }
+                                )
+                            })
+                    })
+            }
+        )
+    })
+})
+
+//Sprint 3 User Story 6
+describe('Profile deletion and messaging', () => {
+    it('Deleting account deletes data from Conversation table', (done) => {
         const password = 'password123'
         const username = 'username'
         const email = 'email'
@@ -1899,14 +2089,98 @@ describe('Messaging', () => {
                     .end((err, res) => {
                         if (err) return done(err)
 
-                        const sql = `Select * from Messages where fromUser="${username}" and toUser="${username2}" and message = "${message}"`
+                        let exists = `select * from conversations where user1="${username}" or user2="${username}"`
 
-                        testCon.query(sql, (err, result) => {
+                        testCon.query(exists, (err, existsRes) => {
                             if (err) return done(err)
 
-                            assert.equal(result.length, 1)
+                            assert.equal(existsRes.length, 1)
 
-                            return done()
+                            request(app)
+                                .get('/api/deleteProfile')
+                                .set('authorization', token)
+                                .expect(200)
+                                .end((err, res) => {
+                                    if (err) return done(err)
+
+                                    let isDeleted = `select * from conversations where user1="${username}" or user2="${username}"`
+
+                                    testCon.query(
+                                        isDeleted,
+                                        (err, isDeletedRes) => {
+                                            if (err) return done(err)
+
+                                            assert.equal(isDeletedRes.length, 0)
+
+                                            return done()
+                                        }
+                                    )
+                                })
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Deleting account deletes data from Messages table', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password2, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let exists = `select * from messages where fromUser="${username}" and toUser="${username2}"`
+
+                        testCon.query(exists, (err, existsRes) => {
+                            if (err) return done(err)
+
+                            assert.equal(existsRes.length, 1)
+
+                            request(app)
+                                .get('/api/deleteProfile')
+                                .set('authorization', token)
+                                .expect(200)
+                                .end((err, res) => {
+                                    if (err) return done(err)
+
+                                    let isDeleted = `select * from messages where fromUser="${username}" and toUser="${username2}"`
+
+                                    testCon.query(
+                                        isDeleted,
+                                        (err, isDeletedRes) => {
+                                            if (err) return done(err)
+
+                                            assert.equal(isDeletedRes.length, 0)
+
+                                            return done()
+                                        }
+                                    )
+                                })
                         })
                     })
             }
@@ -1953,10 +2227,66 @@ describe('Get Active Conversations', () => {
                             .expect(200)
                             .end((err, res) => {
                                 if (err) return done(err)
-
                                 assert.equal(res.length, 1)
 
                                 return done()
+                            })
+                    })
+            }
+        )
+    })
+})
+//Sprint 3 User Story 7
+describe('Deleting a conversation', () => {
+    it('Deleting a conversation adds it to the DeletedConversations table', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        request(app)
+                            .post(`/api/messages/deleteConvo`)
+                            .set('authorization', token)
+                            .send({
+                                currentUser: username,
+                                deletedUser: username2,
+                            })
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
+                                let sql = `select * from deletedConversations where username='${username}'`
+
+                                testCon.query(sql, (err, res) => {
+                                    if (err) return done(err)
+
+                                    assert.equal(res.length, 1)
+
+                                    return done()
+                                })
                             })
                     })
             }
@@ -1997,7 +2327,6 @@ describe('Get Last Message', () => {
                     .expect(200)
                     .end((err, res) => {
                         if (err) return done(err)
-
                         request(app)
                             .post(`/api/messages/sendMessage`)
                             .set('authorization', token)
@@ -2009,7 +2338,6 @@ describe('Get Last Message', () => {
                             .expect(200)
                             .end((err, res) => {
                                 if (err) return done(err)
-
                                 request(app)
                                     .post(`/api/messages/getConversations`)
                                     .set('authorization', token)
@@ -2024,6 +2352,619 @@ describe('Get Last Message', () => {
                                         return done()
                                     })
                                 })
+                            })
+                    }
+                )
+            })
+        })
+
+//Sprint 3 User Story 9
+describe('DM user searching', () => {
+    it('Deleting a conversation adds it to the DeletedConversations table', (done) => {
+        const password = 'password123'
+        const username = 'username2'
+        const email = 'email2'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                let url = `/api/search/${username.substring(
+                    0,
+                    username.length / 2
+                )}`
+                request(app)
+                    .get(url)
+                    .set('authorization', token)
+                    .expect(200)
+                    .expect((res) => {
+                        assert.equal(res.body.length, 1)
+                        assert(res.body[0].value === username)
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        return done()
+                    })
+            }
+        )
+    })
+
+    it('Searching a user after being blocked', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        testQueries.addBlock(username2, username);
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                let url = `/api/search/${username2.substring(
+                    0,
+                    username2.length
+                )}`
+                request(app)
+                    .get(url)
+                    .set('authorization', token)
+                    .expect(400)
+                    .expect((res) => {
+                        //console.log(res.body)
+                        assert.equal(res.body, 'Nothing such as that exists')
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        return done()
+                    })
+            }
+        )
+
+    })
+})
+
+describe('Messaging', () => {
+    it('Can send message', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+                        const sql = `Select * from Messages where fromUser="${username}" and toUser="${username2}" and message = "${message}"`
+
+                        testCon.query(sql, (err, result) => {
+                            if (err) return done(err)
+
+                            assert.equal(result.length, 1)
+
+                            return done()
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Can retrieve message History', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'Hello World'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        request(app)
+                            .post(`/api/messages/getHistory`)
+                            .set('authorization', token)
+                            .send({
+                                user1: username,
+                                user2: username2,
+                            })
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
+                                assert.equal(res.body[0].message, 'Hello World')
+
+                                return done()
+                            })
+                    })
+            }
+        )
+    })
+})
+describe('Block', () => {
+    it('Can not view post from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/getTimeline`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body[0].length);
+                                // console.log(body)
+                                assert.equal(body.length, 0)
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not view tag page post from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/getPostWithTag/${tagID1}`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                assert.equal(body.length, 0)
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not view in followingList from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/getProfile/${interactor}`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body[0].length);
+
+                                assert.equal(body. numberFollowers, 0)
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not view in followedList from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/getProfile/${interactor}`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body[0].length);
+
+                                assert.equal(body.numberFollowing, 0)
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not view comment from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
+        testQueries.createComment(postID1,user1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/comments/${postID1}`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body);
+                                assert.equal(body.length, 0)
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not view profile from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        //testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
+        //testQueries.createComment(postID1,user1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/getProfile/${user1}`)
+                            .set('authorization', token)
+                            .expect(400)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body);
+                                assert.equal(body, "User doesn't exist")
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not preview conversation from blocked account with other user', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+         testQueries.addBlock(user1,interactor);
+        //testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
+        //testQueries.createComment(postID1,user1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).post(`/api/messages/sendMessage`)
+                            .set('authorization', token)
+                            .send({
+                                fromUser: "username1",
+                                toUser: "interactor",
+                                message: "her",
+                            }).end((err, res) => {
+
+                                if (err) return done(err)
+                                    // console.log("hey there whats up")
+                                request(app).post(`/api/messages/getConversations`)
+                                    .set('authorization', token)
+                                    .send({
+                                        user: "interactor",
+                                    })
+
+                                    .expect((res) => {
+                                        let body = res.body
+                                       // console.log(body);
+                                        assert.equal(body.length, 0)
+                                        //  assert.equal(body[0].postID, postID1)
+                                    }).end((err, res) => {
+                                        if (err) return done(err)
+                                        return done()
+                                    }
+                                )
+                            }
+                        )
+                    })
+            }
+        )
+    })
+    it('Can not send message to user who blocked you', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        //testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
+        //testQueries.createComment(postID1,user1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/search/${user1}`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body);
+                                assert.equal(body, "Nothing such as that exists")
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
                     })
             }
         )

@@ -1,18 +1,18 @@
 import {
-    FormControl,
-    FormLabel,
-    Input,
-    Button,
-    Popover,
-    PopoverTrigger,
-    PopoverArrow,
-    PopoverCloseButton,
-    PopoverHeader,
-    PopoverContent,
-    Box,
-    Center,
-    Text,
-  } from '@chakra-ui/react'
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  Popover,
+  PopoverTrigger,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverContent,
+  Box,
+  Center,
+  Text,
+} from '@chakra-ui/react'
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 
@@ -20,28 +20,28 @@ import React, { useEffect, useState } from 'react'
 
 class ResetPassword extends React.Component {
 
-    constructor(props) {
-        super();
-        this.state = {
-            email: ''
-        }
+  constructor(props) {
+    super();
+    this.state = {
+      email: ''
     }
+  }
 
-    changeHandler = e => {
-        const name = e.target.name;
-        const value = e.target.value;
-        //console.log(value);
+  changeHandler = e => {
+    const name = e.target.name;
+    const value = e.target.value;
+    //console.log(value);
 
-        this.setState({email: value});
-    }
+    this.setState({ email: value });
+  }
 
-    resetPassword = () => {
-        console.log("Clicked submit");
+  resetPassword = () => {
+    console.log("Clicked submit");
 
-        // axios stuff
-        axios.put("http://localhost:5000/api/passwordRecoveryLink", {email: this.state.email});
+    // axios stuff
+    axios.put("http://localhost:5000/api/passwordRecoveryLink", { email: this.state.email });
 
-    }
+  }
 
   render() {
     return (
@@ -67,7 +67,7 @@ class ResetPassword extends React.Component {
                   onChange={this.changeHandler}
                   style={{ color: 'darkturquoise' }} />
               </FormControl>
-              
+
             </form>
 
             <Center paddingTop={'2vh'}>
@@ -80,7 +80,7 @@ class ResetPassword extends React.Component {
                   <PopoverArrow />
                   <PopoverCloseButton />
                   <PopoverHeader>If this is an email associated with a PurdueCircle account,
-                       we have sent you an email to finish resetting your password.</PopoverHeader>
+                    we have sent you an email to finish resetting your password.</PopoverHeader>
                 </PopoverContent>
               </Popover>
             </Center>
