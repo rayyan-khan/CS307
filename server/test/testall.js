@@ -2224,6 +2224,9 @@ describe('Get Active Conversations', () => {
                         request(app)
                             .post(`/api/messages/getConversations`)
                             .set('authorization', token)
+                            .send({
+                                user: username
+                            })
                             .expect(200)
                             .end((err, res) => {
                                 if (err) return done(err)
@@ -2341,6 +2344,9 @@ describe('Get Last Message', () => {
                                 request(app)
                                     .post(`/api/messages/getConversations`)
                                     .set('authorization', token)
+                                    .send({
+                                        user: username
+                                    })
                                     .expect(200)
                                     .end((err, res) => {
                                         if (err) return done(err)
