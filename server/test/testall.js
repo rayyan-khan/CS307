@@ -2038,6 +2038,65 @@ describe('Profile deletion and messaging', () => {
     })
 })
 
+//Sprint 3 User Story 7
+describe('Deleting a conversation', () => {
+    it('Deleting a conversation adds it to the DeletedConversations table', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        request(app)
+                            .post(`/api/messages/deleteConvo`)
+                            .set('authorization', token)
+                            .send({
+                                currentUser: username,
+                                deletedUser: username2,
+                            })
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
+
+                                let sql = `select * from deletedConversations where username='${username}'`
+
+                                testCon.query(sql, (err, res) => {
+                                    if (err) return done(err)
+
+                                    assert.equal(res.length, 1)
+
+                                    return done()
+                                })
+                            })
+                    })
+            }
+        )
+    })
+})
+
 describe('Messaging', () => {
     it('Can send message', (done) => {
         const password = 'password123'

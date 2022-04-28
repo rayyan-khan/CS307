@@ -436,14 +436,9 @@ const DirectMessage = (props) => {
                                                     <Stack
                                                         direction="row"
                                                         // mr={10}
-                                                        position={'relative'}
-                                                        bg={'red'}
                                                         alignItems="center"
                                                     >
-                                                        <Box
-                                                            position={'absolute'}
-                                                            left={'0px'}
-                                                        >
+                                                        <Box>
                                                             <Text
                                                                 color={
                                                                     'var(--text-color)'
@@ -453,8 +448,6 @@ const DirectMessage = (props) => {
                                                             </Text>
                                                         </Box>
                                                         <IconButton
-                                                            position={'absolute'}
-                                                            left={'20px'}
                                                             class="delete"
                                                             style={{
                                                                 color: 'red',
@@ -499,23 +492,10 @@ const DirectMessage = (props) => {
                                                             </div>
                                                             <div class="clear"></div>
                                                         </Box>
-                                                        <Avatar
-                                                            name={username}
-                                                            src={profilePic}
-                                                            size="md"
-                                                            mr={5}
-                                                        />
                                                     </Stack>
                                                 </Box> :
                                                 <Box w="full" position={'relative'} p={10} zIndex={1}>
                                                     <Stack direction={'row'} pos={'absolute'} left={0}>
-                                                        <Avatar
-                                                            name={(text.toUser == username ? text.fromUser : text.toUser)}
-                                                            src={otherUserPic}
-                                                            size="md"
-
-                                                            mr={3}
-                                                        />
                                                         <Box height={'auto'}>
                                                             <div class="from-them">
                                                                 <p>{text.message}</p>
