@@ -72,7 +72,9 @@ messageRoutes.route('/messages/getConversations').post(async (req, res) => {
         MAX(timeStamp) FROM Messages GROUP BY(conversationID)) AND conversationID NOT IN (SELECT conversationID FROM DeletedConversations WHERE username = '${req.body.user}') AND (fromUser, toUser) NOT IN (SELECT userBlocking, userBlocked FROM Block) AND (fromUser, toUser) NOT IN (SELECT userBlocked, userBlocking FROM Block) ORDER BY timeStamp DESC;`
 
     let result = await con.awaitQuery(sql)
+
     res.json(result)
+    //console.log(result)
 })
 
 module.exports = messageRoutes

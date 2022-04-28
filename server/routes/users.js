@@ -21,7 +21,7 @@ userRoutes.route('/getUserFromHeader').get(async (req, res) => {
 
 userRoutes.route('/getUserProfilePic/:username').get(async (req, res) => {
     let username = req.params.username
-    console.log(username)
+  //  console.log(username)
     var sql = `SELECT url FROM User WHERE username = ${con.escape(username)}`
     con.query(sql, function (err, result) {
         if (err) {
@@ -120,7 +120,7 @@ userRoutes.route('/unBlock/:username').get(async (req, res) => {
         username
     )} and userBlocked = ${con.escape(req.params.username)}`
     con.query(sql, function (err, result) {
-        console.log(sql)
+       // console.log(sql)
         if (err) {
             console.log(err)
             res.status(500).json(err)
@@ -171,7 +171,7 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
             if (fullResponse.length === 0)
                 return res.status(400).json("User doesn't exist")
             let userResult = fullResponse[0]
-            console.log(userResult)
+           // console.log(userResult)
             if (err) {
                 console.log(userResult)
                 return res.status(500).json(err)
@@ -270,10 +270,10 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
 
     if (set != 'SET') {
         var sql = `UPDATE User ${set} WHERE username = ${con.escape(username)}`
-        console.log(sql)
+      //  console.log(sql)
 
         con.query(sql, function (err, result) {
-            console.log(result)
+           // console.log(result)
             if (err) {
                 console.log(result)
                 return res.status(500).json(err)
@@ -312,9 +312,9 @@ userRoutes.route('/search/:query').get(async (req, res) => {
     }
 
     if (userf != undefined) {
-        console.log(userf.username)
+      //  console.log(userf.username)
         sql += ` AND u.username not in (Select userBlocking From Block where userBlocked = '${userf.username}')`
-        console.log(sql)
+       // console.log(sql)
     }
 
     var sql1 = `SELECT * FROM Tag WHERE locate(${con.escape(

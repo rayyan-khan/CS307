@@ -28,6 +28,7 @@ const cleanDatabase = async () => {
         'messages',
         'conversations',
         'deletedconversations',
+        'block'
     ]
 
     await con.awaitQuery('SET FOREIGN_KEY_CHECKS = 0;')
@@ -83,6 +84,22 @@ const numberOfLikes = async (postID) => {
         `SELECT likesCount FROM Post WHERE postID = "${postID}"`
     )
 }
+const addBlock = async (userBlocking, userBlocked) => {
+
+    let yo = `INSERT INTO Block Values ('${userBlocking}', '${userBlocked}')`
+    let res = await con.awaitQuery(yo)
+
+    return res
+}
+const createComment = async (postID, username) => {
+    let res = await con.awaitQuery(`
+    INSERT INTO Comments Values 
+    (${postID},'${username}', NOW(),"testing");
+    `)
+    return res
+}
+
+
 
 module.exports = {
     cleanDatabase,
@@ -92,4 +109,6 @@ module.exports = {
     allVerifiedUsersByEmail,
     createPost,
     numberOfLikes,
+    addBlock,
+    createComment
 }

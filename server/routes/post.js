@@ -357,7 +357,7 @@ postRoutes.route('/comments/:postID').get(async function (req, res) {
         return res.status(300).json(err)
     }
     const { email, username } = user
-    console.log('hi there')
+        //console.log('hi there')
 
     var sql = `SELECT * FROM Comments JOIN User ON User.username=Comments.username WHERE postId = ${con.escape(
         req.params.postID

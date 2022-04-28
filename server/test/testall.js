@@ -2380,3 +2380,445 @@ describe('Messaging', () => {
         )
     })
 })
+describe('Block', () => {
+    it('Can not view post from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/getTimeline`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body[0].length);
+                                // console.log(body)
+                                assert.equal(body.length, 0)
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not view tag page post from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/getPostWithTag/${tagID1}`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                assert.equal(body.length, 0)
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not view in followingList from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/getProfile/${interactor}`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body[0].length);
+
+                                assert.equal(body. numberFollowers, 0)
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not view in followedList from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/getProfile/${interactor}`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body[0].length);
+
+                                assert.equal(body.numberFollowing, 0)
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not view comment from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
+        testQueries.createComment(postID1,user1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/comments/${postID1}`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body);
+                                assert.equal(body.length, 0)
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not view profile from blocked account', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        //testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
+        //testQueries.createComment(postID1,user1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/getProfile/${user1}`)
+                            .set('authorization', token)
+                            .expect(400)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body);
+                                assert.equal(body, "User doesn't exist")
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+
+    it('Can not preview conversation from blocked account with other user', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+         testQueries.addBlock(user1,interactor);
+        //testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
+        //testQueries.createComment(postID1,user1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).post(`/api/messages/sendMessage`)
+                            .set('authorization', token)
+                            .send({
+                                fromUser: "username1",
+                                toUser: "interactor",
+                                message: "her",
+                            }).end((err, res) => {
+
+                                if (err) return done(err)
+                                    // console.log("hey there whats up")
+                                request(app).post(`/api/messages/getConversations`)
+                                    .set('authorization', token)
+                                    .send({
+                                        user: "interactor",
+                                    })
+
+                                    .expect((res) => {
+                                        let body = res.body
+                                       // console.log(body);
+                                        assert.equal(body.length, 0)
+                                        //  assert.equal(body[0].postID, postID1)
+                                    }).end((err, res) => {
+                                        if (err) return done(err)
+                                        return done()
+                                    }
+                                )
+                            }
+                        )
+                    })
+            }
+        )
+    })
+    it('Can not send message to user who blocked you', (done) => {
+        const user1 = 'username1'
+        const email1 = 'email1'
+        const interactor = 'interactor'
+        const interactorEmail = 'interactorEmail'
+
+        const password = 'password123'
+        const hash = bcrypt.hashSync(password, 10)
+
+        testQueries.createVerifiedUser(user1, email1, hash)
+        testQueries.createVerifiedUser(interactor, interactorEmail, hash)
+
+        let postID1 = '1'
+        let tagID1 = '1'
+        let postCaption1 = 'comment on me'
+        let anonymous1 = '0'
+        testQueries.addBlock(user1,interactor);
+        //testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
+        //testQueries.createComment(postID1,user1)
+
+        jwt.sign(
+            { email: interactorEmail, username: interactor },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/followUser`)
+                    .set('authorization', token)
+                    .send({
+                        followed: user1,
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+
+
+                        request(app).get(`/api/search/${user1}`)
+                            .set('authorization', token)
+                            .expect((res) => {
+                                let body = res.body
+                                //console.log(body);
+                                assert.equal(body, "Nothing such as that exists")
+                                //  assert.equal(body[0].postID, postID1)
+                            }).end((err, res) => {
+                                if (err) return done(err)
+                                return done()
+                            }
+                        )
+                    })
+            }
+        )
+    })
+})
+
+
+
