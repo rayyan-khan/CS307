@@ -44,6 +44,7 @@ const DirectMessage = (props) => {
     const [currText, setCurrText] = React.useState('');
     const [talkingToUsername, setTalkingToUsername] = React.useState(props.usernameToTalkWith ? props.usernameToTalkWith : '');
     const [intervalID, setIntervalID] = React.useState(null);
+    const [render, setRender] = React.useState(false);
 
     const onChange = (e) => {
 
@@ -77,6 +78,18 @@ const DirectMessage = (props) => {
                 setMessage('');
                 scrollToBottom();
 
+            }).then(() => {
+
+                console.log('updating conversations');
+                conversations.forEach(conversation => {
+                    if (conversation.toUser === talkingToUsername || conversation.fromUser === talkingToUsername) {
+                        conversation.message = payload.message;
+                        conversation.timeStamp = payload.timeStamp;
+                        setRender(!render);
+
+                        console.log('updated')
+                    }
+                })
             })
             .catch(({ response }) => {
                 console.log("got an error");
@@ -123,6 +136,50 @@ const DirectMessage = (props) => {
                 userFound = true;
             }
         }
+        if (!userFound && talkingToUsername !== '') {
+            console.log('user not found')
+        } else if (talkingToUsername) {
+            console.log("user found");
+            handleGetConversation();
+            let intervalID = setInterval(handleGetConversation, 3000);
+            setIntervalID(intervalID);
+        }
+    }, [talkingToUsername])
+
+    const test1 = () => {
+        console.log(intervalID);
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
+        let userFound = false;
+        for (let i = 0; i < conversations.length; i++) {
+            if ((conversations[i].toUser == username ? conversations[i].fromUser : conversations[i].toUser) === talkingToUsername) {
+                userFound = true;
+            }
+        }
+        if (!userFound && talkingToUsername !== '') {
+            console.log('user not found')
+            const payload = {
+                fromUser: username,
+                toUser: talkingToUsername,
+                time: moment().format('YYYY-MM-DDThh:mm.ssss')
+            }
+            setConversations([payload, ...conversations])
+        } else if (talkingToUsername) {
+            console.log("user found");
+            handleGetConversation();
+            let intervalID = setInterval(handleGetConversation, 3000);
+            setIntervalID(intervalID);
+        }
+    }
+
+    const test = () => {
+        let userFound = false;
+        for (let i = 0; i < conversations.length; i++) {
+            if ((conversations[i].toUser == username ? conversations[i].fromUser : conversations[i].toUser) === talkingToUsername) {
+                userFound = true;
+            }
+        }
         if (talkingToUsername) {
             console.log("trying to get profile pics");
             try {
@@ -144,18 +201,18 @@ const DirectMessage = (props) => {
                 toUser: talkingToUsername
             }
             setConversations([payload, ...conversations])
-            setCurrentConversation([])
         } else if (talkingToUsername) {
+            console.log("user found");
             handleGetConversation();
             let intervalID = setInterval(handleGetConversation, 3000);
             setIntervalID(intervalID);
         }
-    }, [talkingToUsername])
+    }
 
-    useEffect(() => {
+    useEffect(async () => {
         if (axios.defaults.headers.common['authorization'] != null) {
             console.log('test')
-            axios
+            await axios
                 .get('http://localhost:5000/api/getUserFromHeader')
                 .then((res) => {
                     console.log(res.data)
@@ -180,6 +237,20 @@ const DirectMessage = (props) => {
 
                                 let conversations = [];
                                 conversations = res.data;
+                                let userFound = false;
+                                for (let i = 0; i < conversations.length; i++) {
+                                    if ((conversations[i].toUser == username ? conversations[i].fromUser : conversations[i].toUser) === talkingToUsername) {
+                                        userFound = true;
+                                    }
+                                }
+                                if (!userFound && talkingToUsername !== '') {
+                                    console.log('user not found')
+                                    const payload = {
+                                        fromUser: username,
+                                        toUser: talkingToUsername
+                                    }
+                                    conversations = [payload, ...conversations]
+                                }
                                 conversations.map((conversation) => {
                                     console.log("trying to get profile pics");
                                     try {
@@ -187,7 +258,7 @@ const DirectMessage = (props) => {
                                         axios.get('http://localhost:5000/api/getProfile/' + user).then((res) => {
                                             conversation.url = res.data.url;
                                             let payload = { user: user, url: res.data.url }
-                                            setConversations([...conversations, conversation])
+                                            setConversations([...conversations, conversation], test(), test1());
                                             console.log(payload);
                                             setProfilePics(payload)
                                             console.log(profilePics);
@@ -203,16 +274,37 @@ const DirectMessage = (props) => {
                     }
 
                 })
+                .then(() => {
+                    if (talkingToUsername) {
+                        console.log("user found");
+                        handleGetConversation();
+                        let intervalID = setInterval(handleGetConversation, 3000);
+                        setIntervalID(intervalID);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         }
     }, [])
 
     const handleGetConversation = async () => {
+        let username1 = '';
+        if (username == '') {
+            console.log('getting username');
+            await axios.get('http://localhost:5000/api/getUserFromHeader')
+                .then((res) => {
+                    console.log(res.data)
+                    username1 = res.data.username;
+                    setUsername(res.data.username);
+                })
+        }
         console.log(talkingToUsername);
         if (talkingToUsername) {
             console.log('updating');
             try {
                 const payload = {
-                    user1: username,
+                    user1: username != '' ? username : username1,
                     user2: talkingToUsername,
                 }
 
@@ -220,6 +312,8 @@ const DirectMessage = (props) => {
                     .post('http://localhost:5000/api/messages/getHistory', payload)
                     .then((res) => {
                         setCurrentConversation(res.data);
+                        console.log(payload);
+                        console.log(currentConversation);
                     })
             } catch (error) {
                 console.log(error);
@@ -228,7 +322,6 @@ const DirectMessage = (props) => {
     }
 
     const handleTimeDifference = (time) => {
-        console.log(time);
         if (time != undefined) {
             let minsAgo = Math.round(moment.duration(moment.utc().add(4, 'hours').diff(time)).asMinutes());
             if (minsAgo == 0) {
@@ -340,27 +433,29 @@ const DirectMessage = (props) => {
                                                             </Text>
                                                         </Box>
                                                     </Stack>
-                                                    <Box
-                                                        width={'100px'}
-                                                        textAlign={'right'}
-                                                        display={'block'}
-                                                        mr={0}
-                                                        ml={"auto"}
+                                                    <Stack
+                                                        direction="row"
+                                                        // mr={10}
+                                                        alignItems="center"
                                                     >
-                                                        <Text
-                                                            color={
-                                                                'var(--text-color)'
-                                                            }
-
-                                                            pt={5}
-                                                        >
-                                                            {handleTimeDifference(conversation.timeStamp)}
-                                                        </Text>
+                                                        <Box>
+                                                            <Text
+                                                                color={
+                                                                    'var(--text-color)'
+                                                                }
+                                                            >
+                                                                {handleTimeDifference(conversation.timeStamp)}
+                                                            </Text>
+                                                        </Box>
                                                         <IconButton
+                                                            class="delete"
                                                             style={{
-                                                                color: 'darkturquoise',
-                                                                backgroundColor:
-                                                                    'white',
+                                                                color: 'red',
+                                                                backgroundColor: 'rgba(0,0,0,0)',
+                                                            }}
+                                                            _hover={{
+                                                                borderColor: 'red',
+                                                                borderWidth: '2px'
                                                             }}
                                                             icon={<BsTrash />}
                                                             onClick={(e) => {
@@ -369,7 +464,7 @@ const DirectMessage = (props) => {
                                                                 deleteConversation((conversation.toUser == username ? conversation.fromUser : conversation.toUser))
                                                             }}
                                                         />
-                                                    </Box>
+                                                    </Stack>
                                                 </Stack>
                                             </Box>
                                         </CSSTransition>
@@ -397,23 +492,10 @@ const DirectMessage = (props) => {
                                                             </div>
                                                             <div class="clear"></div>
                                                         </Box>
-                                                        <Avatar
-                                                            name={username}
-                                                            src={profilePic}
-                                                            size="md"
-                                                            mr={5}
-                                                        />
                                                     </Stack>
                                                 </Box> :
                                                 <Box w="full" position={'relative'} p={10} zIndex={1}>
                                                     <Stack direction={'row'} pos={'absolute'} left={0}>
-                                                        <Avatar
-                                                            name={(text.toUser == username ? text.fromUser : text.toUser)}
-                                                            src={otherUserPic}
-                                                            size="md"
-
-                                                            mr={3}
-                                                        />
                                                         <Box height={'auto'}>
                                                             <div class="from-them">
                                                                 <p>{text.message}</p>
