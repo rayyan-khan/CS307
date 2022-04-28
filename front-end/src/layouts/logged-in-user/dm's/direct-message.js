@@ -436,14 +436,9 @@ const DirectMessage = (props) => {
                                                     <Stack
                                                         direction="row"
                                                         // mr={10}
-                                                        position={'relative'}
-                                                        bg={'red'}
                                                         alignItems="center"
                                                     >
-                                                        <Box
-                                                            position={'absolute'}
-                                                            left={'0px'}
-                                                        >
+                                                        <Box>
                                                             <Text
                                                                 color={
                                                                     'var(--text-color)'
@@ -453,8 +448,6 @@ const DirectMessage = (props) => {
                                                             </Text>
                                                         </Box>
                                                         <IconButton
-                                                            position={'absolute'}
-                                                            left={'20px'}
                                                             class="delete"
                                                             style={{
                                                                 color: 'red',
