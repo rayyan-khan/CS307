@@ -49,10 +49,11 @@ messageRoutes.route('/messages/sendMessage').post(async (req, res) => {
     }
     let conversationID = result[0].ConversationID;
 
-    sql = `DELETE FROM DeletedConversations WHERE conversationID = ${conversationID}`;
-    result = await con.awaitQuery(sql)
 
     sql = `INSERT INTO Messages VALUES('${req.body.fromUser}', '${req.body.toUser}', '${req.body.message}', ${result[0].ConversationID}, NOW()) `
+    result = await con.awaitQuery(sql)
+
+    sql = `DELETE FROM DeletedConversations WHERE conversationID = ${conversationID}`;
     result = await con.awaitQuery(sql)
 
     res.json(result)
