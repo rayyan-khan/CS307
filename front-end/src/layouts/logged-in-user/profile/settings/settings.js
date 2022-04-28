@@ -59,7 +59,7 @@ export default function Settings({ user, label, section }) {
 
     const [showPassword, setShowPassword] = useState(false);
 
-    
+
     useEffect(() => {
         setOldPasswordError('');
         setNewPasswordError('');
@@ -68,7 +68,7 @@ export default function Settings({ user, label, section }) {
         setLastName(user.lastName);
 
     }, [editPassword])
-    
+
     useEffect(() => {
         axios.get("http://localhost:5000/api/getProfile/" + user.username).then((response) => {
             console.log(response.data.private);
@@ -78,7 +78,7 @@ export default function Settings({ user, label, section }) {
             else {
                 setPriv(true)
             }
-            
+
             return;
         })
 
@@ -414,7 +414,7 @@ export default function Settings({ user, label, section }) {
                                             <Stack direction={'row'}>
                                                 <Flex>
                                                     <Text fontWeight={'semibold'} fontSize={'lg'} color={"var(--settings-head-color)"}>
-                                                        Private 
+                                                        Private
                                                     </Text>
                                                     <div
                                                         style={{
@@ -425,21 +425,21 @@ export default function Settings({ user, label, section }) {
                                                         }}
                                                     >
                                                         <Box position={'absolute'} right={'30%'}>
-                                                        <Switch size='md' isChecked={priv} onChange={() => {
-                                                            console.log(!priv)
-                                                            var data
-                                                            if (!priv) {
-                                                                data = {'private':1}
-                                                            } else {
-                                                                data = {'private':0}
-                                                            }
-                                                            
-                                                            axios.put("http://localhost:5000/api/updateProfile", data).then((response) => {
-                                                                console.log(response);
-                                                                return;
-                                                            })
-                                                            setPriv(!priv);
-                                                            }}/>
+                                                            <Switch size='md' isChecked={priv} onChange={() => {
+                                                                console.log(!priv)
+                                                                var data
+                                                                if (!priv) {
+                                                                    data = { 'private': 1 }
+                                                                } else {
+                                                                    data = { 'private': 0 }
+                                                                }
+
+                                                                axios.put("http://localhost:5000/api/updateProfile", data).then((response) => {
+                                                                    console.log(response);
+                                                                    return;
+                                                                })
+                                                                setPriv(!priv);
+                                                            }} />
                                                         </Box>
                                                     </div>
                                                 </Flex>

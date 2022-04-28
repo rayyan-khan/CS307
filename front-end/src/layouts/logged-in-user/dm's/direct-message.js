@@ -138,6 +138,33 @@ const DirectMessage = (props) => {
         }
         if (!userFound && talkingToUsername !== '') {
             console.log('user not found')
+            const payload = {
+                fromUser: username,
+                toUser: talkingToUsername,
+                time: moment().format('YYYY-MM-DDThh:mm.ssss')
+            }
+            setConversations([payload, ...conversations])
+            axios.post("http://localhost:5000/api/messages/getConversation", payload)
+                .then((response) => {
+                    console.log(response.data);
+                    setCurrentConversation(response.data);
+                    setRender(!render);
+                    setIntervalID(setInterval(() => {
+                        axios.post("http://localhost:5000/api/messages/getConversation", payload)
+                            .then((response) => {
+                                console.log(response.data);
+                                setCurrentConversation(response.data);
+                                setRender(!render);
+                            })
+                            .catch(({ response }) => {
+                                console.log("got an error");
+                                setCurrentConversation([]);
+                            })
+                    }, 1000));
+                }).catch(({ response }) => {
+                    console.log("got an error");
+                    setCurrentConversation([]);
+                })
         } else if (talkingToUsername) {
             console.log("user found");
             handleGetConversation();
@@ -384,10 +411,9 @@ const DirectMessage = (props) => {
                                         <CSSTransition key={(conversation.toUser == username ? conversation.fromUser : conversation.toUser)} timeout={700} classNames="conversation">
                                             <Box
                                                 mb={8}
-                                                ml={8}
+                                                ml={6}
                                                 backgroundColor={(conversation.toUser == username ? conversation.fromUser : conversation.toUser) == talkingToUsername ? 'darkturquoise' : 'var(--main-color)'}
-                                                width={'80%'}
-                                                maxWidth={'400px'}
+                                                width={'82%'}
                                                 boxShadow={'xl'}
                                                 rounded={'lg'}
                                                 _hover={{
@@ -403,7 +429,7 @@ const DirectMessage = (props) => {
 
                                                 }}
                                             >
-                                                <Stack p={8} direction={'row'}>
+                                                <Stack p={8} direction={'row'} alignItems={'center'} position={'relative'}>
                                                     <Avatar
                                                         name={(conversation.toUser == username ? conversation.fromUser : conversation.toUser)}
                                                         src={conversation.url}
@@ -417,7 +443,7 @@ const DirectMessage = (props) => {
                                                         >
                                                             {(conversation.toUser == username ? conversation.fromUser : conversation.toUser)}
                                                         </Text>
-                                                        <Box width={'10vw'}>
+                                                        <Box>
                                                             <Text
                                                                 overflow={'hidden'}
                                                                 textOverflow={'ellipsis'}
@@ -433,38 +459,37 @@ const DirectMessage = (props) => {
                                                             </Text>
                                                         </Box>
                                                     </Stack>
-                                                    <Stack
-                                                        direction="row"
-                                                        // mr={10}
-                                                        alignItems="center"
-                                                    >
-                                                        <Box>
-                                                            <Text
-                                                                color={
-                                                                    'var(--text-color)'
-                                                                }
-                                                            >
-                                                                {handleTimeDifference(conversation.timeStamp)}
-                                                            </Text>
-                                                        </Box>
-                                                        <IconButton
-                                                            class="delete"
-                                                            style={{
-                                                                color: 'red',
-                                                                backgroundColor: 'rgba(0,0,0,0)',
-                                                            }}
-                                                            _hover={{
-                                                                borderColor: 'red',
-                                                                borderWidth: '2px'
-                                                            }}
-                                                            icon={<BsTrash />}
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                e.stopPropagation();
-                                                                deleteConversation((conversation.toUser == username ? conversation.fromUser : conversation.toUser))
-                                                            }}
-                                                        />
-                                                    </Stack>
+                                                    <Box pos={'absolute'} right={'45px'}>
+                                                        <Text
+                                                            color={
+                                                                'var(--text-color)'
+                                                            }
+                                                        >
+                                                            {handleTimeDifference(conversation.timeStamp)}
+                                                        </Text>
+                                                    </Box>
+                                                    <IconButton
+                                                        pos={'absolute'}
+                                                        right={'5px'}
+                                                        size={'sm'}
+                                                        style={{
+                                                            color: 'red',
+                                                            backgroundColor: 'rgba(0,0,0,0)',
+                                                        }}
+                                                        _hover={{
+                                                            borderColor: 'red',
+                                                            borderWidth: '2px',
+                                                            transform: 'scale(1.05)',
+                                                        }}
+                                                        icon={<BsTrash />}
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            deleteConversation((conversation.toUser == username ? conversation.fromUser : conversation.toUser))
+                                                            conversations.splice(key, 1);
+                                                            setConversations([...conversations]);
+                                                        }}
+                                                    />
                                                 </Stack>
                                             </Box>
                                         </CSSTransition>
@@ -486,7 +511,7 @@ const DirectMessage = (props) => {
                                             text.fromUser == username ?
                                                 <Box w="full" position={'relative'} p={8} zIndex={1}>
                                                     <Stack direction={'row'} pos={'absolute'} right={0}>
-                                                        <Box mr={3}>
+                                                        <Box mr={5}>
                                                             <div class="from-me">
                                                                 <p>{text.message}</p>
                                                             </div>
@@ -495,8 +520,8 @@ const DirectMessage = (props) => {
                                                     </Stack>
                                                 </Box> :
                                                 <Box w="full" position={'relative'} p={10} zIndex={1}>
-                                                    <Stack direction={'row'} pos={'absolute'} left={0}>
-                                                        <Box height={'auto'}>
+                                                    <Stack direction={'row'} pos={'absolute'} left={5}>
+                                                        <Box height={'auto'} >
                                                             <div class="from-them">
                                                                 <p>{text.message}</p>
                                                             </div>

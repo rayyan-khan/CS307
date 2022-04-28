@@ -316,9 +316,8 @@ class Profile extends React.Component {
                     <Center>
                         <div style={{ display: 'flex' }}>
                             <div
-                                className={`toggle-title ${
-                                    this.state.showPosts ? 'select-title' : ''
-                                }`}
+                                className={`toggle-title ${this.state.showPosts ? 'select-title' : ''
+                                    }`}
                                 onClick={this.toPosts}
                             >
                                 <Box>
@@ -331,9 +330,8 @@ class Profile extends React.Component {
                                 </Box>
                             </div>
                             <div
-                                className={`toggle-title ${
-                                    this.state.showPosts ? '' : 'select-title'
-                                }`}
+                                className={`toggle-title ${this.state.showPosts ? '' : 'select-title'
+                                    }`}
                                 onClick={this.toInteractions}
                             >
                                 <Box>
@@ -351,9 +349,8 @@ class Profile extends React.Component {
 
                 <div className="slide-container">
                     <Box
-                        className={`slide ${
-                            this.state.showPosts ? 'right-hide' : 'show'
-                        }`}
+                        className={`slide ${this.state.showPosts ? 'right-hide' : 'show'
+                            }`}
                         style={{ paddingBottom: '80px' }}
                     >
                         <div style={{ textAlign: 'center' }}>
@@ -363,9 +360,8 @@ class Profile extends React.Component {
 
                     <Box
                         style={{ paddingBottom: '80px' }}
-                        className={`slide posts-container ${
-                            this.state.showPosts ? 'show' : 'left-hide'
-                        }`}
+                        className={`slide posts-container ${this.state.showPosts ? 'show' : 'left-hide'
+                            }`}
                     >
                         {this.postHandler()}
                     </Box>
@@ -503,14 +499,14 @@ class Profile extends React.Component {
                                                 <Stack
                                                     p={'10px'}
                                                     direction="row"
-                                                    // _before={{
-                                                    //     content: '""',
-                                                    //     bottom: '0px',
-                                                    //     height: '1px',
-                                                    //     width: '50%',
-                                                    //     borderBottomWidth: '1px',
-                                                    //     borderColor: 'darkturquoise',
-                                                    // }}
+                                                // _before={{
+                                                //     content: '""',
+                                                //     bottom: '0px',
+                                                //     height: '1px',
+                                                //     width: '50%',
+                                                //     borderBottomWidth: '1px',
+                                                //     borderColor: 'darkturquoise',
+                                                // }}
                                                 >
                                                     <Center>
                                                         <Text
@@ -1049,8 +1045,8 @@ class Profile extends React.Component {
                                                                 </Popup>
                                                             </Box>
                                                         ) : localStorage.getItem(
-                                                              'token'
-                                                          ) ? (
+                                                            'token'
+                                                        ) ? (
                                                             <Stack
                                                                 direction={
                                                                     'row'
