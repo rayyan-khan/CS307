@@ -109,3 +109,10 @@ create table Conversations (
     user2 varchar(20),
     PRIMARY KEY (conversationID)
 );
+
+CREATE TABLE DeletedConversations (
+    username VARCHAR(20) not null,
+    conversationID INT,
+    FOREIGN KEY(username) REFERENCES User(username) ON DELETE CASCADE,
+    FOREIGN KEY (conversationID) REFERENCES Conversations(conversationID) ON DELETE CASCADE
+);
