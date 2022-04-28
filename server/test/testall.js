@@ -1913,3 +1913,119 @@ describe('Messaging', () => {
         )
     })
 })
+
+describe('Get Active Conversations', () => {
+    it('Can get active conversations', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        request(app)
+                            .post(`/api/messages/getConversations`)
+                            .set('authorization', token)
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
+
+                                assert.equal(res.length, 1)
+
+                                return done()
+                            })
+                    })
+            }
+        )
+    })
+})
+
+describe('Get Last Message', () => {
+    it('Can get the last message through the conversation', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+        const message2 = 'This is the second message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        request(app)
+                            .post(`/api/messages/sendMessage`)
+                            .set('authorization', token)
+                            .send({
+                                fromUser: username,
+                                toUser: username2,
+                                message: message2,
+                            })
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
+
+                                request(app)
+                                    .post(`/api/messages/getConversations`)
+                                    .set('authorization', token)
+                                    .expect(200)
+                                    .end((err, res) => {
+                                        if (err) return done(err)
+
+                                        assert.equal(res.length, 1)
+                                        assert.notEqual(res[0].message, undefined)
+                                        assert.equal(res[0].message, message2)
+
+                                        return done()
+                                    })
+                                })
+                    })
+            }
+        )
+    })
+})
