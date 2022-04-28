@@ -2402,7 +2402,6 @@ describe('DM user searching', () => {
                     .set('authorization', token)
                     .expect(400)
                     .expect((res) => {
-                        console.log(res)
                         assert.equal(res.body, 'Nothing such as that exists')
                     })
                     .end((err, res) => {
@@ -3007,7 +3006,6 @@ describe('Get Last Message', () => {
                                         .end((err, res) => {
                                             if (err) return done(err)
 
-                                            console.log(res.body)
                                             assert.equal(res.body.length, 1)
                                             assert.notEqual(
                                                 res.body[0].message,
