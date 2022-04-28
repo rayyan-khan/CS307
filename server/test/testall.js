@@ -1866,6 +1866,178 @@ describe('Password Reset', () => {
     })
 })
 
+//Sprint 3 User Story 3
+describe('Private Profile', () => {
+    it('Setting profile to private relfected in database', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .put(`/api/updateProfile`)
+                    .set('authorization', token)
+                    .send({
+                        private: 1,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        const sql = `Select * from User where username="${username}" and private=1`
+
+                        testCon.query(sql, (err, result) => {
+                            if (err) return done(err)
+
+                            assert.equal(result.length, 1)
+
+                            return done()
+                        })
+                    })
+            }
+        )
+    })
+})
+
+//Sprint 3 User Story 6
+describe('Profile deletion and messaging', () => {
+    it('Deleting account deletes data from Conversation table', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let exists = `select * from conversations where user1="${username}" or user2="${username}"`
+
+                        testCon.query(exists, (err, existsRes) => {
+                            if (err) return done(err)
+
+                            assert.equal(existsRes.length, 1)
+
+                            request(app)
+                                .get('/api/deleteProfile')
+                                .set('authorization', token)
+                                .expect(200)
+                                .end((err, res) => {
+                                    if (err) return done(err)
+
+                                    let isDeleted = `select * from conversations where user1="${username}" or user2="${username}"`
+
+                                    testCon.query(
+                                        isDeleted,
+                                        (err, isDeletedRes) => {
+                                            if (err) return done(err)
+
+                                            assert.equal(isDeletedRes.length, 0)
+
+                                            return done()
+                                        }
+                                    )
+                                })
+                        })
+                    })
+            }
+        )
+    })
+
+    it('Deleting account deletes data from Messages table', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password2, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        let exists = `select * from messages where fromUser="${username}" and toUser="${username2}"`
+
+                        testCon.query(exists, (err, existsRes) => {
+                            if (err) return done(err)
+
+                            assert.equal(existsRes.length, 1)
+
+                            request(app)
+                                .get('/api/deleteProfile')
+                                .set('authorization', token)
+                                .expect(200)
+                                .end((err, res) => {
+                                    if (err) return done(err)
+
+                                    let isDeleted = `select * from messages where fromUser="${username}" and toUser="${username2}"`
+
+                                    testCon.query(
+                                        isDeleted,
+                                        (err, isDeletedRes) => {
+                                            if (err) return done(err)
+
+                                            assert.equal(isDeletedRes.length, 0)
+
+                                            return done()
+                                        }
+                                    )
+                                })
+                        })
+                    })
+            }
+        )
+    })
+})
+
 describe('Messaging', () => {
     it('Can send message', (done) => {
         const password = 'password123'
