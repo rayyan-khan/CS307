@@ -21,7 +21,7 @@ userRoutes.route('/getUserFromHeader').get(async (req, res) => {
 
 userRoutes.route('/getUserProfilePic/:username').get(async (req, res) => {
     let username = req.params.username
-  //  console.log(username)
+    //  console.log(username)
     var sql = `SELECT url FROM User WHERE username = ${con.escape(username)}`
     con.query(sql, function (err, result) {
         if (err) {
@@ -120,7 +120,7 @@ userRoutes.route('/unBlock/:username').get(async (req, res) => {
         username
     )} and userBlocked = ${con.escape(req.params.username)}`
     con.query(sql, function (err, result) {
-       // console.log(sql)
+        // console.log(sql)
         if (err) {
             console.log(err)
             res.status(500).json(err)
@@ -171,7 +171,7 @@ userRoutes.route('/getProfile/:username').get(async (req, res) => {
             if (fullResponse.length === 0)
                 return res.status(400).json("User doesn't exist")
             let userResult = fullResponse[0]
-           // console.log(userResult)
+            // console.log(userResult)
             if (err) {
                 console.log(userResult)
                 return res.status(500).json(err)
@@ -270,10 +270,10 @@ userRoutes.route('/updateProfile').put(async (req, res) => {
 
     if (set != 'SET') {
         var sql = `UPDATE User ${set} WHERE username = ${con.escape(username)}`
-      //  console.log(sql)
+        //  console.log(sql)
 
         con.query(sql, function (err, result) {
-           // console.log(result)
+            // console.log(result)
             if (err) {
                 console.log(result)
                 return res.status(500).json(err)
@@ -312,9 +312,9 @@ userRoutes.route('/search/:query').get(async (req, res) => {
     }
 
     if (userf != undefined) {
-      //  console.log(userf.username)
+        //  console.log(userf.username)
         sql += ` AND u.username not in (Select userBlocking From Block where userBlocked = '${userf.username}')`
-       // console.log(sql)
+        // console.log(sql)
     }
 
     var sql1 = `SELECT * FROM Tag WHERE locate(${con.escape(
@@ -355,6 +355,76 @@ userRoutes.route('/search/:query').get(async (req, res) => {
                 })
 
                 return res.status(200).json([...userList, ...tagList])
+            } catch (error) {
+                return res.status(400).json(error)
+            }
+        })
+    })
+})
+
+userRoutes.route('/dmsearch/:query').get(async (req, res) => {
+    var userf
+
+    try {
+        //Use decodeHeader to extract user info from header or throw an error
+        userf = await decodeHeader.decodeAuthHeader(req)
+    } catch (err) {
+        userf = undefined
+    }
+
+    var sql = `SELECT u.username, u.firstName, u.lastName, u.private FROM User as u WHERE (locate(${con.escape(
+        req.params.query
+    )}, u.username) > 0 OR locate(${con.escape(
+        req.params.query
+    )}, u.firstName) > 0 OR locate(${con.escape(
+        req.params.query
+    )}, u.lastName) > 0) AND u.private != 1`
+
+    const name = req.params.query.split(' ')
+    if (name.length > 1) {
+        sql = `SELECT username, firstName, lastName FROM User as u WHERE (locate(${con.escape(
+            name[0]
+        )}, firstName) > 0 and locate(${con.escape(
+            name[1]
+        )}, lastName) > 0) and private != 1`
+    }
+
+    if (userf != undefined) {
+        //  console.log(userf.username)
+        sql += ` AND u.username not in (Select userBlocking From Block where userBlocked = '${userf.username}')`
+        // console.log(sql)
+    }
+
+    var sql1 = `SELECT * FROM Tag WHERE locate(${con.escape(
+        req.params.query
+    )}, tagID) > 0`
+
+    con.query(sql, function (err, result) {
+        con.query(sql1, function (err1, result1) {
+            if (err) {
+                console.log(err)
+                return res.status(500).json(err)
+            }
+            if (err1) {
+                console.log(err1)
+                return res.status(500).json(err1)
+            }
+            if (result1.length === 0 && result.length === 0)
+                return res.status(400).json('Nothing such as that exists')
+            console.log(result1)
+            try {
+                let userList = result.map((user) => {
+                    return {
+                        value: user.username,
+                        label:
+                            user.firstName && user.lastName
+                                ? `${user.firstName} ${user.lastName}`
+                                : '',
+                        type: 'user',
+                    }
+                })
+
+                return res.status(200).json([...userList])
             } catch (error) {
                 return res.status(400).json(error)
             }

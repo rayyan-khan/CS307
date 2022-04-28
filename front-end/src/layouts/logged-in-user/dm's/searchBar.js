@@ -30,7 +30,7 @@ class SearchBar extends Component {
             this.setState({ searchableNames: [] })
         } else {
             axios
-                .get('http://localhost:5000/api/search/' + input)
+                .get('http://localhost:5000/api/dmsearch/' + input)
                 .then((response) => {
                     let searchableNames = response.data.filter(
                         (option) => option.type === 'user'
