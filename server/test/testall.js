@@ -2225,12 +2225,12 @@ describe('Get Active Conversations', () => {
                             .post(`/api/messages/getConversations`)
                             .set('authorization', token)
                             .send({
-                                user: username
+                                user: username,
                             })
                             .expect(200)
                             .end((err, res) => {
                                 if (err) return done(err)
-                                assert.equal(res.length, 1)
+                                assert.equal(res.body.length, 1)
 
                                 return done()
                             })
@@ -2297,73 +2297,6 @@ describe('Deleting a conversation', () => {
     })
 })
 
-describe('Get Last Message', () => {
-    it('Can get the last message through the conversation', (done) => {
-        const password = 'password123'
-        const username = 'username'
-        const email = 'email'
-        const hash = bcrypt.hashSync(password, 10)
-        testQueries.createVerifiedUser(username, email, hash)
-
-        const password2 = 'password123'
-        const username2 = 'username2'
-        const email2 = 'email2'
-        const hash2 = bcrypt.hashSync(password, 10)
-        testQueries.createVerifiedUser(username2, email2, hash2)
-
-        const message = 'This is a message'
-        const message2 = 'This is the second message'
-
-        jwt.sign(
-            { email: email, username: username },
-            process.env.TOKEN_SECRET,
-            { expiresIn: 3600 },
-            (err, token) => {
-                request(app)
-                    .post(`/api/messages/sendMessage`)
-                    .set('authorization', token)
-                    .send({
-                        fromUser: username,
-                        toUser: username2,
-                        message: message,
-                    })
-                    .expect(200)
-                    .end((err, res) => {
-                        if (err) return done(err)
-                        request(app)
-                            .post(`/api/messages/sendMessage`)
-                            .set('authorization', token)
-                            .send({
-                                fromUser: username,
-                                toUser: username2,
-                                message: message2,
-                            })
-                            .expect(200)
-                            .end((err, res) => {
-                                if (err) return done(err)
-                                request(app)
-                                    .post(`/api/messages/getConversations`)
-                                    .set('authorization', token)
-                                    .send({
-                                        user: username
-                                    })
-                                    .expect(200)
-                                    .end((err, res) => {
-                                        if (err) return done(err)
-
-                                        assert.equal(res.length, 1)
-                                        assert.notEqual(res[0].message, undefined)
-                                        assert.equal(res[0].message, message2)
-
-                                        return done()
-                                    })
-                                })
-                            })
-                    }
-                )
-            })
-        })
-
 //Sprint 3 User Story 9
 describe('DM user searching', () => {
     it('Deleting a conversation adds it to the DeletedConversations table', (done) => {
@@ -2412,7 +2345,7 @@ describe('DM user searching', () => {
         const hash2 = bcrypt.hashSync(password, 10)
         testQueries.createVerifiedUser(username2, email2, hash2)
 
-        testQueries.addBlock(username2, username);
+        testQueries.addBlock(username2, username)
 
         jwt.sign(
             { email: email, username: username },
@@ -2438,7 +2371,6 @@ describe('DM user searching', () => {
                     })
             }
         )
-
     })
 
     it('Searching a user after they become private', (done) => {
@@ -2454,7 +2386,7 @@ describe('DM user searching', () => {
         const hash2 = bcrypt.hashSync(password, 10)
         testQueries.createVerifiedUser(username2, email2, hash2)
 
-        testQueries.setPrivate(username2);
+        testQueries.setPrivate(username2)
 
         jwt.sign(
             { email: email, username: username },
@@ -2595,7 +2527,7 @@ describe('Block', () => {
         let tagID1 = '1'
         let postCaption1 = 'comment on me'
         let anonymous1 = '0'
-        testQueries.addBlock(user1,interactor);
+        testQueries.addBlock(user1, interactor)
         testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
 
         jwt.sign(
@@ -2612,9 +2544,8 @@ describe('Block', () => {
                     .end((err, res) => {
                         if (err) return done(err)
 
-
-
-                        request(app).get(`/api/getTimeline`)
+                        request(app)
+                            .get(`/api/getTimeline`)
                             .set('authorization', token)
                             .expect((res) => {
                                 let body = res.body
@@ -2622,11 +2553,11 @@ describe('Block', () => {
                                 // console.log(body)
                                 assert.equal(body.length, 0)
                                 //  assert.equal(body[0].postID, postID1)
-                            }).end((err, res) => {
+                            })
+                            .end((err, res) => {
                                 if (err) return done(err)
                                 return done()
-                            }
-                        )
+                            })
                     })
             }
         )
@@ -2648,7 +2579,7 @@ describe('Block', () => {
         let tagID1 = '1'
         let postCaption1 = 'comment on me'
         let anonymous1 = '0'
-        testQueries.addBlock(user1,interactor);
+        testQueries.addBlock(user1, interactor)
         testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
 
         jwt.sign(
@@ -2665,19 +2596,18 @@ describe('Block', () => {
                     .end((err, res) => {
                         if (err) return done(err)
 
-
-
-                        request(app).get(`/api/getPostWithTag/${tagID1}`)
+                        request(app)
+                            .get(`/api/getPostWithTag/${tagID1}`)
                             .set('authorization', token)
                             .expect((res) => {
                                 let body = res.body
                                 assert.equal(body.length, 0)
                                 //  assert.equal(body[0].postID, postID1)
-                            }).end((err, res) => {
+                            })
+                            .end((err, res) => {
                                 if (err) return done(err)
                                 return done()
-                            }
-                        )
+                            })
                     })
             }
         )
@@ -2699,7 +2629,7 @@ describe('Block', () => {
         let tagID1 = '1'
         let postCaption1 = 'comment on me'
         let anonymous1 = '0'
-        testQueries.addBlock(user1,interactor);
+        testQueries.addBlock(user1, interactor)
         testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
 
         jwt.sign(
@@ -2716,21 +2646,20 @@ describe('Block', () => {
                     .end((err, res) => {
                         if (err) return done(err)
 
-
-
-                        request(app).get(`/api/getProfile/${interactor}`)
+                        request(app)
+                            .get(`/api/getProfile/${interactor}`)
                             .set('authorization', token)
                             .expect((res) => {
                                 let body = res.body
                                 //console.log(body[0].length);
 
-                                assert.equal(body. numberFollowers, 0)
+                                assert.equal(body.numberFollowers, 0)
                                 //  assert.equal(body[0].postID, postID1)
-                            }).end((err, res) => {
+                            })
+                            .end((err, res) => {
                                 if (err) return done(err)
                                 return done()
-                            }
-                        )
+                            })
                     })
             }
         )
@@ -2752,7 +2681,7 @@ describe('Block', () => {
         let tagID1 = '1'
         let postCaption1 = 'comment on me'
         let anonymous1 = '0'
-        testQueries.addBlock(user1,interactor);
+        testQueries.addBlock(user1, interactor)
         testQueries.createPost(postID1, tagID1, user1, postCaption1, anonymous1)
 
         jwt.sign(
@@ -2769,9 +2698,8 @@ describe('Block', () => {
                     .end((err, res) => {
                         if (err) return done(err)
 
-
-
-                        request(app).get(`/api/getProfile/${interactor}`)
+                        request(app)
+                            .get(`/api/getProfile/${interactor}`)
                             .set('authorization', token)
                             .expect((res) => {
                                 let body = res.body
@@ -2779,11 +2707,11 @@ describe('Block', () => {
 
                                 assert.equal(body.numberFollowing, 0)
                                 //  assert.equal(body[0].postID, postID1)
-                            }).end((err, res) => {
+                            })
+                            .end((err, res) => {
                                 if (err) return done(err)
                                 return done()
-                            }
-                        )
+                            })
                     })
             }
         )
@@ -2805,9 +2733,15 @@ describe('Block', () => {
         let tagID1 = '1'
         let postCaption1 = 'comment on me'
         let anonymous1 = '0'
-        testQueries.addBlock(user1,interactor);
-        testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
-        testQueries.createComment(postID1,user1)
+        testQueries.addBlock(user1, interactor)
+        testQueries.createPost(
+            postID1,
+            tagID1,
+            interactor,
+            postCaption1,
+            anonymous1
+        )
+        testQueries.createComment(postID1, user1)
 
         jwt.sign(
             { email: interactorEmail, username: interactor },
@@ -2823,20 +2757,19 @@ describe('Block', () => {
                     .end((err, res) => {
                         if (err) return done(err)
 
-
-
-                        request(app).get(`/api/comments/${postID1}`)
+                        request(app)
+                            .get(`/api/comments/${postID1}`)
                             .set('authorization', token)
                             .expect((res) => {
                                 let body = res.body
                                 //console.log(body);
                                 assert.equal(body.length, 0)
                                 //  assert.equal(body[0].postID, postID1)
-                            }).end((err, res) => {
+                            })
+                            .end((err, res) => {
                                 if (err) return done(err)
                                 return done()
-                            }
-                        )
+                            })
                     })
             }
         )
@@ -2858,7 +2791,7 @@ describe('Block', () => {
         let tagID1 = '1'
         let postCaption1 = 'comment on me'
         let anonymous1 = '0'
-        testQueries.addBlock(user1,interactor);
+        testQueries.addBlock(user1, interactor)
         //testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
         //testQueries.createComment(postID1,user1)
 
@@ -2876,9 +2809,8 @@ describe('Block', () => {
                     .end((err, res) => {
                         if (err) return done(err)
 
-
-
-                        request(app).get(`/api/getProfile/${user1}`)
+                        request(app)
+                            .get(`/api/getProfile/${user1}`)
                             .set('authorization', token)
                             .expect(400)
                             .expect((res) => {
@@ -2886,11 +2818,11 @@ describe('Block', () => {
                                 //console.log(body);
                                 assert.equal(body, "User doesn't exist")
                                 //  assert.equal(body[0].postID, postID1)
-                            }).end((err, res) => {
+                            })
+                            .end((err, res) => {
                                 if (err) return done(err)
                                 return done()
-                            }
-                        )
+                            })
                     })
             }
         )
@@ -2912,7 +2844,7 @@ describe('Block', () => {
         let tagID1 = '1'
         let postCaption1 = 'comment on me'
         let anonymous1 = '0'
-         testQueries.addBlock(user1,interactor);
+        testQueries.addBlock(user1, interactor)
         //testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
         //testQueries.createComment(postID1,user1)
 
@@ -2930,36 +2862,35 @@ describe('Block', () => {
                     .end((err, res) => {
                         if (err) return done(err)
 
-
-
-                        request(app).post(`/api/messages/sendMessage`)
+                        request(app)
+                            .post(`/api/messages/sendMessage`)
                             .set('authorization', token)
                             .send({
-                                fromUser: "username1",
-                                toUser: "interactor",
-                                message: "her",
-                            }).end((err, res) => {
-
+                                fromUser: 'username1',
+                                toUser: 'interactor',
+                                message: 'her',
+                            })
+                            .end((err, res) => {
                                 if (err) return done(err)
-                                    // console.log("hey there whats up")
-                                request(app).post(`/api/messages/getConversations`)
+                                // console.log("hey there whats up")
+                                request(app)
+                                    .post(`/api/messages/getConversations`)
                                     .set('authorization', token)
                                     .send({
-                                        user: "interactor",
+                                        user: 'interactor',
                                     })
 
                                     .expect((res) => {
                                         let body = res.body
-                                       // console.log(body);
+                                        // console.log(body);
                                         assert.equal(body.length, 0)
                                         //  assert.equal(body[0].postID, postID1)
-                                    }).end((err, res) => {
+                                    })
+                                    .end((err, res) => {
                                         if (err) return done(err)
                                         return done()
-                                    }
-                                )
-                            }
-                        )
+                                    })
+                            })
                     })
             }
         )
@@ -2980,7 +2911,7 @@ describe('Block', () => {
         let tagID1 = '1'
         let postCaption1 = 'comment on me'
         let anonymous1 = '0'
-        testQueries.addBlock(user1,interactor);
+        testQueries.addBlock(user1, interactor)
         //testQueries.createPost(postID1, tagID1, interactor, postCaption1, anonymous1)
         //testQueries.createComment(postID1,user1)
 
@@ -2998,20 +2929,99 @@ describe('Block', () => {
                     .end((err, res) => {
                         if (err) return done(err)
 
-
-
-                        request(app).get(`/api/search/${user1}`)
+                        request(app)
+                            .get(`/api/search/${user1}`)
                             .set('authorization', token)
                             .expect((res) => {
                                 let body = res.body
                                 //console.log(body);
-                                assert.equal(body, "Nothing such as that exists")
+                                assert.equal(
+                                    body,
+                                    'Nothing such as that exists'
+                                )
                                 //  assert.equal(body[0].postID, postID1)
-                            }).end((err, res) => {
+                            })
+                            .end((err, res) => {
                                 if (err) return done(err)
                                 return done()
-                            }
-                        )
+                            })
+                    })
+            }
+        )
+    })
+})
+
+describe('Get Last Message', () => {
+    it('Can get the last message through the conversation', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+        const message2 = 'This is the second message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        setTimeout(function () {
+                            request(app)
+                                .post(`/api/messages/sendMessage`)
+                                .set('authorization', token)
+                                .send({
+                                    fromUser: username,
+                                    toUser: username2,
+                                    message: message2,
+                                })
+                                .expect(200)
+                                .end((err, res) => {
+                                    if (err) return done(err)
+                                    request(app)
+                                        .post(`/api/messages/getConversations`)
+                                        .set('authorization', token)
+                                        .send({
+                                            user: username,
+                                        })
+                                        .expect(200)
+                                        .end((err, res) => {
+                                            if (err) return done(err)
+
+                                            console.log(res.body)
+                                            assert.equal(res.body.length, 1)
+                                            assert.notEqual(
+                                                res.body[0].message,
+                                                undefined
+                                            )
+                                            assert.equal(
+                                                res.body[0].message,
+                                                message2
+                                            )
+
+                                            return done()
+                                        })
+                                })
+                        }, 1000)
                     })
             }
         )
