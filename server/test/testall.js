@@ -2247,6 +2247,42 @@ describe('Deleting a conversation', () => {
     })
 })
 
+//Sprint 3 User Story 9
+describe('DM user searching', () => {
+    it('Deleting a conversation adds it to the DeletedConversations table', (done) => {
+        const password = 'password123'
+        const username = 'username2'
+        const email = 'email2'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                let url = `/api/search/${username.substring(
+                    0,
+                    username.length / 2
+                )}`
+                request(app)
+                    .get(url)
+                    .set('authorization', token)
+                    .expect(200)
+                    .expect((res) => {
+                        assert.equal(res.body.length, 1)
+                        assert(res.body[0].value === username)
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        return done()
+                    })
+            }
+        )
+    })
+})
+
 describe('Messaging', () => {
     it('Can send message', (done) => {
         const password = 'password123'
@@ -2294,52 +2330,53 @@ describe('Messaging', () => {
         )
     })
 
-    it('Can retrieve message History', (done) => {
-                const password = 'password123'
-                const username = 'username'
-                const email = 'email'
-                const hash = bcrypt.hashSync(password, 10)
-                testQueries.createVerifiedUser(username, email, hash)
-        
-                const password2 = 'password123'
-                const username2 = 'username2'
-                const email2 = 'email2'
-                const hash2 = bcrypt.hashSync(password, 10)
-                testQueries.createVerifiedUser(username2, email2, hash2)
-        
-                const message = 'Hello World'
-        
-                jwt.sign(
-                    { email: email, username: username },
-                    process.env.TOKEN_SECRET,
-                    { expiresIn: 3600 },
-                    (err, token) => {
-                        request(app)
-                            .post(`/api/messages/sendMessage`)
-                            .set('authorization', token)
-                            .send({
-                                fromUser: username,
-                                toUser: username2,
-                                message: message,
-                            })
-                            .expect(200)
-                            .end((err, res) => {
-                                request(app).post(`/api/messages/getHistory`)
-                                .set('authorization', token)
-                                .send({
-                                    user1: username,
-                                    user2 : username2
-                                }).expect(200)
-                                .end((err, res) => {
-                                    if (err) return done(err)
+    it('Can retrieve message History', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
 
-                                    assert.equal(res.body[0].message, 'Hello World')
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
 
-                                    return done()
-                                })
-                            })
-                            
-                    }
-                )
+        const message = 'Hello World'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        request(app)
+                            .post(`/api/messages/getHistory`)
+                            .set('authorization', token)
+                            .send({
+                                user1: username,
+                                user2: username2,
+                            })
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
+
+                                assert.equal(res.body[0].message, 'Hello World')
+
+                                return done()
+                            })
+                    })
+            }
+        )
     })
 })
