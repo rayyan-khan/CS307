@@ -2188,6 +2188,54 @@ describe('Profile deletion and messaging', () => {
     })
 })
 
+describe('Get Active Conversations', () => {
+    it('Can get active conversations', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        request(app)
+                            .post(`/api/messages/getConversations`)
+                            .set('authorization', token)
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
+                                assert.equal(res.length, 1)
+
+                                return done()
+                            })
+                    })
+            }
+        )
+    })
+})
 //Sprint 3 User Story 7
 describe('Deleting a conversation', () => {
     it('Deleting a conversation adds it to the DeletedConversations table', (done) => {
@@ -2230,7 +2278,6 @@ describe('Deleting a conversation', () => {
                             .expect(200)
                             .end((err, res) => {
                                 if (err) return done(err)
-
                                 let sql = `select * from deletedConversations where username='${username}'`
 
                                 testCon.query(sql, (err, res) => {
@@ -2246,6 +2293,70 @@ describe('Deleting a conversation', () => {
         )
     })
 })
+
+describe('Get Last Message', () => {
+    it('Can get the last message through the conversation', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        const message = 'This is a message'
+        const message2 = 'This is the second message'
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                request(app)
+                    .post(`/api/messages/sendMessage`)
+                    .set('authorization', token)
+                    .send({
+                        fromUser: username,
+                        toUser: username2,
+                        message: message,
+                    })
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+                        request(app)
+                            .post(`/api/messages/sendMessage`)
+                            .set('authorization', token)
+                            .send({
+                                fromUser: username,
+                                toUser: username2,
+                                message: message2,
+                            })
+                            .expect(200)
+                            .end((err, res) => {
+                                if (err) return done(err)
+                                request(app)
+                                    .post(`/api/messages/getConversations`)
+                                    .set('authorization', token)
+                                    .expect(200)
+                                    .end((err, res) => {
+                                        if (err) return done(err)
+
+                                        assert.equal(res.length, 1)
+                                        assert.notEqual(res[0].message, undefined)
+                                        assert.equal(res[0].message, message2)
+
+                                        return done()
+                                    })
+                                })
+                            })
+                    }
+                )
+            })
+        })
 
 //Sprint 3 User Story 9
 describe('DM user searching', () => {
@@ -2398,7 +2509,6 @@ describe('Messaging', () => {
                     .expect(200)
                     .end((err, res) => {
                         if (err) return done(err)
-
                         const sql = `Select * from Messages where fromUser="${username}" and toUser="${username2}" and message = "${message}"`
 
                         testCon.query(sql, (err, result) => {
@@ -2453,7 +2563,6 @@ describe('Messaging', () => {
                             .expect(200)
                             .end((err, res) => {
                                 if (err) return done(err)
-
                                 assert.equal(res.body[0].message, 'Hello World')
 
                                 return done()
@@ -2902,6 +3011,3 @@ describe('Block', () => {
         )
     })
 })
-
-
-
