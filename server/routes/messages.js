@@ -33,10 +33,17 @@ messageRoutes.route('/messages/sendMessage').post(async (req, res) => {
     //if (result.length !== 0) {
     //    res.json(result);
     // }
-    let follow = `SELECT * FROM UserFollow WHERE followed = '${arr[0]}' AND follower = '${arr[1]}'`
-    let follow_result = await con.awaitQuery(follow);
-    if (follow_result.length === 0) {
-        return res.status(500).json('User is not following you!')
+    let private = `SELECT private, username FROM User WHERE username='${req.body.toUser}'`
+    let private_result = await con.awaitQuery(private)
+    let { private_var } = private_result
+    if (private_result[0].private === 1) {
+        let follow = `SELECT * FROM UserFollow WHERE followed = '${req.body.fromUser}' AND follower = '${req.body.toUser}'`
+        console.log(follow)
+        let follow_result = await con.awaitQuery(follow);
+        if (follow_result.length === 0) {
+            console.log('Test this now please')
+            return res.status(500).json('User is not following you!')
+        }
     }
 
     let sql = `SELECT ConversationID FROM Conversations WHERE user1 = '${arr[0]}' AND user2 = '${arr[1]}'`
@@ -48,11 +55,10 @@ messageRoutes.route('/messages/sendMessage').post(async (req, res) => {
         result = await con.awaitQuery(sql);
     }
 
-    sql = `INSERT INTO Messages VALUES('${req.body.fromUser}', '${req.body.toUser}', '${req.body.message}', ${result[0].ConversationID}, NOW()) `
+    sql = `INSERT INTO Messages VALUES('${req.body.fromUser}', '${req.body.toUser}', '${req.body.message}', '${result[0].ConversationID}', NOW()) `
     result = await con.awaitQuery(sql)
 
     res.json(result)
-
 })
 
 messageRoutes.route('/messages/deleteConvo').post(async (req, res) => {

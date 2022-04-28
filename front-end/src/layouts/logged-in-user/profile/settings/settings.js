@@ -427,7 +427,13 @@ export default function Settings({ user, label, section }) {
                                                         <Box position={'absolute'} right={'30%'}>
                                                         <Switch size='md' isChecked={priv} onChange={() => {
                                                             console.log(!priv)
-                                                            var data = {'private':!priv}
+                                                            var data
+                                                            if (!priv) {
+                                                                data = {'private':1}
+                                                            } else {
+                                                                data = {'private':0}
+                                                            }
+                                                            
                                                             axios.put("http://localhost:5000/api/updateProfile", data).then((response) => {
                                                                 console.log(response);
                                                                 return;
