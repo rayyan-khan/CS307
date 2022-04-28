@@ -2323,6 +2323,47 @@ describe('DM user searching', () => {
         )
 
     })
+
+    it('Searching a user after they become private', (done) => {
+        const password = 'password123'
+        const username = 'username'
+        const email = 'email'
+        const hash = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username, email, hash)
+
+        const password2 = 'password123'
+        const username2 = 'username2'
+        const email2 = 'email2'
+        const hash2 = bcrypt.hashSync(password, 10)
+        testQueries.createVerifiedUser(username2, email2, hash2)
+
+        testQueries.setPrivate(username2);
+
+        jwt.sign(
+            { email: email, username: username },
+            process.env.TOKEN_SECRET,
+            { expiresIn: 3600 },
+            (err, token) => {
+                let url = `/api/dmsearch/${username2.substring(
+                    0,
+                    username2.length
+                )}`
+                request(app)
+                    .get(url)
+                    .set('authorization', token)
+                    .expect(400)
+                    .expect((res) => {
+                        console.log(res)
+                        assert.equal(res.body, 'Nothing such as that exists')
+                    })
+                    .end((err, res) => {
+                        if (err) return done(err)
+
+                        return done()
+                    })
+            }
+        )
+    })
 })
 
 describe('Messaging', () => {

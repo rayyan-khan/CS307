@@ -91,6 +91,14 @@ const addBlock = async (userBlocking, userBlocked) => {
 
     return res
 }
+
+const setPrivate = async (user) => {
+    let sql = `UPDATE User SET private = 1 WHERE username = ${user}`
+    let res = await con.awaitQuery(sql)
+
+    return res
+}
+
 const createComment = async (postID, username) => {
     let res = await con.awaitQuery(`
     INSERT INTO Comments Values 
@@ -110,5 +118,6 @@ module.exports = {
     createPost,
     numberOfLikes,
     addBlock,
-    createComment
+    createComment,
+    setPrivate
 }
